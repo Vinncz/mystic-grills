@@ -1,0 +1,9 @@
+.metadata/
+.settings/
+.temp/
+.vscode/
+bin/
+*SYSTEM_PROPERTIES.*
+*.class
+*.env
+.classpath
