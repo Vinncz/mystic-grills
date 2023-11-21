@@ -1,24 +1,30 @@
 package models;
 
-import java.sql.Connection;
+// TODO remove every database-accessing methods
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.sql.Statement;
 
-import database_access.ConnectionMaster;
-import models.helpers.ConnectsWithDatabase;
+import models.interfaces.Parsable;
+import repositories.helpers.DatabaseAccessor;
+import values.SYSTEM_PROPERTIES;
+import values.strings.DatabaseMessages;
 
-public class MenuItem extends ConnectsWithDatabase{
-    private static Connection db = ConnectionMaster.getConnection();
-    private static final String TABLE_NAME = "menu_items";
-    // private static Integer cumulativeMenuItemId = 0;
+public class MenuItem extends DatabaseAccessor implements Parsable<MenuItem> {
+
+    private static final String TABLE_NAME = SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value;
 
     private Integer menuItemId;
     private String menuItemName;
     private String menuItemDescription;
     private Integer menuItemPrice;
+
+
+
+
 
     /*
      * ==========================================================================
@@ -31,45 +37,78 @@ public class MenuItem extends ConnectsWithDatabase{
      * ==========================================================================
      */
 
+
+    @Override
+    public MenuItem parse (ResultSet _rs) throws SQLException {
+        MenuItem mi = new MenuItem();
+
+        while ( _rs.next() ) {
+            mi.setMenuItemId            (_rs.getInt("id"));
+            mi.setMenuItemName          (_rs.getString("name"));
+            mi.setMenuItemDescription   (_rs.getString("description"));
+            mi.setMenuItemPrice         (_rs.getInt("price"));
+        }
+
+        return mi;
+    }
+
+    @Override
+    public ArrayList<MenuItem> parseMultiple (ResultSet _rs) throws SQLException {
+        ArrayList<MenuItem> parsedMenuItems = new ArrayList<>();
+
+        while ( _rs.next() ) {
+            MenuItem mi = new MenuItem();
+
+            mi.setMenuItemId            (_rs.getInt("id"));
+            mi.setMenuItemName          (_rs.getString("name"));
+            mi.setMenuItemDescription   (_rs.getString("description"));
+            mi.setMenuItemPrice         (_rs.getInt("price"));
+
+            parsedMenuItems.add(mi);
+        }
+
+        return parsedMenuItems;
+    }
+
     /*
      * GET
      */
     public static MenuItem getMenuItemById (Integer _menuItemId) {
 
-        final String query = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
-
-        MenuItem target = null;
+        final String query = String.format("SELECT * FROM %s WHERE id = ?", TABLE_NAME);
         PreparedStatement ps = null;
+        MenuItem target = null;
 
         try {
-            ps = db.prepareStatement(query);
-            ps.setInt(1, _menuItemId);
+            ResultSet res = executeQuery(query, _menuItemId);
 
-            ResultSet res = ps.executeQuery();
-
-            while ( res.next() ) {
-                target = new MenuItem();
-
-                target.setMenuItemId            (res.getInt("id"));
-                target.setMenuItemName          (res.getString("name"));
-                target.setMenuItemDescription   (res.getString("description"));
-                target.setMenuItemPrice         (res.getInt("price"));
-            }
 
             res.close();
-            ps.close();
 
-        } catch (SQLException e) {
-            /* When query operations encountered an exception, it will be handled here */
-            ExplainSQLError(e, (ps != null) ? ps.toString() : SQLEXCEPTION_GENERIC_MESSAGE);
+        } catch (SQLException problemDuringQueryExecution) {
 
-        } catch (IllegalArgumentException e) {
-            /* When enumerals attribute encountered an exception, it will be handled here */
-            System.out.println(e.getMessage() != null ? e.getMessage() : ILLEGALARGUMENTEXCEPTION_GENERIC_MESSAGE);
+            explain(
+                problemDuringQueryExecution,
+                (ps != null) ?
+                    ps.toString() :
+                    DatabaseMessages.EMPTY_PREPARED_STATEMENT.value
+            );
 
-        } catch (Exception e) {
-            /* When there are an exception we didn't foresee, it will be handled here */
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : EXCEPTION_GENERIC_MESSAGE);
+        } catch (IllegalArgumentException problemDuringEnumeralAssignment) {
+
+            System.out.println(
+                problemDuringEnumeralAssignment.getMessage() != null ?
+                    problemDuringEnumeralAssignment.getMessage() :
+                    DatabaseMessages.PREPARED_STATEMENT_ILLEGAL_ARGUMENT
+            );
+
+        } catch (Exception unanticipatedProblem) {
+
+            throw new RuntimeException(
+                unanticipatedProblem.getMessage() != null ?
+                unanticipatedProblem.getMessage() :
+                DatabaseMessages.GENERIC_UNASSOCIATED_EXCEPTION.value
+            );
 
         }
 
@@ -78,14 +117,14 @@ public class MenuItem extends ConnectsWithDatabase{
 
     public static ArrayList<MenuItem> getAllMenuItems () {
 
-        final String query = "SELECT * FROM " + TABLE_NAME;
+        final String query = String.format("SELECT * FROM %s", TABLE_NAME);
 
         ArrayList<MenuItem> target = new ArrayList<>();
-        PreparedStatement ps = null;
-        ResultSet res;
+        PreparedStatement   ps = null;
+        ResultSet           res;
 
         try {
-            ps = db.prepareStatement(query);
+            ps  = db.prepareStatement(query);
             res = ps.executeQuery();
 
             while (res.next()){
@@ -102,14 +141,30 @@ public class MenuItem extends ConnectsWithDatabase{
             res.close();
             ps.close();
 
-        } catch (SQLException e) {
-            ExplainSQLError(e, (ps != null) ? ps.toString() : SQLEXCEPTION_GENERIC_MESSAGE);
+        } catch (SQLException problemDuringQueryExecution) {
 
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage() != null ? e.getMessage() : ILLEGALARGUMENTEXCEPTION_GENERIC_MESSAGE);
+            explain(
+                problemDuringQueryExecution,
+                (ps != null) ?
+                    ps.toString() :
+                    DatabaseMessages.EMPTY_PREPARED_STATEMENT.value
+            );
 
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : EXCEPTION_GENERIC_MESSAGE);
+        } catch (IllegalArgumentException problemDuringEnumeralAssignment) {
+
+            System.out.println(
+                problemDuringEnumeralAssignment.getMessage() != null ?
+                    problemDuringEnumeralAssignment.getMessage() :
+                    DatabaseMessages.PREPARED_STATEMENT_ILLEGAL_ARGUMENT
+            );
+
+        } catch (Exception unanticipatedProblem) {
+
+            throw new RuntimeException(
+                unanticipatedProblem.getMessage() != null ?
+                unanticipatedProblem.getMessage() :
+                DatabaseMessages.GENERIC_UNASSOCIATED_EXCEPTION.value
+            );
 
         }
 
@@ -121,9 +176,9 @@ public class MenuItem extends ConnectsWithDatabase{
      */
     public static MenuItem createMenuItem(String _menuItemName, String _menuItemDescription, Integer _menuItemPrice) {
 
-        final String query = "INSERT INTO " + TABLE_NAME + " (name, description, price) VALUE (?, ?, ?)";
+        final String query = String.format("INSERT INTO %s (name, description, price) VALUE (?, ?, ?)", TABLE_NAME);
 
-        MenuItem mi = null;
+        MenuItem          mi = null;
         PreparedStatement ps = null;
 
         try {
@@ -131,16 +186,16 @@ public class MenuItem extends ConnectsWithDatabase{
 
             ps.setString(1, _menuItemName);
             ps.setString(2, _menuItemDescription);
-            ps.setInt(3, _menuItemPrice);
+            ps.setInt   (3, _menuItemPrice);
 
             int rowsAffected = ps.executeUpdate();
-            SummarizeDatabaseExecution("createMenuItem", ps.toString(), rowsAffected);
+            summarizeDatabaseExecution("createMenuItem", ps.toString(), rowsAffected);
 
-            if( !Commit(db, ps.toString()) )
+            if( !commit(db, ps.toString()) )
                 throw new Exception();
 
-            /* If a new order is successfully made, then you can safely insert its order_items */
             ResultSet generatedKeys  = ps.getGeneratedKeys();
+
             if ( generatedKeys.next() ) {
                 int generatedId = generatedKeys.getInt(1);
 
@@ -155,13 +210,26 @@ public class MenuItem extends ConnectsWithDatabase{
             ps.close();
 
         } catch (SQLException e) {
-            ExplainSQLError(e, (ps != null) ? ps.toString() : SQLEXCEPTION_GENERIC_MESSAGE);
+            explain(
+                e,
+                (ps != null) ?
+                    ps.toString() :
+                    DatabaseMessages.EMPTY_PREPARED_STATEMENT.value
+            );
 
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage() != null ? e.getMessage() : ILLEGALARGUMENTEXCEPTION_GENERIC_MESSAGE);
+            System.out.println(
+                e.getMessage() != null ?
+                    e.getMessage() :
+                    DatabaseMessages.PREPARED_STATEMENT_ILLEGAL_ARGUMENT
+            );
 
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : EXCEPTION_GENERIC_MESSAGE);
+            throw new RuntimeException(
+                e.getMessage() != null ?
+                e.getMessage() :
+                DatabaseMessages.GENERIC_UNASSOCIATED_EXCEPTION.value
+            );
 
         }
 
@@ -187,9 +255,9 @@ public class MenuItem extends ConnectsWithDatabase{
             ps.setInt(4, _menuItemId);
 
             int rowsAffected = ps.executeUpdate();
-            SummarizeDatabaseExecution("updateMenuItem", ps.toString(), rowsAffected);
+            summarizeDatabaseExecution("updateMenuItem", ps.toString(), rowsAffected);
 
-            if ( !Commit(db, ps.toString()) ) {
+            if ( !commit(db, ps.toString()) ) {
                 throw new Exception();
             }
 
@@ -197,13 +265,26 @@ public class MenuItem extends ConnectsWithDatabase{
             ps.close();
 
         } catch (SQLException e) {
-            ExplainSQLError(e, (ps != null) ? ps.toString() : SQLEXCEPTION_GENERIC_MESSAGE);
+            explain(
+                e,
+                (ps != null) ?
+                    ps.toString() :
+                    DatabaseMessages.EMPTY_PREPARED_STATEMENT.value
+            );
 
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage() != null ? e.getMessage() : ILLEGALARGUMENTEXCEPTION_GENERIC_MESSAGE);
+            System.out.println(
+                e.getMessage() != null ?
+                    e.getMessage() :
+                    DatabaseMessages.PREPARED_STATEMENT_ILLEGAL_ARGUMENT
+            );
 
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : EXCEPTION_GENERIC_MESSAGE);
+            throw new RuntimeException(
+                e.getMessage() != null ?
+                e.getMessage() :
+                DatabaseMessages.GENERIC_UNASSOCIATED_EXCEPTION.value
+            );
 
         }
 
@@ -226,22 +307,35 @@ public class MenuItem extends ConnectsWithDatabase{
 
             int rowsAffected = ps.executeUpdate();
 
-            SummarizeDatabaseExecution("deleteMenuItem", ps.toString(), rowsAffected);
+            summarizeDatabaseExecution("deleteMenuItem", ps.toString(), rowsAffected);
 
-            if ( !Commit(db, ps.toString()) )
+            if ( !commit(db, ps.toString()) )
                 throw new Exception();
 
             successful = true;
             ps.close();
 
         } catch (SQLException e) {
-            ExplainSQLError(e, (ps != null) ? ps.toString() : SQLEXCEPTION_GENERIC_MESSAGE);
+            explain(
+                e,
+                (ps != null) ?
+                    ps.toString() :
+                    DatabaseMessages.EMPTY_PREPARED_STATEMENT.value
+            );
 
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage() != null ? e.getMessage() : ILLEGALARGUMENTEXCEPTION_GENERIC_MESSAGE);
+            System.out.println(
+                e.getMessage() != null ?
+                    e.getMessage() :
+                    DatabaseMessages.PREPARED_STATEMENT_ILLEGAL_ARGUMENT
+            );
 
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : EXCEPTION_GENERIC_MESSAGE);
+            throw new RuntimeException(
+                e.getMessage() != null ?
+                e.getMessage() :
+                DatabaseMessages.GENERIC_UNASSOCIATED_EXCEPTION.value
+            );
 
         }
 
@@ -291,4 +385,5 @@ public class MenuItem extends ConnectsWithDatabase{
     public Integer getMenuItemPrice(){
         return this.menuItemPrice;
     }
+
 }

@@ -3,6 +3,7 @@ module mystic_grills {
 	opens controllers;
     opens database_access;
     opens models;
+    opens repositories;
     opens views;
 
 	requires javafx.graphics;

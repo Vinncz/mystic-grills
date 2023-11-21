@@ -1,5 +1,7 @@
 package models;
 
+// TODO remove every database-accessing methods
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,12 +9,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import database_access.ConnectionMaster;
-import models.helpers.ConnectsWithDatabase;
+import repositories.helpers.DatabaseAccessor;
+import values.SYSTEM_PROPERTIES;
+import values.strings.DatabaseMessages;
 
-public class OrderItem extends ConnectsWithDatabase {
+public class OrderItem extends DatabaseAccessor {
 
     private static Connection db = ConnectionMaster.getConnection();
-    private static final String TABLE_NAME = "order_items";
+    private static final String TABLE_NAME = SYSTEM_PROPERTIES.DATABASE_ORDER_ITEM_TABLE.value;
 
     private Integer orderId;
     private MenuItem menuItem;
@@ -89,15 +93,15 @@ public class OrderItem extends ConnectsWithDatabase {
 
         } catch (SQLException e) {
             /* When query operations encountered an exception, it will be handled here */
-            ExplainSQLError(e, (ps != null) ? ps.toString() : SQLEXCEPTION_GENERIC_MESSAGE);
+            explain(e, (ps != null) ? ps.toString() : DatabaseMessages.EMPTY_PREPARED_STATEMENT.value);
 
         } catch (IllegalArgumentException e) {
             /* When enumerals attribute encountered an exception, it will be handled here */
-            System.out.println(e.getMessage() != null ? e.getMessage() : ILLEGALARGUMENTEXCEPTION_GENERIC_MESSAGE);
+            System.out.println(e.getMessage() != null ? e.getMessage() : DatabaseMessages.PREPARED_STATEMENT_ILLEGAL_ARGUMENT);
 
         } catch (Exception e) {
             /* When there are an exception we didn't foresee, it will be handled here */
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : EXCEPTION_GENERIC_MESSAGE);
+            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : DatabaseMessages.GENERIC_UNASSOCIATED_EXCEPTION.value);
 
         }
 
@@ -127,10 +131,10 @@ public class OrderItem extends ConnectsWithDatabase {
             int rowsAffected = ps.executeUpdate();
 
             /* ALWAYS summarize your query execution INSIDE insert/update/delete methods */
-            SummarizeDatabaseExecution("createOrderItem", ps.toString(), rowsAffected);
+            summarizeDatabaseExecution("createOrderItem", ps.toString(), rowsAffected);
 
             /* If database cannot commit to a transaction, stop any object creation */
-            if ( !Commit(db, ps.toString()) )
+            if ( !commit(db, ps.toString()) )
                 throw new Exception();
 
             /* If the code manages to reach this point, then we can be sure that there are no errors present */
@@ -143,7 +147,7 @@ public class OrderItem extends ConnectsWithDatabase {
             ps.close();
 
         } catch (SQLException e) {
-            ExplainSQLError(e, (ps != null) ? ps.toString() : SQLEXCEPTION_GENERIC_MESSAGE);
+            explain(e, (ps != null) ? ps.toString() : DatabaseMessages.EMPTY_PREPARED_STATEMENT.value);
 
         } catch (IllegalArgumentException e) {
             /*
@@ -153,10 +157,10 @@ public class OrderItem extends ConnectsWithDatabase {
              * If an IllegalArgumentException was thrown, then it indicates that the query is trying to insert/modify/delete
              * more than one row of data inside the database.
              */
-            System.out.println(e.getMessage() != null ? e.getMessage() : ILLEGALARGUMENTEXCEPTION_GENERIC_MESSAGE);
+            System.out.println(e.getMessage() != null ? e.getMessage() : DatabaseMessages.PREPARED_STATEMENT_ILLEGAL_ARGUMENT);
 
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : EXCEPTION_GENERIC_MESSAGE);
+            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : DatabaseMessages.GENERIC_UNASSOCIATED_EXCEPTION.value);
 
         }
 
@@ -186,22 +190,22 @@ public class OrderItem extends ConnectsWithDatabase {
             ps.setInt(3, _orderId);
 
             int rowsAffected = ps.executeUpdate();
-            SummarizeDatabaseExecution("updateOrderItem", ps.toString(), rowsAffected);
+            summarizeDatabaseExecution("updateOrderItem", ps.toString(), rowsAffected);
 
-            if ( !Commit(db, ps.toString()) )
+            if ( !commit(db, ps.toString()) )
                 throw new Exception();
 
             successful = true;
             ps.close();
 
         } catch (SQLException e) {
-            ExplainSQLError(e, (ps != null) ? ps.toString() : SQLEXCEPTION_GENERIC_MESSAGE);
+            explain(e, (ps != null) ? ps.toString() : DatabaseMessages.EMPTY_PREPARED_STATEMENT.value);
 
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage() != null ? e.getMessage() : ILLEGALARGUMENTEXCEPTION_GENERIC_MESSAGE);
+            System.out.println(e.getMessage() != null ? e.getMessage() : DatabaseMessages.PREPARED_STATEMENT_ILLEGAL_ARGUMENT);
 
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : EXCEPTION_GENERIC_MESSAGE);
+            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : DatabaseMessages.GENERIC_UNASSOCIATED_EXCEPTION.value);
 
         }
 
@@ -224,9 +228,9 @@ public class OrderItem extends ConnectsWithDatabase {
             ps.setInt(2, _menuItemId);
 
             int rowsAffected = ps.executeUpdate();
-            SummarizeDatabaseExecution("deleteOrderItem", ps.toString(), rowsAffected);
+            summarizeDatabaseExecution("deleteOrderItem", ps.toString(), rowsAffected);
 
-            if ( !Commit(db, ps.toString()) )
+            if ( !commit(db, ps.toString()) )
                 throw new Exception();
 
             successful = true;
@@ -234,13 +238,13 @@ public class OrderItem extends ConnectsWithDatabase {
             ps.close();
 
         } catch (SQLException e) {
-            ExplainSQLError(e, (ps != null) ? ps.toString() : SQLEXCEPTION_GENERIC_MESSAGE);
+            explain(e, (ps != null) ? ps.toString() : DatabaseMessages.EMPTY_PREPARED_STATEMENT.value);
 
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage() != null ? e.getMessage() : ILLEGALARGUMENTEXCEPTION_GENERIC_MESSAGE);
+            System.out.println(e.getMessage() != null ? e.getMessage() : DatabaseMessages.PREPARED_STATEMENT_ILLEGAL_ARGUMENT);
 
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : EXCEPTION_GENERIC_MESSAGE);
+            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : DatabaseMessages.GENERIC_UNASSOCIATED_EXCEPTION.value);
 
         }
 

@@ -1,5 +1,7 @@
 package models;
 
+// TODO remove every database-accessing methods
+
 import java.util.ArrayList;
 
 import java.sql.Connection;
@@ -9,11 +11,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import database_access.ConnectionMaster;
-import models.helpers.ConnectsWithDatabase;
+import repositories.helpers.DatabaseAccessor;
+import values.SYSTEM_PROPERTIES;
+import values.strings.DatabaseMessages;
 
-public class User extends ConnectsWithDatabase {
-
-
+public class User extends DatabaseAccessor {
 
     public enum UserRole {
         ADMIN,
@@ -24,13 +26,13 @@ public class User extends ConnectsWithDatabase {
     }
 
     private static Connection db = ConnectionMaster.getConnection();
-    private static final String TABLE_NAME = "users";
+    private static final String TABLE_NAME = SYSTEM_PROPERTIES.DATABASE_USER_TABLE.value;
 
-    private Integer userId;
+    private Integer  userId;
     private UserRole userRole;
-    private String userName;
-    private String userEmail;
-    private String userPassword;
+    private String   userName;
+    private String   userEmail;
+    private String   userPassword;
 
 
     /*
@@ -48,7 +50,8 @@ public class User extends ConnectsWithDatabase {
      * GET
      */
     public static User getUserById(Integer _userId) {
-        final String QUERY = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
+
+        final String QUERY = String.format("SELECT * FROM %s WHERE id = ?", TABLE_NAME);
 
         User target = null;
         PreparedStatement ps = null;
@@ -75,15 +78,15 @@ public class User extends ConnectsWithDatabase {
 
         } catch (SQLException e) {
             /* When query operations encountered an exception, it will be handled here */
-            ExplainSQLError(e, (ps != null) ? ps.toString() : SQLEXCEPTION_GENERIC_MESSAGE);
+            explain(e, (ps != null) ? ps.toString() : DatabaseMessages.EMPTY_PREPARED_STATEMENT.value);
 
         } catch (IllegalArgumentException e) {
             /* When enumerals attribute encountered an exception, it will be handled here */
-            System.out.println(e.getMessage() != null ? e.getMessage() : ILLEGALARGUMENTEXCEPTION_GENERIC_MESSAGE);
+            System.out.println(e.getMessage() != null ? e.getMessage() : DatabaseMessages.PREPARED_STATEMENT_ILLEGAL_ARGUMENT);
 
         } catch (Exception e) {
             /* When there are an exception we didn't foresee, it will be handled here */
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : EXCEPTION_GENERIC_MESSAGE);
+            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : DatabaseMessages.GENERIC_UNASSOCIATED_EXCEPTION.value);
         }
 
         return target;
@@ -100,7 +103,7 @@ public class User extends ConnectsWithDatabase {
             ps = db.prepareStatement(QUERY);
             ResultSet res = ps.executeQuery();
 
-            while (res.next()) { // Loop through all rows
+            while (res.next()) {
                 User u = new User();
                 User.UserRole role = UserRole.valueOf(res.getString("role"));
 
@@ -117,11 +120,14 @@ public class User extends ConnectsWithDatabase {
             res.close();
 
         } catch (SQLException e) {
-            ExplainSQLError(e, (ps != null) ? ps.toString() : SQLEXCEPTION_GENERIC_MESSAGE);
+            explain(e, (ps != null) ? ps.toString() : DatabaseMessages.EMPTY_PREPARED_STATEMENT.value);
+
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage() != null ? e.getMessage() : ILLEGALARGUMENTEXCEPTION_GENERIC_MESSAGE);
+            System.out.println(e.getMessage() != null ? e.getMessage() : DatabaseMessages.PREPARED_STATEMENT_ILLEGAL_ARGUMENT);
+
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : EXCEPTION_GENERIC_MESSAGE);
+            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : DatabaseMessages.GENERIC_UNASSOCIATED_EXCEPTION.value);
+
         }
 
         return target;
@@ -149,9 +155,9 @@ public class User extends ConnectsWithDatabase {
 
             int rowsAffected = ps.executeUpdate();
 
-            SummarizeDatabaseExecution("createUser", ps.toString(), rowsAffected);
+            summarizeDatabaseExecution("createUser", ps.toString(), rowsAffected);
 
-            if( !Commit(db, ps.toString()) )
+            if( !commit(db, ps.toString()) )
                 throw new Exception();
 
 
@@ -168,18 +174,17 @@ public class User extends ConnectsWithDatabase {
 
             }
 
-            // Close resources
             generatedKeys.close();
             ps.close();
 
         } catch (SQLException e) {
-            ExplainSQLError(e, (ps != null) ? ps.toString() : SQLEXCEPTION_GENERIC_MESSAGE);
+            explain(e, (ps != null) ? ps.toString() : DatabaseMessages.EMPTY_PREPARED_STATEMENT.value);
 
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage() != null ? e.getMessage() : ILLEGALARGUMENTEXCEPTION_GENERIC_MESSAGE);
+            System.out.println(e.getMessage() != null ? e.getMessage() : DatabaseMessages.PREPARED_STATEMENT_ILLEGAL_ARGUMENT);
 
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : EXCEPTION_GENERIC_MESSAGE);
+            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : DatabaseMessages.GENERIC_UNASSOCIATED_EXCEPTION.value);
         }
 
         return target;
@@ -204,9 +209,9 @@ public class User extends ConnectsWithDatabase {
             ps.setInt(1, _userId);
 
             int rowsAffected = ps.executeUpdate();
-            SummarizeDatabaseExecution("deleteUser", ps.toString(), rowsAffected);
+            summarizeDatabaseExecution("deleteUser", ps.toString(), rowsAffected);
 
-            if ( !Commit(db, ps.toString()) )
+            if ( !commit(db, ps.toString()) )
                 throw new Exception();
 
             successful = true;
@@ -214,13 +219,13 @@ public class User extends ConnectsWithDatabase {
             ps.close();
 
         } catch (SQLException e) {
-            ExplainSQLError(e, (ps != null) ? ps.toString() : SQLEXCEPTION_GENERIC_MESSAGE);
+            explain(e, (ps != null) ? ps.toString() : DatabaseMessages.EMPTY_PREPARED_STATEMENT.value);
 
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage() != null ? e.getMessage() : ILLEGALARGUMENTEXCEPTION_GENERIC_MESSAGE);
+            System.out.println(e.getMessage() != null ? e.getMessage() : DatabaseMessages.PREPARED_STATEMENT_ILLEGAL_ARGUMENT);
 
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : EXCEPTION_GENERIC_MESSAGE);
+            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : DatabaseMessages.GENERIC_UNASSOCIATED_EXCEPTION.value);
 
         }
 
@@ -249,22 +254,22 @@ public class User extends ConnectsWithDatabase {
             ps.setInt(5, _userId);
 
             int rowsAffected = ps.executeUpdate();
-            SummarizeDatabaseExecution("updateUser", ps.toString(), rowsAffected);
+            summarizeDatabaseExecution("updateUser", ps.toString(), rowsAffected);
 
-            if ( !Commit(db, ps.toString()) )
+            if ( !commit(db, ps.toString()) )
                 throw new Exception();
 
             successful = true;
             ps.close();
 
         }catch (SQLException e) {
-            ExplainSQLError(e, (ps != null) ? ps.toString() : SQLEXCEPTION_GENERIC_MESSAGE);
+            explain(e, (ps != null) ? ps.toString() : DatabaseMessages.EMPTY_PREPARED_STATEMENT.value);
 
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage() != null ? e.getMessage() : ILLEGALARGUMENTEXCEPTION_GENERIC_MESSAGE);
+            System.out.println(e.getMessage() != null ? e.getMessage() : DatabaseMessages.PREPARED_STATEMENT_ILLEGAL_ARGUMENT);
 
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : EXCEPTION_GENERIC_MESSAGE);
+            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : DatabaseMessages.GENERIC_UNASSOCIATED_EXCEPTION.value);
 
         }
 
@@ -334,15 +339,15 @@ public class User extends ConnectsWithDatabase {
 
         } catch (SQLException e) {
             /* When query operations encountered an exception, it will be handled here */
-            ExplainSQLError(e, (ps != null) ? ps.toString() : SQLEXCEPTION_GENERIC_MESSAGE);
+            explain(e, (ps != null) ? ps.toString() : DatabaseMessages.EMPTY_PREPARED_STATEMENT.value);
 
         } catch (IllegalArgumentException e) {
             /* When enumerals attribute encountered an exception, it will be handled here */
-            System.out.println(e.getMessage() != null ? e.getMessage() : ILLEGALARGUMENTEXCEPTION_GENERIC_MESSAGE);
+            System.out.println(e.getMessage() != null ? e.getMessage() : DatabaseMessages.PREPARED_STATEMENT_ILLEGAL_ARGUMENT);
 
         } catch (Exception e) {
             /* When there are an exception we didn't foresee, it will be handled here */
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : EXCEPTION_GENERIC_MESSAGE);
+            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : DatabaseMessages.GENERIC_UNASSOCIATED_EXCEPTION.value);
 
         }
 

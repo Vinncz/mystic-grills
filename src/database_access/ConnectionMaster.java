@@ -40,7 +40,7 @@ public class ConnectionMaster {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException(DatabaseMessages.AUTOCOMMIT_FALSE_FAILURE.value);
+            throw new RuntimeException(DatabaseMessages.AUTOCOMMIT_TO_FALSE_FAILURE.value);
 
         }
 
@@ -53,7 +53,11 @@ public class ConnectionMaster {
 
     public static void closeConnection () {
         try {
-            connection.close();
+            if ( !(connection == null || connection.isClosed()) )
+                connection.close();
+
+            System.out.println(DatabaseMessages.CONNECTION_CLOSED.value);
+            
         } catch (Exception e) {}
 
     }
