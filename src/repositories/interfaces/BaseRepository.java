@@ -1,9 +1,6 @@
 package repositories.interfaces;
 
-// TODO refactor methods which uses executeUpdate into two seperate methods
-
 import values.DATABASE_MODIFICATION_POLICY;
-import values.SYSTEM_PROPERTIES;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +10,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import exceptions.DatabaseModificationPolicyViolatedException;
 import repositories.helpers.DatabaseExceptionExplainer;
 
 public abstract class BaseRepository <T> {
@@ -40,6 +38,7 @@ public abstract class BaseRepository <T> {
     /**
      * Retrieves all data of an associated concrete object, whose id matched the id given through parameter.
      *
+     * @param _id • The id of which object you wish to retrieve
      * @return The concrete object whose attribute has been filled with the data given.
      */
     public abstract Optional<T> getById (Integer _id);
@@ -54,13 +53,15 @@ public abstract class BaseRepository <T> {
     /**
      * Provides a way to insert a concrete object into the database.
      *
+     * @param _object • The object you wish to insert into the database. Repository classes will handle the unwraping of the object's attribute.
      * @return The same object you passed on, but with its id attribute filled.
      */
     public abstract T post (T _object);
 
     /**
-     * Provides a way to update a concrete object in the database
+     * Provides a way to update a concrete object in the database.
      *
+     * @param _replacementObject • The replacement object, whose attributes will override all the old data inside the database. Make sure for it to have its id attribute filled!
      * @return Confirmation of whether the modification operation is successful or not.
      */
     public abstract Boolean put (T _replacementObject);
@@ -68,18 +69,34 @@ public abstract class BaseRepository <T> {
     /**
      * Provides a way to delete a concrete object from the database
      *
+     * @param _id • The id of which object you wish to remove
      * @return Confirmation of whether the deletion operation is successful or not.
      */
     public abstract Boolean delete (Integer _id);
 
+    /**
+     * A datatype class, which contains how many rows were affected, and what was the generated id that database generated.
+     *
+     * @attribute rowsAffected
+     * @attribute generatedId
+     */
     public class executeQueryReturnDatatypes {
-        public PreparedStatement ps;
-        public ResultSet rs;
+        private PreparedStatement ps;
+        private ResultSet rs;
 
         public executeQueryReturnDatatypes (PreparedStatement _ps, ResultSet _rs) {
             this.ps = _ps;
             this.rs = _rs;
         }
+
+        public PreparedStatement getPreparedStatement() {
+            return ps;
+        }
+
+        public ResultSet getResultSet() {
+            return rs;
+        }
+
     }
 
     /**
@@ -94,8 +111,7 @@ public abstract class BaseRepository <T> {
     public executeQueryReturnDatatypes executeQuery (Connection _db, String _query, Object... _params) throws SQLException {
         PreparedStatement ps = _db.prepareStatement(_query);
 
-        for (int i = 1; i <= _params.length; i++)
-            ps.setObject(i, _params[i - 1]);
+        attachParameters(ps, _params);
 
         return new executeQueryReturnDatatypes(ps, ps.executeQuery());
     }
@@ -107,13 +123,23 @@ public abstract class BaseRepository <T> {
      * @attribute generatedId
      */
     public class executeUpdateReturnDatatypes {
-        public Integer rowsAffected;
-        public Integer generatedId;
+        private Integer rowsAffected;
+        private Integer generatedId;
 
         public executeUpdateReturnDatatypes (Integer _rowsAffected, Integer _generatedId) {
             this.rowsAffected = _rowsAffected;
             this.generatedId = _generatedId;
         }
+
+        public Integer getRowsAffected() {
+            return rowsAffected;
+        }
+
+        public Integer getGeneratedId() {
+            return generatedId;
+        }
+
+
     }
 
     /**
@@ -128,8 +154,7 @@ public abstract class BaseRepository <T> {
     public executeUpdateReturnDatatypes executeUpdate (Connection _db, String _query, Object... _params) throws SQLException {
         PreparedStatement ps = _db.prepareStatement(_query, Statement.RETURN_GENERATED_KEYS);
 
-        for (int i = 1; i <= _params.length; i++)
-            ps.setObject(i, _params[i - 1]);
+        attachParameters(ps, _params);
 
         Integer rowsAffected = ps.executeUpdate();
         Integer generatedId  = -1;
@@ -144,6 +169,30 @@ public abstract class BaseRepository <T> {
         return new executeUpdateReturnDatatypes(rowsAffected, generatedId);
     }
 
+    private void attachParameters(PreparedStatement ps, Object... _params) throws SQLException {
+        for (int i = 1; i <= _params.length; i++)
+            ps.setObject(i, _params[i - 1]);
+    }
+
+    /**
+     * Throws a DatabaseModificationPolicyViolatedException when affected rows is larger than a treshold; otherwise always return true.
+     * @param rowsAffected
+     * @return
+     * @throws DatabaseModificationPolicyViolatedException
+     */
+    public Boolean modificationFollowsDatabasePolicy (Integer rowsAffected) throws DatabaseModificationPolicyViolatedException {
+        if (rowsAffected > MAXIMUM_ROW_FOR_MODIFICATION)
+            throw new DatabaseModificationPolicyViolatedException();
+
+        return true;
+    }
+
+    /**
+     * Saves any changes made to the database.
+     *
+     * @param db • Database connection
+     * @return Confirmation of whether the commit operation is successful or not.
+     */
     public Boolean save (Connection db) {
         try {
             db.commit();
@@ -156,6 +205,12 @@ public abstract class BaseRepository <T> {
         }
     }
 
+    /**
+     * Restores any changes made to the database SINCE the last commited modification.
+     *
+     * @param db • Database connection
+     * @return Confirmation of whether the rollback operation is successful or not
+     */
     public Boolean rollback (Connection db) {
         try {
             db.rollback();
