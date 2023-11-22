@@ -50,11 +50,15 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
                 parsedObject = Optional.of(moldObject);
             }
 
-        } catch (SQLException problemDuringQueryExecution) {
-            DatabaseExceptionExplainer.explainParseFault(problemDuringQueryExecution);
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainParseFault(_problemDuringQueryExecution);
 
-        } catch (NullPointerException moldObjectIsNull) {
-            DatabaseExceptionExplainer.explainMoldObjectIsNull(moldObjectIsNull);
+        } catch (NullPointerException _moldObjectIsNull) {
+            DatabaseExceptionExplainer.explainMoldObjectIsNull(_moldObjectIsNull);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
 
         }
 
@@ -78,8 +82,12 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
                 parsedObjects.add(moldObject);
             }
 
-        } catch (SQLException problemDuringQueryExecution) {
-            DatabaseExceptionExplainer.explainParseFault(problemDuringQueryExecution);
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainParseFault(_problemDuringQueryExecution);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
 
         }
 
@@ -93,17 +101,17 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
 
         try {
             BaseRepository<MenuItem>.executeQueryReturnDatatypes report = executeQuery(db, query, _id);
-            retrievedObject = parse(report.rs);
+            retrievedObject = parse(report.getResultSet());
 
-            report.rs.close();
-            report.ps.close();
+            report.getResultSet().close();
+            report.getPreparedStatement().close();
 
         } catch (SQLException _problemDuringQueryExecution) {
             DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
 
-        } catch (Exception unanticipatedProblem) {
-            unanticipatedProblem.printStackTrace();
-            throw new RuntimeException(unanticipatedProblem.getMessage());
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
 
         }
 
@@ -117,10 +125,10 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
 
         try {
             BaseRepository<MenuItem>.executeQueryReturnDatatypes report = executeQuery(db, query);
-            retrievedObjects = parseMany(report.rs);
+            retrievedObjects = parseMany(report.getResultSet());
 
-            report.rs.close();
-            report.ps.close();
+            report.getResultSet().close();
+            report.getPreparedStatement().close();
 
         } catch (SQLException _problemDuringQueryExecution) {
             DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
@@ -148,23 +156,20 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
                 _object.getMenuItemPrice()
             );
 
-            Integer generatedId  = insertReport.generatedId;
+            Integer generatedId = insertReport.getGeneratedId();
             _object.setMenuItemId(generatedId);
 
-            Integer rowsAffected = insertReport.rowsAffected;
-            if (rowsAffected > MAXIMUM_ROW_FOR_MODIFICATION) {
-                throw new DatabaseModificationPolicyViolatedException();
-
-            } else {
+            Integer rowsAffected = insertReport.getRowsAffected();
+            if ( modificationFollowsDatabasePolicy(rowsAffected) )
                 save(db);
-
-            }
 
         } catch (SQLException _problemDuringQueryExecution) {
             DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+            rollback(db);
 
         } catch (DatabaseModificationPolicyViolatedException _maximumModifiableRowViolated) {
             DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_maximumModifiableRowViolated);
+            rollback(db);
 
         } catch (Exception _unanticipatedProblem) {
             _unanticipatedProblem.printStackTrace();
@@ -191,17 +196,16 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
                 _replacementObject.getMenuItemId()
             );
 
-            Integer rowsAffected = updateReport.rowsAffected;
-            if (rowsAffected > MAXIMUM_ROW_FOR_MODIFICATION) {
-                throw new DatabaseModificationPolicyViolatedException();
-
-            } else {
-                return save(db);
+            Integer rowsAffected = updateReport.getRowsAffected();
+            if ( modificationFollowsDatabasePolicy(rowsAffected) ) {
+                save(db);
+                return true;
 
             }
 
         } catch (SQLException _problemDuringQueryExecution) {
             DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+            rollback(db);
 
         } catch (DatabaseModificationPolicyViolatedException _maximumModifiableRowViolated) {
             DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_maximumModifiableRowViolated);
@@ -213,7 +217,7 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
 
         }
 
-        return rollback(db);
+        return false;
     }
 
     @Override
@@ -228,17 +232,16 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
                 _id
             );
 
-            Integer rowsAffected = updateReport.rowsAffected;
-            if (rowsAffected > MAXIMUM_ROW_FOR_MODIFICATION) {
-                throw new DatabaseModificationPolicyViolatedException();
-
-            } else {
-                return save(db);
+            Integer rowsAffected = updateReport.getRowsAffected();
+            if ( modificationFollowsDatabasePolicy(rowsAffected) ) {
+                save(db);
+                return true;
 
             }
 
         } catch (SQLException _problemDuringQueryExecution) {
             DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+            rollback(db);
 
         } catch (DatabaseModificationPolicyViolatedException _maximumModifiableRowViolated) {
             DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_maximumModifiableRowViolated);
@@ -250,7 +253,7 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
 
         }
 
-        return rollback(db);
+        return false;
     }
 
 }
