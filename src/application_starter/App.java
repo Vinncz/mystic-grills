@@ -1,7 +1,6 @@
 package application_starter;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -11,50 +10,68 @@ import repositories.MenuItemRepository;
 public class App extends Application {
 
 	public static void main (String [] args) {
+
 		MenuItemRepository mirepo = new MenuItemRepository();
-		Optional<MenuItem> mi = mirepo.getById(1);
+		ArrayList<MenuItem> menuItems = mirepo.getAll();
 
-		if (mi.isPresent()) {
-			MenuItem m = mi.get();
+		System.out.println("\n\nDELETE ALL BELOW ___");
+		for (MenuItem mi : menuItems) {
+			mirepo.delete(mi.getMenuItemId());
+		}
 
+		System.out.println("\n\nFETCH ALL BELOW ___");
+		menuItems = mirepo.getAll();
+		for (MenuItem m : menuItems) {
 			System.out.println("id: " + m.getMenuItemId());
 			System.out.println("name: " + m.getMenuItemName());
 			System.out.println("desc: " + m.getMenuItemDescription());
 			System.out.println("price: " + m.getMenuItemPrice());
 		}
 
-		System.out.println("\n\n");
+		System.out.println("\n\nINSERT ONE BELOW ___");
+		MenuItem mi = new MenuItem();
+		mi.setMenuItemName("Indomie Goreng Jumbo");
+		mi.setMenuItemDescription("Lebih nikmat disajikan dengan telur");
+		mi.setMenuItemPrice(3900);
+		mi = mirepo.post(mi);
 
-		ArrayList<MenuItem> mis = mirepo.getAll();
-		for (MenuItem m : mis) {
+		System.out.println("\n\nFETCH ALL BELOW ___");
+		menuItems = mirepo.getAll();
+		for (MenuItem m : menuItems) {
 			System.out.println("id: " + m.getMenuItemId());
 			System.out.println("name: " + m.getMenuItemName());
 			System.out.println("desc: " + m.getMenuItemDescription());
 			System.out.println("price: " + m.getMenuItemPrice());
 		}
 
-		System.out.println("\n\n");
+		System.out.println("\n\nUPDATE ONE BELOW ___");
+		mi.setMenuItemName("Mie Suksess Isi 2");
+		mi.setMenuItemDescription("Isinya boleh 2, rasanya gaenak!");
+		mi.setMenuItemPrice(3500);
+		mirepo.put(mi);
 
-		MenuItem minew = new MenuItem();
-		minew.setMenuItemName("Indomie Kari Ayam");
-		minew.setMenuItemDescription("Lebih nikmat disajikan dengan telur");
-		minew.setMenuItemPrice(12_000);
-
-		minew = mirepo.post(minew);
-		System.out.println("id: " + minew.getMenuItemId());
-		System.out.println("name: " + minew.getMenuItemName());
-		System.out.println("desc: " + minew.getMenuItemDescription());
-		System.out.println("price: " + minew.getMenuItemPrice());
-
-		System.out.println("\n\n");
-		
-		mis = mirepo.getAll();
-		for (MenuItem m : mis) {
+		System.out.println("\n\nFETCH ALL BELOW ___");
+		menuItems = mirepo.getAll();
+		for (MenuItem m : menuItems) {
 			System.out.println("id: " + m.getMenuItemId());
 			System.out.println("name: " + m.getMenuItemName());
 			System.out.println("desc: " + m.getMenuItemDescription());
 			System.out.println("price: " + m.getMenuItemPrice());
 		}
+
+		System.out.println("\n\nDELETE ONE BELOW ___");
+		mirepo.delete(mi.getMenuItemId());
+
+		System.out.println("\n\nFETCH ALL BELOW ___");
+		menuItems = mirepo.getAll();
+		for (MenuItem m : menuItems) {
+			System.out.println("MASUK SINI");
+			System.out.println("id: " + m.getMenuItemId());
+			System.out.println("name: " + m.getMenuItemName());
+			System.out.println("desc: " + m.getMenuItemDescription());
+			System.out.println("price: " + m.getMenuItemPrice());
+		}
+
 
 		launch(args);
 

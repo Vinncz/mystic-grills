@@ -1,7 +1,5 @@
 package repositories.interfaces;
 
-import values.DATABASE_MODIFICATION_POLICY;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,17 +8,66 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import database_access.ConnectionMaster;
 import exceptions.DatabaseModificationPolicyViolatedException;
 import repositories.helpers.DatabaseExceptionExplainer;
+import values.DATABASE_MODIFICATION_POLICY;
+import values.SYSTEM_PROPERTIES;
 
+/**
+ * A superclass on which every repository classes should be based on.
+ * This class encompasses mostly everything about things that a repository class should be responsible of.
+ */
 public abstract class BaseRepository <T> {
 
     public final int MAXIMUM_ROW_FOR_MODIFICATION = DATABASE_MODIFICATION_POLICY.MAXIMUM_ROW_FOR_MODIFICATION.value;
+    public final boolean LOG_DATABASE_TRANSACTION = SYSTEM_PROPERTIES.ACTIVATE_LOG.value.equals("true");
+
+    protected Connection db;
+    protected String TABLE_NAME;
+
+    protected String GET_BY_ID_QUERY;
+    protected String GET_ALL_QUERY;
+    protected String POST_QUERY;
+    protected String PUT_QUERY;
+    protected String DELETE_QUERY;
+
+    public BaseRepository () {
+        this.db = ConnectionMaster.getConnection();
+    }
 
     /**
-     * Parses a concrete object from a given result set, that may contain object's attributes.
+     * Unparses a concrete object's attribute from the given parameter into an array of Objects.
+     * Do note that this method SHOULD NOT unparse the id from said object.
      *
-     * Every implementation of this method should handle all of the error-handling task, itself.
+     * @param _object • Object to be unparsed.
+     * @return Array of objects that vary in size, according to the passed parameter's datatype.
+     */
+    public abstract Object[] unparseAttributes (T _object);
+
+    /**
+     * Retrieves the id from the given parameter.
+     *
+     * @param _object • Object whose id is to be extracted.
+     * @return The id of said object.
+     */
+    public abstract Integer getId (T _object);
+
+    /**
+     * Sets the id of an object.
+     *
+     * @param _mi • The object whose id is to be filled.
+     * @param _id • The id to be filled.
+     * @return
+     */
+    public abstract T setId (T _mi, Integer _id);
+
+    /**
+     * Parses a concrete object from a given result set, that may or may not contain object's attributes.
+     *
+     * Every implementation of this method should handle all of the error-handling task itself.
+     *
+     * For best practice, create a method named 'attachAttribute', with the parameters of said object's attributes.
      *
      * @return An optional object, who may contain a concrete object whose attribute has been filled with the data inside result set.
      */
@@ -41,22 +88,93 @@ public abstract class BaseRepository <T> {
      * @param _id • The id of which object you wish to retrieve
      * @return The concrete object whose attribute has been filled with the data given.
      */
-    public abstract Optional<T> getById (Integer _id);
+    public Optional<T> getById (Integer _id) {
+        Optional<T> retrievedObject = Optional.empty();
+
+        try {
+            BaseRepository<T>.executeQueryReturnDatatypes report = executeQuery(db, GET_BY_ID_QUERY, _id);
+            retrievedObject = parse(report.getResultSet());
+
+            report.getResultSet().close();
+            report.getPreparedStatement().close();
+
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
+
+        }
+
+        return retrievedObject;
+    }
 
     /**
      * Provides a way to retrieve all data inside the database
      *
      * @return All of the data from the database, that has been parsed into a list of concrete object.
      */
-    public abstract ArrayList<T> getAll ();
+    public ArrayList<T> getAll () {
+        ArrayList<T> retrievedObjects = new ArrayList<>();
+
+        try {
+            BaseRepository<T>.executeQueryReturnDatatypes report = executeQuery(db, GET_ALL_QUERY);
+            retrievedObjects = parseMany(report.getResultSet());
+
+            report.getResultSet().close();
+            report.getPreparedStatement().close();
+
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
+
+        }
+
+        return retrievedObjects;
+    }
 
     /**
      * Provides a way to insert a concrete object into the database.
      *
-     * @param _object • The object you wish to insert into the database. Repository classes will handle the unwraping of the object's attribute.
+     * @param _objectToBeInserted • The object you wish to insert into the database. Repository classes will handle the unwraping of the object's attribute.
      * @return The same object you passed on, but with its id attribute filled.
      */
-    public abstract T post (T _object);
+    public T post (T _objectToBeInserted) {
+        try {
+            BaseRepository<T>.executeUpdateReturnDatatypes insertReport = executeUpdate(
+                db,
+                POST_QUERY,
+
+                unparseAttributes(_objectToBeInserted)
+            );
+
+            Integer generatedId = insertReport.getGeneratedId();
+            _objectToBeInserted = setId(_objectToBeInserted, generatedId);
+
+            Integer rowsAffected = insertReport.getRowsAffected();
+            if ( modificationFollowsDatabasePolicy(rowsAffected) )
+                save(db);
+
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+            rollback(db);
+
+        } catch (DatabaseModificationPolicyViolatedException _maximumModifiableRowViolated) {
+            DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_maximumModifiableRowViolated);
+            rollback(db);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
+
+        }
+
+        return _objectToBeInserted;
+    }
 
     /**
      * Provides a way to update a concrete object in the database.
@@ -64,15 +182,83 @@ public abstract class BaseRepository <T> {
      * @param _replacementObject • The replacement object, whose attributes will override all the old data inside the database. Make sure for it to have its id attribute filled!
      * @return Confirmation of whether the modification operation is successful or not.
      */
-    public abstract Boolean put (T _replacementObject);
+    public Boolean put (T _replacementObject) {
+        try {
+            Object[] attributes = unparseAttributes(_replacementObject);
+            Object[] combinedParams = new Object[attributes.length + 1];
+
+            System.arraycopy(attributes, 0, combinedParams, 0, attributes.length);
+            combinedParams[attributes.length] = getId(_replacementObject);
+
+            BaseRepository<T>.executeUpdateReturnDatatypes updateReport = executeUpdate(
+                db,
+                PUT_QUERY,
+
+                combinedParams
+            );
+
+            Integer rowsAffected = updateReport.getRowsAffected();
+            if ( modificationFollowsDatabasePolicy(rowsAffected) ) {
+                save(db);
+                return true;
+
+            }
+
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+            rollback(db);
+
+        } catch (DatabaseModificationPolicyViolatedException _maximumModifiableRowViolated) {
+            DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_maximumModifiableRowViolated);
+            rollback(db);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
+
+        }
+
+        return false;
+    }
 
     /**
      * Provides a way to delete a concrete object from the database
      *
-     * @param _id • The id of which object you wish to remove
+     * @param _idOfAnObjectToBeDeleted • The id of which object you wish to remove
      * @return Confirmation of whether the deletion operation is successful or not.
      */
-    public abstract Boolean delete (Integer _id);
+    public Boolean delete (Integer _idOfAnObjectToBeDeleted) {
+        try {
+            BaseRepository<T>.executeUpdateReturnDatatypes updateReport = executeUpdate(
+                db,
+                DELETE_QUERY,
+
+                _idOfAnObjectToBeDeleted
+            );
+
+            Integer rowsAffected = updateReport.getRowsAffected();
+            if ( modificationFollowsDatabasePolicy(rowsAffected) ) {
+                save(db);
+                return true;
+
+            }
+
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+            rollback(db);
+
+        } catch (DatabaseModificationPolicyViolatedException _maximumModifiableRowViolated) {
+            DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_maximumModifiableRowViolated);
+            rollback(db);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
+
+        }
+
+        return false;
+    }
 
     /**
      * A datatype class, which contains how many rows were affected, and what was the generated id that database generated.
@@ -111,7 +297,10 @@ public abstract class BaseRepository <T> {
     public executeQueryReturnDatatypes executeQuery (Connection _db, String _query, Object... _params) throws SQLException {
         PreparedStatement ps = _db.prepareStatement(_query);
 
-        attachParameters(ps, _params);
+        String finalQuery = attachParameters(ps, _params);
+        if ( LOG_DATABASE_TRANSACTION ) {
+            log(finalQuery);
+        }
 
         return new executeQueryReturnDatatypes(ps, ps.executeQuery());
     }
@@ -154,7 +343,10 @@ public abstract class BaseRepository <T> {
     public executeUpdateReturnDatatypes executeUpdate (Connection _db, String _query, Object... _params) throws SQLException {
         PreparedStatement ps = _db.prepareStatement(_query, Statement.RETURN_GENERATED_KEYS);
 
-        attachParameters(ps, _params);
+        String finalQuery = attachParameters(ps, _params);
+        if ( LOG_DATABASE_TRANSACTION ) {
+            log(finalQuery);
+        }
 
         Integer rowsAffected = ps.executeUpdate();
         Integer generatedId  = -1;
@@ -167,11 +359,6 @@ public abstract class BaseRepository <T> {
         ps.close();
 
         return new executeUpdateReturnDatatypes(rowsAffected, generatedId);
-    }
-
-    private void attachParameters(PreparedStatement ps, Object... _params) throws SQLException {
-        for (int i = 1; i <= _params.length; i++)
-            ps.setObject(i, _params[i - 1]);
     }
 
     /**
@@ -221,6 +408,29 @@ public abstract class BaseRepository <T> {
             return false;
 
         }
+    }
+
+    /**
+     * Helper method to attach arguments (parameters) into a given PreparedStatement object.
+     * @param ps
+     * @param _params
+     * @return String of PreparedStatement, with its parameters attached
+     * @throws SQLException
+     */
+    private String attachParameters(PreparedStatement ps, Object... _params) throws SQLException {
+        String copyOfStatement = ps.toString().substring(43);
+
+        for (int i = 1; i <= _params.length; i++) {
+            ps.setObject(i, _params[i - 1]);
+            copyOfStatement = copyOfStatement.replaceFirst("\\*\\*\\sNOT\\sSPECIFIED\\s\\*\\*", String.format("'%s'", _params[i-1].toString()));
+
+        }
+
+        return copyOfStatement;
+    }
+
+    private void log (String _databaseQuery) {
+        System.out.println("Database executed:\n    " + _databaseQuery);
     }
 
 }
