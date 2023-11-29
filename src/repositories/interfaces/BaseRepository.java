@@ -17,6 +17,18 @@ import values.SYSTEM_PROPERTIES;
 /**
  * A superclass on which every repository classes should be based on.
  * This class encompasses mostly everything about things that a repository class should be responsible of.
+ *
+ * <br /> <br />
+ *
+ * However, it is recommended to implement the following method, even though it is not listed as an official method of BaseRepository.
+ *
+ * <br /> <br />
+ *
+ * <pre> private T attachAttribute (Object... _attributes) {} </pre>
+ *
+ * <br /> <br />
+ *
+ * Method above handles the assignment of attributes into an object.
  */
 public abstract class BaseRepository <T> {
 
@@ -32,18 +44,26 @@ public abstract class BaseRepository <T> {
     protected String PUT_QUERY;
     protected String DELETE_QUERY;
 
-    public BaseRepository () {
-        this.db = ConnectionMaster.getConnection();
-    }
-
     /**
-     * Unparses a concrete object's attribute from the given parameter into an array of Objects.
-     * Do note that this method SHOULD NOT unparse the id from said object.
-     *
-     * @param _object • Object to be unparsed.
-     * @return Array of objects that vary in size, according to the passed parameter's datatype.
+     * Sets up the required variable needed to create, retrieve, modify, and delete data from database.
+     * @param _tableName
+     * @param _getByIdQuery
+     * @param _getAllQuery
+     * @param _postQuery
+     * @param _putQuery
+     * @param _deleteQuery
      */
-    public abstract Object[] unparseAttributes (T _object);
+    public BaseRepository (String _tableName, String _getByIdQuery, String _getAllQuery, String _postQuery, String _putQuery, String _deleteQuery) {
+        this.db              = ConnectionMaster.getConnection();
+
+        this.TABLE_NAME      = _tableName;
+
+        this.GET_BY_ID_QUERY = _getByIdQuery;
+        this.GET_ALL_QUERY   = _getAllQuery;
+        this.POST_QUERY      = _postQuery;
+        this.PUT_QUERY       = _putQuery;
+        this.DELETE_QUERY    = _deleteQuery;
+    }
 
     /**
      * Retrieves the id from the given parameter.
@@ -51,7 +71,7 @@ public abstract class BaseRepository <T> {
      * @param _object • Object whose id is to be extracted.
      * @return The id of said object.
      */
-    public abstract Integer getId (T _object);
+    public abstract Integer getObjectId (T _object);
 
     /**
      * Sets the id of an object.
@@ -60,7 +80,30 @@ public abstract class BaseRepository <T> {
      * @param _id • The id to be filled.
      * @return
      */
-    public abstract T setId (T _mi, Integer _id);
+    public abstract T setObjectId (T _object, Integer _id);
+
+
+
+
+
+    /**
+     * Helper method to attach arguments (parameters) into a given PreparedStatement object.
+     * @param ps
+     * @param _params
+     * @return String of PreparedStatement, with its parameters attached
+     * @throws SQLException
+     */
+    private String attachParameters(PreparedStatement ps, Object... _params) throws SQLException {
+        String copyOfStatement = ps.toString().substring(43);
+
+        for (int i = 1; i <= _params.length; i++) {
+            ps.setObject(i, _params[i - 1]);
+            copyOfStatement = copyOfStatement.replaceFirst("\\*\\*\\sNOT\\sSPECIFIED\\s\\*\\*", String.format("'%s'", _params[i-1].toString()));
+
+        }
+
+        return copyOfStatement;
+    }
 
     /**
      * Parses a concrete object from a given result set, that may or may not contain object's attributes.
@@ -81,6 +124,19 @@ public abstract class BaseRepository <T> {
      * @return A list of concrete object, or an empty list.
      */
     public abstract ArrayList<T> parseMany (ResultSet _resultSetThatMayContainObject);
+
+    /**
+     * Unparses a concrete object's attribute from the given parameter into an array of Objects.
+     * Do note that this method SHOULD NOT unparse the id from said object.
+     *
+     * @param _object • Object to be unparsed.
+     * @return Array of objects that vary in size, according to the passed parameter's datatype.
+     */
+    public abstract Object[] unparseAttributes (T _object);
+
+
+
+
 
     /**
      * Retrieves all data of an associated concrete object, whose id matched the id given through parameter.
@@ -153,7 +209,7 @@ public abstract class BaseRepository <T> {
             );
 
             Integer generatedId = insertReport.getGeneratedId();
-            _objectToBeInserted = setId(_objectToBeInserted, generatedId);
+            _objectToBeInserted = setObjectId(_objectToBeInserted, generatedId);
 
             Integer rowsAffected = insertReport.getRowsAffected();
             if ( modificationFollowsDatabasePolicy(rowsAffected) )
@@ -188,7 +244,7 @@ public abstract class BaseRepository <T> {
             Object[] combinedParams = new Object[attributes.length + 1];
 
             System.arraycopy(attributes, 0, combinedParams, 0, attributes.length);
-            combinedParams[attributes.length] = getId(_replacementObject);
+            combinedParams[attributes.length] = getObjectId(_replacementObject);
 
             BaseRepository<T>.executeUpdateReturnDatatypes updateReport = executeUpdate(
                 db,
@@ -259,6 +315,10 @@ public abstract class BaseRepository <T> {
 
         return false;
     }
+
+
+
+
 
     /**
      * A datatype class, which contains how many rows were affected, and what was the generated id that database generated.
@@ -361,6 +421,10 @@ public abstract class BaseRepository <T> {
         return new executeUpdateReturnDatatypes(rowsAffected, generatedId);
     }
 
+
+
+
+
     /**
      * Throws a DatabaseModificationPolicyViolatedException when affected rows is larger than a treshold; otherwise always return true.
      * @param rowsAffected
@@ -373,6 +437,10 @@ public abstract class BaseRepository <T> {
 
         return true;
     }
+
+
+
+
 
     /**
      * Saves any changes made to the database.
@@ -411,24 +479,9 @@ public abstract class BaseRepository <T> {
     }
 
     /**
-     * Helper method to attach arguments (parameters) into a given PreparedStatement object.
-     * @param ps
-     * @param _params
-     * @return String of PreparedStatement, with its parameters attached
-     * @throws SQLException
+     * The helper method whose job is to print out what's being queried to the database.
+     * @param _databaseQuery
      */
-    private String attachParameters(PreparedStatement ps, Object... _params) throws SQLException {
-        String copyOfStatement = ps.toString().substring(43);
-
-        for (int i = 1; i <= _params.length; i++) {
-            ps.setObject(i, _params[i - 1]);
-            copyOfStatement = copyOfStatement.replaceFirst("\\*\\*\\sNOT\\sSPECIFIED\\s\\*\\*", String.format("'%s'", _params[i-1].toString()));
-
-        }
-
-        return copyOfStatement;
-    }
-
     private void log (String _databaseQuery) {
         System.out.println("Database executed:\n    " + _databaseQuery);
     }

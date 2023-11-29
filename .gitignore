@@ -3,7 +3,7 @@
 .temp/
 .vscode/
 bin/
-*SYSTEM_PROPERTIES.*
+SYSTEM_PROPERTIES.java
 *.class
 *.env
 .classpath

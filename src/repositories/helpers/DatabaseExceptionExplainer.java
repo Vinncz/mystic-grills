@@ -21,6 +21,11 @@ public class DatabaseExceptionExplainer {
         e.printStackTrace();
     }
 
+    public static void explainEnumeralAssignmentFailure (IllegalArgumentException e) {
+        System.out.println("There is no associated enumerals for given string");
+        e.printStackTrace();
+    }
+
     public static void explainQueryFault (SQLException e) {
         System.out.println("Query fault!");
         e.printStackTrace();

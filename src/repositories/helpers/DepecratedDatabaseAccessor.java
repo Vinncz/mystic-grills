@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 import database_access.ConnectionMaster;
 
-public abstract class DatabaseAccessor {
+public abstract class DepecratedDatabaseAccessor {
 
     protected static Connection db = ConnectionMaster.getConnection();
     private static int errorCount = 1;

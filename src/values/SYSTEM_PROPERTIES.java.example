@@ -1,0 +1,42 @@
+package values;
+
+public enum SYSTEM_PROPERTIES {
+    DATABASE_NAME
+        (""),
+
+    DATABASE_USERNAME
+        (""),
+
+    DATABASE_PASSWORD
+        (""),
+
+    DATABASE_PORT
+        (""),
+
+    DATABASE_URL
+        (""),
+
+    DATABASE_MENU_ITEM_TABLE
+        (""),
+
+    DATABASE_ORDER_TABLE
+        (""),
+
+    DATABASE_ORDER_ITEM_TABLE
+        (""),
+
+    DATABASE_RECEIPT_TABLE
+        (""),
+
+    DATABASE_USER_TABLE
+        (""),
+
+    ACTIVATE_LOG
+        ("true");
+
+    public final String value;
+    private SYSTEM_PROPERTIES (String _value) {
+        this.value = _value;
+    }
+
+}

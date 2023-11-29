@@ -13,15 +13,28 @@ import values.SYSTEM_PROPERTIES;
 public class MenuItemRepository extends BaseRepository<MenuItem> {
 
     public MenuItemRepository () {
-        super();
-        this.TABLE_NAME = SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value;
+        super (
+            SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value,
 
-        this.GET_BY_ID_QUERY = String.format("SELECT * FROM %s WHERE id = ?", TABLE_NAME);
-        this.GET_ALL_QUERY   = String.format("SELECT * FROM %s", TABLE_NAME);
-        this.POST_QUERY      = String.format("INSERT INTO %s (name, description, price) VALUES (?, ?, ?)", TABLE_NAME);
-        this.PUT_QUERY       = String.format("UPDATE %s SET name = ?, description = ?, price = ? WHERE id = ?", TABLE_NAME);
-        this.DELETE_QUERY    = String.format("DELETE FROM %s WHERE id = ?", TABLE_NAME);
+            String.format("SELECT * FROM %s WHERE id = ?"                                   , SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value),
+            String.format("SELECT * FROM %s"                                                , SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value),
+            String.format("INSERT INTO %s (name, description, price) VALUES (?, ?, ?)"      , SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value),
+            String.format("UPDATE %s SET name = ?, description = ?, price = ? WHERE id = ?" , SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value),
+            String.format("DELETE FROM %s WHERE id = ?"                                     , SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value)
+        );
     }
+
+    @Override
+    public Integer getObjectId (MenuItem _object) {
+        return _object.getMenuItemId();
+    }
+
+    @Override
+    public MenuItem setObjectId (MenuItem _object, Integer _id) {
+        _object.setMenuItemId(_id);
+        return _object;
+    }
+
 
     private MenuItem attachAttribute (Integer _id, String _name, String _description, Integer _price) {
         MenuItem moldObject = new MenuItem();
@@ -40,7 +53,7 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
         ResultSet res = _resultSetThatMayContainObject;
 
         try {
-            if (res.next()) {
+            if ( res.next() ) {
                 MenuItem moldObject = attachAttribute(
                                           res.getInt("id"),
                                           res.getString("name"),
@@ -104,17 +117,6 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
                                };
         return attributes;
 
-    }
-
-    @Override
-    public Integer getId (MenuItem _object) {
-        return _object.getMenuItemId();
-    }
-
-    @Override
-    public MenuItem setId (MenuItem _mi, Integer _id) {
-        _mi.setMenuItemId(_id);
-        return _mi;
     }
 
 }
