@@ -1,13 +1,11 @@
 package repositories;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
 
 import models.User;
-import models.User.UserRole;
 import repositories.helpers.DatabaseExceptionExplainer;
 import repositories.interfaces.BaseRepository;
 import values.SYSTEM_PROPERTIES;
@@ -27,49 +25,28 @@ public class UserRepository extends BaseRepository<User> {
     }
 
     public User authenticateUser (String _userEmail, String _userPassword) {;
-        User target = getUserByEmail(_userEmail);
+        Optional<User> target = getUserByEmail(_userEmail);
 
-        if (target != null && target.getUserPassword().equals(_userPassword)) {
-            return target;
+        if (target.isPresent() && target.get().getUserPassword().equals(_userPassword)) {
+            return target.get();
         }
 
         return null;
     }
 
-    public User getUserByEmail(String _userEmail) {
-
-        final String QUERY = String.format("SELECT * FROM %s WHERE email = ?", TABLE_NAME);
-
-        User target = null;
-        PreparedStatement ps = null;
+    public Optional<User> getUserByEmail(String _userEmail) {
+        Optional<User> retrievedObject = Optional.empty();
+        final String query = String.format("SELECT * FROM %s WHERE email = ?", TABLE_NAME);
 
         try {
-            ps = db.prepareStatement(QUERY);
+            BaseRepository<User>.executeQueryReturnDatatypes getByEmailReport = executeQuery(db, query, _userEmail);
+            retrievedObject = parse(getByEmailReport.getResultSet());
 
-            ps.setString(1, _userEmail);
-
-            ResultSet res = ps.executeQuery();
-
-            if (res.next()) {
-                target = new User();
-                User.UserRole role = UserRole.valueOf(res.getString("role"));
-
-                target.setUserId       ( res.getInt("id"));
-                target.setUserName     (res.getString("name"));
-                target.setUserEmail    (res.getString("email"));
-                target.setUserPassword (res.getString("password"));
-                target.setUserRole     (role);
-
-            }
-
-            res.close();
-            ps.close();
+            getByEmailReport.getResultSet().close();
+            getByEmailReport.getPreparedStatement().close();
 
         } catch (SQLException _problemDuringQueryExecution) {
             DatabaseExceptionExplainer.explainParseFault(_problemDuringQueryExecution);
-
-        } catch (IllegalArgumentException _enumeralAssignmentFailure) {
-            DatabaseExceptionExplainer.explainEnumeralAssignmentFailure(_enumeralAssignmentFailure);
 
         } catch (Exception _unanticipatedProblem) {
             _unanticipatedProblem.printStackTrace();
@@ -77,7 +54,7 @@ public class UserRepository extends BaseRepository<User> {
 
         }
 
-         return target;
+         return retrievedObject;
      }
 
 
@@ -92,7 +69,7 @@ public class UserRepository extends BaseRepository<User> {
         return _object;
     }
 
-    private User attachAttribute (Integer _id, String _userRole, String _userName, String _userEmail, String _userPassword) {
+    private User attachAttribute (Integer _id, String _userRole, String _userName, String _userEmail, String _userPassword) throws IllegalArgumentException {
         User moldObject = new User();
 
         moldObject.setUserId          (_id);
@@ -124,6 +101,9 @@ public class UserRepository extends BaseRepository<User> {
 
         } catch (SQLException _problemDuringQueryExecution) {
             DatabaseExceptionExplainer.explainParseFault(_problemDuringQueryExecution);
+
+        } catch (IllegalArgumentException _noMatchingEnumeralValue) {
+            DatabaseExceptionExplainer.explainEnumeralAssignmentFailure(_noMatchingEnumeralValue);
 
         } catch (NullPointerException _moldObjectIsNull) {
             DatabaseExceptionExplainer.explainMoldObjectIsNull(_moldObjectIsNull);
@@ -157,6 +137,9 @@ public class UserRepository extends BaseRepository<User> {
 
         } catch (SQLException _problemDuringQueryExecution) {
             DatabaseExceptionExplainer.explainParseFault(_problemDuringQueryExecution);
+
+        } catch (IllegalArgumentException _noMatchingEnumeralValue) {
+            DatabaseExceptionExplainer.explainEnumeralAssignmentFailure(_noMatchingEnumeralValue);
 
         } catch (NullPointerException _moldObjectIsNull) {
             DatabaseExceptionExplainer.explainMoldObjectIsNull(_moldObjectIsNull);
