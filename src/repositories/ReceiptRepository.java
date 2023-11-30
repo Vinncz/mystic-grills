@@ -40,7 +40,7 @@ public class ReceiptRepository extends BaseRepository<Receipt> {
         return _object;
     }
 
-    private Receipt attachAttribute (Integer _id, Integer _orderId, Double _paymentAmount, String _paymentDate, String _paymentType) {
+    private Receipt attachAttribute (Integer _id, Integer _orderId, Double _paymentAmount, String _paymentDate, String _paymentType) throws IllegalArgumentException {
         Receipt moldObject = new Receipt();
 
         moldObject.setReceiptId         (_id);
@@ -79,6 +79,9 @@ public class ReceiptRepository extends BaseRepository<Receipt> {
         } catch (SQLException _problemDuringQueryExecution) {
             DatabaseExceptionExplainer.explainParseFault(_problemDuringQueryExecution);
 
+        } catch (IllegalArgumentException _noMatchingEnumeralValue) {
+            DatabaseExceptionExplainer.explainEnumeralAssignmentFailure(_noMatchingEnumeralValue);
+
         } catch (NullPointerException _moldObjectIsNull) {
             DatabaseExceptionExplainer.explainMoldObjectIsNull(_moldObjectIsNull);
 
@@ -112,6 +115,9 @@ public class ReceiptRepository extends BaseRepository<Receipt> {
 
         } catch (SQLException _problemDuringQueryExecution) {
             DatabaseExceptionExplainer.explainParseFault(_problemDuringQueryExecution);
+
+        } catch (IllegalArgumentException _noMatchingEnumeralValue) {
+            DatabaseExceptionExplainer.explainEnumeralAssignmentFailure(_noMatchingEnumeralValue);
 
         } catch (Exception _unanticipatedProblem) {
             _unanticipatedProblem.printStackTrace();

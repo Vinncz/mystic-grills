@@ -42,7 +42,7 @@ public class OrderRepository extends BaseRepository<Order> {
         return _object;
     }
 
-    private Order attachAttribute (Integer _id, Integer _userId, String _status, String _date, Double _total) {
+    private Order attachAttribute (Integer _id, Integer _userId, String _status, String _date, Double _total) throws IllegalArgumentException {
         Order moldObject = new Order();
 
         moldObject.setOrderId       (_id);
@@ -81,6 +81,9 @@ public class OrderRepository extends BaseRepository<Order> {
         } catch (SQLException _problemDuringQueryExecution) {
             DatabaseExceptionExplainer.explainParseFault(_problemDuringQueryExecution);
 
+        } catch (IllegalArgumentException _noMatchingEnumeralValue) {
+            DatabaseExceptionExplainer.explainEnumeralAssignmentFailure(_noMatchingEnumeralValue);
+
         } catch (NullPointerException _moldObjectIsNull) {
             DatabaseExceptionExplainer.explainMoldObjectIsNull(_moldObjectIsNull);
 
@@ -113,6 +116,9 @@ public class OrderRepository extends BaseRepository<Order> {
 
         } catch (SQLException _problemDuringQueryExecution) {
             DatabaseExceptionExplainer.explainParseFault(_problemDuringQueryExecution);
+
+        } catch (IllegalArgumentException _noMatchingEnumeralValue) {
+            DatabaseExceptionExplainer.explainEnumeralAssignmentFailure(_noMatchingEnumeralValue);
 
         } catch (Exception _unanticipatedProblem) {
             _unanticipatedProblem.printStackTrace();
