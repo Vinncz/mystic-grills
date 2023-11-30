@@ -29,6 +29,7 @@ import values.SYSTEM_PROPERTIES;
  * <br /> <br />
  *
  * Method above handles the assignment of attributes into an object.
+ * Add the <pre>throws IllegalArgumentException</pre> clause to said function, if and only if the associated model has enumeral for attribute.
  */
 public abstract class BaseRepository <T> {
 
@@ -254,11 +255,8 @@ public abstract class BaseRepository <T> {
             );
 
             Integer rowsAffected = updateReport.getRowsAffected();
-            if ( modificationFollowsDatabasePolicy(rowsAffected) ) {
-                save(db);
-                return true;
-
-            }
+            if ( modificationFollowsDatabasePolicy(rowsAffected) )
+                return save(db);
 
         } catch (SQLException _problemDuringQueryExecution) {
             DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
@@ -293,11 +291,8 @@ public abstract class BaseRepository <T> {
             );
 
             Integer rowsAffected = updateReport.getRowsAffected();
-            if ( modificationFollowsDatabasePolicy(rowsAffected) ) {
-                save(db);
-                return true;
-
-            }
+            if ( modificationFollowsDatabasePolicy(rowsAffected) )
+                return save(db);
 
         } catch (SQLException _problemDuringQueryExecution) {
             DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
@@ -428,7 +423,6 @@ public abstract class BaseRepository <T> {
     /**
      * Throws a DatabaseModificationPolicyViolatedException when affected rows is larger than a treshold; otherwise always return true.
      * @param rowsAffected
-     * @return
      * @throws DatabaseModificationPolicyViolatedException
      */
     public Boolean modificationFollowsDatabasePolicy (Integer rowsAffected) throws DatabaseModificationPolicyViolatedException {

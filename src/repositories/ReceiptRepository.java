@@ -19,11 +19,11 @@ public class ReceiptRepository extends BaseRepository<Receipt> {
         super (
             SYSTEM_PROPERTIES.DATABASE_RECEIPT_TABLE.value,
 
-            String.format("SELECT * FROM %s WHERE id = ?"                               , SYSTEM_PROPERTIES.DATABASE_RECEIPT_TABLE.value),
-            String.format("SELECT * FROM %s"                                            , SYSTEM_PROPERTIES.DATABASE_RECEIPT_TABLE.value),
-            String.format("INSERT INTO %s (order_id, payment_amount, payment_date, payment_type) VALUES (?, ?, ?, ?)"       , SYSTEM_PROPERTIES.DATABASE_RECEIPT_TABLE.value),
-            String.format("UPDATE %s SET order_id = ?, payment_amount = ?, payment_date = ?, payment_type = ? WHERE id = ?"   , SYSTEM_PROPERTIES.DATABASE_RECEIPT_TABLE.value),
-            String.format("DELETE FROM %s WHERE id = ?"                                 , SYSTEM_PROPERTIES.DATABASE_RECEIPT_TABLE.value)
+            String.format("SELECT * FROM %s WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_RECEIPT_TABLE.value),
+            String.format("SELECT * FROM %s", SYSTEM_PROPERTIES.DATABASE_RECEIPT_TABLE.value),
+            String.format("INSERT INTO %s (order_id, payment_amount, payment_date, payment_type) VALUES (?, ?, ?, ?)", SYSTEM_PROPERTIES.DATABASE_RECEIPT_TABLE.value),
+            String.format("UPDATE %s SET order_id = ?, payment_amount = ?, payment_date = ?, payment_type = ? WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_RECEIPT_TABLE.value),
+            String.format("DELETE FROM %s WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_RECEIPT_TABLE.value)
         );
 
         orderRepo = new OrderRepository();
@@ -52,6 +52,9 @@ public class ReceiptRepository extends BaseRepository<Receipt> {
         if ( o.isPresent() ) {
             moldObject.setReceiptOrder(o.get());
 
+        } else {
+            moldObject.setReceiptOrder(null);
+            
         }
 
         return moldObject;
@@ -74,7 +77,6 @@ public class ReceiptRepository extends BaseRepository<Receipt> {
 
                 parsedObject = Optional.of(moldObject);
             }
-
 
         } catch (SQLException _problemDuringQueryExecution) {
             DatabaseExceptionExplainer.explainParseFault(_problemDuringQueryExecution);
@@ -111,7 +113,6 @@ public class ReceiptRepository extends BaseRepository<Receipt> {
 
                 parsedObjects.add(moldObject);
             }
-
 
         } catch (SQLException _problemDuringQueryExecution) {
             DatabaseExceptionExplainer.explainParseFault(_problemDuringQueryExecution);

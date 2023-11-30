@@ -16,11 +16,11 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
         super (
             SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value,
 
-            String.format("SELECT * FROM %s WHERE id = ?"                                   , SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value),
-            String.format("SELECT * FROM %s"                                                , SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value),
-            String.format("INSERT INTO %s (name, description, price) VALUES (?, ?, ?)"      , SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value),
-            String.format("UPDATE %s SET name = ?, description = ?, price = ? WHERE id = ?" , SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value),
-            String.format("DELETE FROM %s WHERE id = ?"                                     , SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value)
+            String.format("SELECT * FROM %s WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value),
+            String.format("SELECT * FROM %s", SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value),
+            String.format("INSERT INTO %s (name, description, price) VALUES (?, ?, ?)", SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value),
+            String.format("UPDATE %s SET name = ?, description = ?, price = ? WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value),
+            String.format("DELETE FROM %s WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value)
         );
     }
 
