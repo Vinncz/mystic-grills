@@ -123,7 +123,7 @@ public class UserRepository extends BaseRepository<User> {
         ResultSet res = _resultSetThatMayContainObject;
 
         try {
-            if ( res.next() ) {
+            while ( res.next() ) {
                 User moldObject = attachAttribute (
                                           res.getInt   ("id"),
                                           res.getString("role"),

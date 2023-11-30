@@ -54,7 +54,7 @@ public class ReceiptRepository extends BaseRepository<Receipt> {
 
         } else {
             moldObject.setReceiptOrder(null);
-            
+
         }
 
         return moldObject;
@@ -102,7 +102,7 @@ public class ReceiptRepository extends BaseRepository<Receipt> {
         ResultSet res = _resultSetThatMayContainObject;
 
         try {
-            if ( res.next() ) {
+            while ( res.next() ) {
                 Receipt moldObject = attachAttribute(
                                             res.getInt("id"),
                                             res.getInt("order_id"),

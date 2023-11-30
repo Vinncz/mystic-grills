@@ -76,7 +76,7 @@ public class OrderItemRepository extends BaseRepository<OrderItem> {
 
         } else {
             moldObject.setMenuItem(null);
-            
+
         }
 
         return moldObject;
@@ -121,7 +121,7 @@ public class OrderItemRepository extends BaseRepository<OrderItem> {
         ResultSet res = _resultSetThatMayContainObject;
 
         try {
-            if ( res.next() ) {
+            while ( res.next() ) {
                 OrderItem moldObject = attachAttribute(
                                             res.getInt("id"),
                                             res.getInt("order_id"),

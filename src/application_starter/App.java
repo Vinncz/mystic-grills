@@ -1,16 +1,69 @@
 package application_starter;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
 import models.MenuItem;
+import models.Order;
+import models.OrderItem;
 import repositories.MenuItemRepository;
+import repositories.OrderRepository;
 
 public class App extends Application {
 
 	public static void main (String [] args) {
 
+		// debugMenuItemRepository();
+		debugOrderRepository();
+
+		launch(args);
+
+	}
+
+	private static void debugOrderRepository () {
+		OrderRepository orepo = new OrderRepository();
+		// ArrayList<Order> orders = orepo.getAll();
+
+		// System.out.println("\n\nDELETE ALL BELOW ___");
+		// for (Order o : orders) {
+		// 	orepo.delete(o.getOrderId());
+		// }
+
+		Optional<Order> opto = orepo.getById(1);
+		if (opto.isPresent()) {
+			Order o = opto.get();
+			System.out.println("\nOrderID: " + o.getOrderId());
+			System.out.println("OrderDate: " + o.getOrderDate());
+			System.out.println("OrderTotal: " + o.getOrderTotal());
+			System.out.println("OrderStatus: " + o.getOrderStatus());
+
+			System.out.println("\nOrder User:");
+			System.out.println("    Order UserID: " + o.getOrderUser().getUserId());
+			System.out.println("    Order UserName: " + o.getOrderUser().getUserName());
+			System.out.println("    Order UserEmail: " + o.getOrderUser().getUserEmail());
+			System.out.println("    Order UserPassword: " + o.getOrderUser().getUserPassword());
+			System.out.println("    Order UserRole: " + o.getOrderUser().getUserRole());
+
+			System.out.println("\nOrder Items:");
+			for (OrderItem oi : o.getOrderItems()) {
+				System.out.println("    OrderItem ID: " + oi.getOrderItemId());
+				System.out.println("    OrderItem Quantity: " + oi.getQuantity());
+				System.out.println("    OrderItem's OrderID: " + oi.getOrderId());
+
+				System.out.println("\n    OrderItem's Menu Item:");
+				System.out.println("         OrderItem's MenuItem Id: " + oi.getMenuItem().getMenuItemId());
+				System.out.println("         OrderItem's MenuItem Name: " + oi.getMenuItem().getMenuItemName());
+				System.out.println("         OrderItem's MenuItem Desc: " + oi.getMenuItem().getMenuItemDescription());
+				System.out.println("         OrderItem's MenuItem Price: " + oi.getMenuItem().getMenuItemPrice());
+				System.out.println("");
+			}
+		}
+
+	}
+
+	private static void debugMenuItemRepository() {
 		MenuItemRepository mirepo = new MenuItemRepository();
 		ArrayList<MenuItem> menuItems = mirepo.getAll();
 
@@ -71,10 +124,6 @@ public class App extends Application {
 			System.out.println("desc: " + m.getMenuItemDescription());
 			System.out.println("price: " + m.getMenuItemPrice());
 		}
-
-
-		launch(args);
-
 	}
 
 	@Override

@@ -57,7 +57,7 @@ public class OrderRepository extends BaseRepository<Order> {
 
         } else {
             moldObject.setOrderUser(null);
-            
+
         }
 
         return moldObject;
@@ -72,7 +72,7 @@ public class OrderRepository extends BaseRepository<Order> {
             if ( res.next() ) {
                 Order moldObject = attachAttribute (
                                           res.getInt    ("id"),
-                                          res.getInt    ("order_id"),
+                                          res.getInt    ("user_id"),
                                           res.getString ("status"),
                                           res.getDate   ("date").toString(),
                                           res.getDouble ("total")
@@ -105,10 +105,10 @@ public class OrderRepository extends BaseRepository<Order> {
         ResultSet res = _resultSetThatMayContainObject;
 
         try {
-            if ( res.next() ) {
+            while ( res.next() ) {
                 Order moldObject = attachAttribute (
                                           res.getInt    ("id"),
-                                          res.getInt    ("order_id"),
+                                          res.getInt    ("user_id"),
                                           res.getString ("status"),
                                           res.getDate   ("date").toString(),
                                           res.getDouble ("total")
