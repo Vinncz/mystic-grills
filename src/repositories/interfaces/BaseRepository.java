@@ -128,7 +128,16 @@ public abstract class BaseRepository <T> {
 
     /**
      * Unparses a concrete object's attribute from the given parameter into an array of Objects.
-     * Do note that this method SHOULD NOT unparse the id from said object.
+     * <b> Do note </b> that the unparsed attribute's sequence MUST MATCH with the declared sequence of COLUMN, of a table.
+     * <br></br>
+     * ㅤ
+     * <br></br>
+     *     <b> For example: </b> let there be a table that is declared as follows: {@code (name VARCHAR(64), price INT)}.
+     * <br></br>
+     *     Therefore, in your implementation for this method, you should unparse the attribute as the following sequence:
+     * <br></br>
+     * <pre> return new Object [] { _object.getName(), _object.getPrice() } </pre>
+     *
      *
      * @param _object • Object to be unparsed.
      * @return Array of objects that vary in size, according to the passed parameter's datatype.
