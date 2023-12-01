@@ -229,8 +229,8 @@ public abstract class BaseRepository <T> {
             DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
             rollback(db);
 
-        } catch (DatabaseModificationPolicyViolatedException _maximumModifiableRowViolated) {
-            DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_maximumModifiableRowViolated);
+        } catch (DatabaseModificationPolicyViolatedException _modificationDidNotFollowDatabasePolicy) {
+            DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_modificationDidNotFollowDatabasePolicy);
             rollback(db);
 
         } catch (Exception _unanticipatedProblem) {
@@ -271,8 +271,8 @@ public abstract class BaseRepository <T> {
             DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
             rollback(db);
 
-        } catch (DatabaseModificationPolicyViolatedException _maximumModifiableRowViolated) {
-            DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_maximumModifiableRowViolated);
+        } catch (DatabaseModificationPolicyViolatedException _modificationDidNotFollowDatabasePolicy) {
+            DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_modificationDidNotFollowDatabasePolicy);
             rollback(db);
 
         } catch (Exception _unanticipatedProblem) {
@@ -307,8 +307,8 @@ public abstract class BaseRepository <T> {
             DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
             rollback(db);
 
-        } catch (DatabaseModificationPolicyViolatedException _maximumModifiableRowViolated) {
-            DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_maximumModifiableRowViolated);
+        } catch (DatabaseModificationPolicyViolatedException _modificationDidNotFollowDatabasePolicy) {
+            DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_modificationDidNotFollowDatabasePolicy);
             rollback(db);
 
         } catch (Exception _unanticipatedProblem) {

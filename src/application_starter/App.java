@@ -4,19 +4,24 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import models.MenuItem;
 import models.Order;
 import models.OrderItem;
+import models.User;
 import repositories.MenuItemRepository;
 import repositories.OrderRepository;
+import views.LoginPage;
 
 public class App extends Application {
+
+	private static User currentUser = null;
 
 	public static void main (String [] args) {
 
 		// debugMenuItemRepository();
-		debugOrderRepository();
+		// debugOrderRepository();
 
 		launch(args);
 
@@ -135,7 +140,12 @@ public class App extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		primaryStage.setScene(new Scene(new LoginPage(primaryStage), 600, 600));
+		primaryStage.setResizable(true);
+		primaryStage.setMinHeight(0);
+		primaryStage.setMinWidth(0);
 		primaryStage.show();
+
 
 	}
 
