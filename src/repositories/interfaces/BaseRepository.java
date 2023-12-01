@@ -88,9 +88,10 @@ public abstract class BaseRepository <T> {
 
 
     /**
-     * Helper method to attach arguments (parameters) into a given PreparedStatement object.
-     * @param ps
-     * @param _params
+     * A helper method which attaches arguments (parameters) into a given {@code PreparedStatement} object.
+     *
+     * @param ps • The PreparedStatement object, which will later be attached by parameters.
+     * @param _params • Your parameters of choice.
      * @return String of PreparedStatement, with its parameters attached
      * @throws SQLException
      */

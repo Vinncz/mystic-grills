@@ -1,7 +1,5 @@
 package views.guidelines;
 
-import javafx.scene.Scene;
-
 public interface PageDeclarationGuideline_v1 {
 
     /**
@@ -48,11 +46,5 @@ public interface PageDeclarationGuideline_v1 {
      * Idealy, there can only be ONE root element for any given scene.
      */
     public void setupScene();
-
-    /**
-     * Replaces whichever Scene the PrimaryStage is showing you with the passed argument.
-     * @param _targetScene
-     */
-    public void redirectTo(Scene _targetScene);
 
 }
