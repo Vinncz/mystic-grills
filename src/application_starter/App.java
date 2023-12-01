@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import models.MenuItem;
 import models.Order;
@@ -12,11 +13,16 @@ import models.OrderItem;
 import models.User;
 import repositories.MenuItemRepository;
 import repositories.OrderRepository;
+import values.SYSTEM_PROPERTIES;
+import values.SharedPreference;
 import views.LoginPage;
 
 public class App extends Application {
 
-	private static User currentUser = null;
+	private static Stage primaryStage;
+	public  static SharedPreference preferences = new SharedPreference();
+
+	public static Integer stagePadding = 60;
 
 	public static void main (String [] args) {
 
@@ -139,14 +145,61 @@ public class App extends Application {
 	}
 
 	@Override
-	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setScene(new Scene(new LoginPage(primaryStage), 600, 600));
+	public void start(Stage _primaryStage) throws Exception {
+		primaryStage = _primaryStage;
+
+		final Scene defaultStartupScene = attachStylesheet( sceneBuilder( new LoginPage() ) );
+		primaryStage.setScene(defaultStartupScene);
+
+		primaryStage.setMinHeight(Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_MIN_HEIGHT.value) + (stagePadding * 2) );
+		primaryStage.setMinWidth (Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_MIN_WIDTH.value ) + (stagePadding * 2) );
+
 		primaryStage.setResizable(true);
-		primaryStage.setMinHeight(0);
-		primaryStage.setMinWidth(0);
+		primaryStage.setTitle("");
+
 		primaryStage.show();
 
+	}
 
+	/**
+	 * Attaches the global css file to the passed scene argument.
+	 *
+	 * @param _target
+	 * @return The passed scene argument, with its stylesheet attribute linked to the global css file.
+	 */
+	private static Scene attachStylesheet (Scene _target) {
+		_target.getStylesheets().add(
+			App.class.getResource("/views/styles/global.css").toExternalForm()
+		);
+
+		return _target;
+	}
+
+	/**
+     * Replaces whichever Scene the PrimaryStage is showing you, with the passed argument.
+	 * <br></br>
+	 * <b> DO NOTE </b> that the passed scene <b> MUST NOT </b> be the same instance as the scene which is shown.
+	 *
+     * @param _targetScene • The scene who will replace the scene that is currently shown.
+     */
+    public static void redirectTo (Scene _targetScene) {
+		_targetScene = attachStylesheet(_targetScene);
+
+		primaryStage.setScene(_targetScene);
+	}
+
+	/**
+	 * Simplifies the creation of a new scene, using the system properties' application scene target width/height.
+	 *
+	 * @param _page
+	 * @return The created scene object
+	 */
+	public static Scene sceneBuilder (Pane _page) {
+		return new Scene (
+			_page,
+			Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_TARGET_WIDTH.value),
+			Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_TARGET_HEIGHT.value)
+		);
 	}
 
 }
