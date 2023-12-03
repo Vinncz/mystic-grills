@@ -1,21 +1,23 @@
 package views;
 
 import application_starter.App;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import values.SYSTEM_PROPERTIES;
+import views.components.buttons.CTAButton;
+import views.components.buttons.OutlineButton;
+import views.components.hboxes.CenteredVerticallyHBox;
+import views.components.hboxes.RootElement;
+import views.components.textfields.DefaultTextfield;
+import views.components.textfields.PasswordTextfield;
 import views.components.labels.H1Label;
 import views.components.labels.H3Label;
+import views.components.labels.H5Label;
+import views.components.vboxes.Container;
+import views.components.vboxes.DefaultVBox;
 import views.guidelines.PageDeclarationGuideline_v1;
 
 public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1 {
@@ -23,7 +25,16 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
     private HBox rootElement;
     private VBox container;
 
+    private VBox pageIdentifier;
     private Label brand, pageTitle;
+
+    private VBox pageContent;
+    private VBox emailFieldContainer, passwordFieldContainer;
+
+    private Label emailLabel, passwordLabel;
+    private TextField emailField, passwordField;
+
+    private HBox buttonContainer;
     private Button loginButton, registerButton;
 
     public LoginPage () {
@@ -32,22 +43,31 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
 
     @Override
     public void initializeControls() {
-        rootElement    = new HBox();
-        container      = new VBox();
-        brand          = new H1Label("Mystic Grills");
-        pageTitle      = new H3Label("Login Portal");
-        loginButton    = new Button("Log me in");
-        registerButton = new Button("I don't have an account");
+        rootElement    = new RootElement();
+        container      = new Container();
+
+        pageIdentifier = new VBox();
+            brand          = new H1Label("Mystic Grills").extraBold();
+            pageTitle      = new H3Label("Login Portal").extraBold();
+
+        pageContent = new DefaultVBox();
+            emailFieldContainer = new DefaultVBox();
+                emailLabel = new H5Label("Email");
+                emailField = new DefaultTextfield("Email here");
+            passwordFieldContainer = new DefaultVBox();
+                passwordLabel = new H5Label("Password");
+                passwordField = new PasswordTextfield("Password here");
+
+        buttonContainer = new CenteredVerticallyHBox();
+        loginButton    = new CTAButton("Log me in");
+        registerButton = new OutlineButton("I don't have an account");
     }
 
     @Override
     public void configureElements() {
-        container.setMinWidth(Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_MIN_WIDTH.value));
-        // container.setStyle("-fx-background-color: red;");
-        HBox.setHgrow(container, Priority.ALWAYS);
-        container.setPadding(new Insets(App.stagePadding, 0, 0, 0));
-        rootElement.setPadding(new Insets(0, App.stagePadding, 0, App.stagePadding));
-        rootElement.setAlignment(Pos.TOP_CENTER);
+        pageIdentifier.setStyle("-fx-padding: 0 0 24 0;");
+        pageContent.setSpacing(24);
+        pageContent.setStyle("-fx-padding: 0 0 120 0");
 
     }
 
@@ -65,11 +85,35 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
 
     @Override
     public void assembleLayout() {
-        container.getChildren().addAll(
+        pageIdentifier.getChildren().addAll(
             brand,
-            pageTitle,
+            pageTitle
+        );
+
+        buttonContainer.getChildren().addAll(
             loginButton,
             registerButton
+        );
+
+        emailFieldContainer.getChildren().addAll(
+            emailLabel,
+            emailField
+        );
+
+        passwordFieldContainer.getChildren().addAll(
+            passwordLabel,
+            passwordField
+        );
+
+        pageContent.getChildren().addAll(
+            emailFieldContainer,
+            passwordFieldContainer
+        );
+
+        container.getChildren().addAll(
+            pageIdentifier,
+            pageContent,
+            buttonContainer
         );
 
         rootElement.getChildren().addAll(
