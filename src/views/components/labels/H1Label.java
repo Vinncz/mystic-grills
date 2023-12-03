@@ -1,15 +1,10 @@
 package views.components.labels;
 
-import javafx.scene.control.Label;
-import javafx.scene.text.Font;
-
-public class H1Label extends Label {
+public class H1Label extends HLabel {
 
     public H1Label (String _message) {
         super(_message);
-        this.setFont(
-            Font.loadFont(getClass().getResourceAsStream("/views/fonts/clash_display/ClashDisplay-Bold.otf"), 72)
-        );
+        super.setSize(LabelConfig.FONT_SIZE_LARGE);
         this.getStyleClass().add("h1");
     }
 
