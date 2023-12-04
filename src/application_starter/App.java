@@ -1,7 +1,6 @@
 package application_starter;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -10,7 +9,6 @@ import javafx.stage.Stage;
 import models.MenuItem;
 import models.Order;
 import models.OrderItem;
-import models.User;
 import repositories.MenuItemRepository;
 import repositories.OrderRepository;
 import values.SYSTEM_PROPERTIES;
@@ -33,7 +31,7 @@ public class App extends Application {
 
 	}
 
-	private static void debugOrderRepository () {
+	public static void debugOrderRepository () {
 		OrderRepository orepo = new OrderRepository();
 		ArrayList<Order> orders = orepo.getAll();
 
@@ -81,7 +79,7 @@ public class App extends Application {
 
 	}
 
-	private static void debugMenuItemRepository() {
+	public static void debugMenuItemRepository() {
 		MenuItemRepository mirepo = new MenuItemRepository();
 		ArrayList<MenuItem> menuItems = mirepo.getAll();
 

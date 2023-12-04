@@ -1,0 +1,95 @@
+.pb-16 {
+    -fx-padding: 0 0 16 0;
+}
+
+.pb-32 {
+    -fx-padding: 0 0 32 0;
+}
+
+.pb-48 {
+    -fx-padding: 0 0 48 0;
+}
+
+.pb-64 {
+    -fx-padding: 0 0 64 0;
+}
+
+.pt-16 {
+    -fx-padding: 16 0 0 0;
+}
+
+.pt-32 {
+    -fx-padding: 32 0 0 0;
+}
+
+.pt-48 {
+    -fx-padding: 48 0 0 0;
+}
+
+.pt-64 {
+    -fx-padding: 64 0 0 0;
+}
+
+.pl-16 {
+    -fx-padding: 0 0 0 16;
+}
+
+.pl-32 {
+    -fx-padding: 0 0 0 32;
+}
+
+.pl-48 {
+    -fx-padding: 0 0 0 48;
+}
+
+.pl-64 {
+    -fx-padding: 0 0 0 64;
+}
+
+.pr-16 {
+    -fx-padding: 0 16 0 0;
+}
+
+.pr-32 {
+    -fx-padding: 0 32 0 0;
+}
+
+.pr-48 {
+    -fx-padding: 0 48 0 0;
+}
+
+.pr-64 {
+    -fx-padding: 0 64 0 0;
+}
+
+.py-16 {
+    -fx-padding: 16 0 16 0;
+}
+
+.py-32 {
+    -fx-padding: 32 0 32 0;
+}
+
+.py-48 {
+    -fx-padding: 48 0 48 0;
+}
+
+.py-64 {
+    -fx-padding: 64 0 64 0;
+}
+
+.ph-16 {
+    -fx-padding: 0 16 0 16;
+}
+
+.ph-32 {
+    -fx-padding: 0 32 0 32;
+}
+
+.ph-48 {
+    -fx-padding: 0 48 0 48;
+}
+
+.ph-64 {
+    -fx-padding: 0 64 0 64;
+}
