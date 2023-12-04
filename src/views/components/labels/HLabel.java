@@ -1,9 +1,10 @@
 package views.components.labels;
 
+import interfaces.Observer;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 
-public class HLabel extends Label {
+public class HLabel extends Label implements Observer {
 
     public static final String BLACK = "Black";
     public static final String EXTRA_BOLD = "Extrabold";
@@ -66,6 +67,11 @@ public class HLabel extends Label {
     public HLabel (String _message) {
         super(_message);
         build();
+    }
+
+    @Override
+    public void getNotified(String _key, Object _value) {
+        this.setStyle("-fx-background-color: red");
     }
 
 }

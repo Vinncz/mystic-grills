@@ -1,12 +1,39 @@
 package values;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 
-public class SharedPreference {
+import interfaces.Observer;
+import interfaces.Publisher;
+
+public class SharedPreference implements Publisher {
+    private HashMap<String, List<Observer>> subscribers;
     private HashMap<String, Object> preferences;
+
+    /**
+     * Adds the passed on _subscriber argument into a pool of other subscribers, that is also subscribing for a given key.
+     */
+    @Override
+    public void subscribe(String _key, Observer _subscriber) {
+        subscribers.computeIfAbsent(_key, k -> new ArrayList<>()).add(_subscriber);
+    }
+
+    /**
+     * Notifies every subscriber for a given key, that a new object has replaced its old value.
+     */
+    @Override
+    public void notifyChanges (String _key, Object _value) {
+        List<Observer> keySubscribers = subscribers.getOrDefault(_key, Collections.emptyList());
+        for (Observer observer : keySubscribers) {
+            observer.getNotified(_key, _value);
+        }
+    }
 
     public SharedPreference () {
         preferences = new HashMap<>();
+        subscribers = new HashMap<>();
 
     }
 
@@ -17,8 +44,9 @@ public class SharedPreference {
      * @param _value • value to be associated with the specified key
      */
     public void putValue (String _key, Object _value) {
-        preferences.put(_key, _value);
-
+        System.out.println("New value incoming for key " + _key + ", and the value is " + _value);
+        Object o = preferences.put(_key, _value);
+        if (o != _value) notifyChanges(_key, _value);
     }
 
     /**
