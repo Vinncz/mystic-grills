@@ -25,12 +25,12 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
     }
 
     @Override
-    public Integer getObjectId (MenuItem _object) {
+    protected Integer getObjectId (MenuItem _object) {
         return _object.getMenuItemId();
     }
 
     @Override
-    public MenuItem setObjectId (MenuItem _object, Integer _id) {
+    protected MenuItem setObjectId (MenuItem _object, Integer _id) {
         _object.setMenuItemId(_id);
         return _object;
     }

@@ -33,8 +33,8 @@ import values.SYSTEM_PROPERTIES;
  */
 public abstract class BaseRepository <T> {
 
-    public final int MAXIMUM_ROW_FOR_MODIFICATION = DATABASE_MODIFICATION_POLICY.MAXIMUM_ROW_FOR_MODIFICATION.value;
-    public final boolean LOG_DATABASE_TRANSACTION = SYSTEM_PROPERTIES.ACTIVATE_LOG.value.equals("true");
+    protected final int MAXIMUM_ROW_FOR_MODIFICATION = DATABASE_MODIFICATION_POLICY.MAXIMUM_ROW_FOR_MODIFICATION.value;
+    protected final boolean LOG_DATABASE_TRANSACTION = SYSTEM_PROPERTIES.ACTIVATE_LOG.value.equals("true");
 
     protected Connection db;
     protected String TABLE_NAME;
@@ -72,7 +72,7 @@ public abstract class BaseRepository <T> {
      * @param _object • Object whose id is to be extracted.
      * @return The id of said object.
      */
-    public abstract Integer getObjectId (T _object);
+    protected abstract Integer getObjectId (T _object);
 
     /**
      * Sets the id of an object.
@@ -81,7 +81,7 @@ public abstract class BaseRepository <T> {
      * @param _id • The id to be filled.
      * @return
      */
-    public abstract T setObjectId (T _object, Integer _id);
+    protected abstract T setObjectId (T _object, Integer _id);
 
 
 

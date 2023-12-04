@@ -59,12 +59,12 @@ public class UserRepository extends BaseRepository<User> {
 
 
     @Override
-    public Integer getObjectId(User _object) {
+    protected Integer getObjectId(User _object) {
         return _object.getUserId();
     }
 
     @Override
-    public User setObjectId(User _object, Integer _id) {
+    protected User setObjectId(User _object, Integer _id) {
         _object.setUserId(_id);
         return _object;
     }
@@ -88,13 +88,7 @@ public class UserRepository extends BaseRepository<User> {
 
         try {
             if ( res.next() ) {
-                User moldObject = attachAttribute (
-                                          res.getInt   ("id"),
-                                          res.getString("role"),
-                                          res.getString("name"),
-                                          res.getString("email"),
-                                          res.getString("password")
-                                      );
+                User moldObject = attachAttributeImplementation(res);
 
                 parsedObject = Optional.of(moldObject);
             }
@@ -124,13 +118,7 @@ public class UserRepository extends BaseRepository<User> {
 
         try {
             while ( res.next() ) {
-                User moldObject = attachAttribute (
-                                          res.getInt   ("id"),
-                                          res.getString("role"),
-                                          res.getString("name"),
-                                          res.getString("email"),
-                                          res.getString("password")
-                                      );
+                User moldObject = attachAttributeImplementation(res);
 
                 parsedObject.add(moldObject);
             }
@@ -151,6 +139,17 @@ public class UserRepository extends BaseRepository<User> {
         }
 
         return parsedObject;
+    }
+
+    private User attachAttributeImplementation(ResultSet res) throws SQLException {
+        User moldObject = attachAttribute (
+                                            res.getInt   ("id"),
+                                            res.getString("role"),
+                                            res.getString("name"),
+                                            res.getString("email"),
+                                            res.getString("password")
+                                          );
+        return moldObject;
     }
 
     @Override

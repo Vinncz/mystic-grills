@@ -53,12 +53,12 @@ public class OrderItemRepository extends BaseRepository<OrderItem> {
     }
 
     @Override
-    public Integer getObjectId (OrderItem _object) {
+    protected Integer getObjectId (OrderItem _object) {
         return _object.getOrderItemId();
     }
 
     @Override
-    public OrderItem setObjectId (OrderItem _object, Integer _id) {
+    protected OrderItem setObjectId (OrderItem _object, Integer _id) {
         _object.setOrderItemId(_id);
         return _object;
     }

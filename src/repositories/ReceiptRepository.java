@@ -30,12 +30,12 @@ public class ReceiptRepository extends BaseRepository<Receipt> {
     }
 
     @Override
-    public Integer getObjectId(Receipt _object) {
+    protected Integer getObjectId(Receipt _object) {
         return _object.getReceiptId();
     }
 
     @Override
-    public Receipt setObjectId(Receipt _object, Integer _id) {
+    protected Receipt setObjectId(Receipt _object, Integer _id) {
         _object.setReceiptId(_id);
         return _object;
     }

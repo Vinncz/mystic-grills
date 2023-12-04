@@ -32,12 +32,12 @@ public class OrderRepository extends BaseRepository<Order> {
     }
 
     @Override
-    public Integer getObjectId(Order _object) {
+    protected Integer getObjectId(Order _object) {
         return _object.getOrderId();
     }
 
     @Override
-    public Order setObjectId(Order _object, Integer _id) {
+    protected Order setObjectId(Order _object, Integer _id) {
         _object.setOrderId(_id);
         return _object;
     }
