@@ -9,6 +9,7 @@ import models.User;
 import repositories.helpers.DatabaseExceptionExplainer;
 import repositories.interfaces.BaseRepository;
 import values.SYSTEM_PROPERTIES;
+import values.strings.ValidationState;
 
 public class UserRepository extends BaseRepository<User> {
 
@@ -24,14 +25,53 @@ public class UserRepository extends BaseRepository<User> {
         );
     }
 
-    public User authenticateUser (String _userEmail, String _userPassword) {;
-        Optional<User> target = getUserByEmail(_userEmail);
+    public static class AuthenticationReturnDatatype {
+        private ValidationState state = null;
+        private User associatedUser = null;
 
-        if (target.isPresent() && target.get().getUserPassword().equals(_userPassword)) {
-            return target.get();
+        public AuthenticationReturnDatatype () {}
+
+        public String getMessage() {
+            return this.state.value;
         }
 
-        return null;
+        public ValidationState getState() {
+            return state;
+        }
+
+        public void setState(ValidationState _state) {
+            this.state = _state;
+        }
+
+        public User getAssociatedUser() {
+            return associatedUser;
+        }
+
+        public void setAssociatedUser(User associatedUser) {
+            this.associatedUser = associatedUser;
+        }
+    }
+
+    public AuthenticationReturnDatatype authenticateUser (String _userEmail, String _userPassword) {;
+        AuthenticationReturnDatatype returnObject = new AuthenticationReturnDatatype();
+
+        Optional<User> target = getUserByEmail(_userEmail);
+        if ( target.isEmpty() ) {
+            returnObject.setState(ValidationState.UNREGISTERED_EMAIL);
+            return returnObject;
+
+        }
+
+        if ( !(target.isPresent() && target.get().getUserPassword().equals(_userPassword)) ) {
+            returnObject.setState(ValidationState.INCORRECT_PASSWORD);
+            return returnObject;
+
+        } else if (target.isPresent() && target.get().getUserPassword().equals(_userPassword)) {
+            returnObject.setAssociatedUser(target.get());
+
+        }
+
+        return returnObject;
     }
 
     public Optional<User> getUserByEmail(String _userEmail) {

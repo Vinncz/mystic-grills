@@ -79,7 +79,7 @@ public abstract class BaseRepository <T> {
      *
      * @param _mi • The object whose id is to be filled.
      * @param _id • The id to be filled.
-     * @return
+     * @return the object itself, with its id attribute filled
      */
     protected abstract T setObjectId (T _object, Integer _id);
 

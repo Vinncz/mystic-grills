@@ -153,7 +153,7 @@ public class App extends Application {
 		primaryStage.setMinWidth (Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_MIN_WIDTH.value ) + (stagePadding * 2) );
 
 		primaryStage.setResizable(true);
-		primaryStage.setTitle("");
+		primaryStage.setTitle("Mystic Grills");
 
 		primaryStage.show();
 
