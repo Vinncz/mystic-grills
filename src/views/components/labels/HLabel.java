@@ -1,77 +1,118 @@
 package views.components.labels;
 
-import interfaces.Observer;
+import design_patterns.observer_pattern.Observer;
+import design_patterns.strategy_pattern.Strategy;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
+import views.components.interfaces.UsesStrategy;
 
-public class HLabel extends Label implements Observer {
+public class HLabel extends Label implements Observer, UsesStrategy<HLabel> {
 
     public static final String BLACK = "Black";
     public static final String EXTRA_BOLD = "Extrabold";
     public static final String BOLD = "Bold";
+    public static final String SEMI_BOLD = "Semibold";
+    public static final String MEDIUM = "Medium";
     public static final String REGULAR = "Regular";
     public static final String LIGHT = "Light";
 
+    private Boolean usesAlternateFont = false;
+    private Strategy strat = null;
     private String variant = REGULAR;
     private Integer fontSize = LabelConfig.FONT_SIZE_SMALLEST;
 
+    public HLabel (String _message) {
+        super(_message);
+        withDefaultFont();
+    }
+
     public HLabel setSize (Integer _fontSize) {
         this.fontSize = _fontSize;
-        build();
-        return this;
+        return build();
     }
 
     public HLabel setMessage (String _message) {
         super.setText(_message);
-        build();
-        return this;
+        return build();
+    }
+
+    public HLabel withDefaultFont () {
+        this.usesAlternateFont = false;
+        return build();
+    }
+
+    public HLabel withAlternateFont () {
+        this.usesAlternateFont = true;
+        return build();
     }
 
     public HLabel build () {
-        setFont(
-            Font.loadFont(getClass().getResourceAsStream(String.format("/views/fonts/cabinet_grotesk/CabinetGrotesk-%s.otf", this.variant)), this.fontSize)
-        );
+        if ( this.usesAlternateFont == false ) {
+            setFont(
+                Font.loadFont(getClass().getResourceAsStream(String.format("/views/fonts/cabinet_grotesk/CabinetGrotesk-%s.otf", this.variant)), this.fontSize)
+            );
+
+        } else {
+            setFont(
+                Font.loadFont(getClass().getResourceAsStream(String.format("/views/fonts/clash_display/ClashDisplay-%s.otf", this.variant)), this.fontSize)
+            );
+        }
+
         return this;
     }
 
     public HLabel black () {
         this.variant = BLACK;
-        build();
-        return this;
+        return build();
     }
 
     public HLabel extraBold () {
-        this.variant = EXTRA_BOLD;
-        build();
-        return this;
+        if (this.usesAlternateFont) {
+            this.variant = BOLD;
+
+        } else {
+            this.variant = EXTRA_BOLD;
+
+        }
+        return build();
+    }
+
+    public HLabel semiBold () {
+        if (this.usesAlternateFont) {
+            this.variant = SEMI_BOLD;
+
+        } else {
+            this.variant = MEDIUM;
+
+        }
+
+        return build();
     }
 
     public HLabel bold () {
         this.variant = BOLD;
-        build();
-        return this;
+        return build();
     }
 
     public HLabel regular () {
         this.variant = REGULAR.toString();
-        build();
-        return this;
+        return build();
     }
 
     public HLabel light () {
         this.variant = LIGHT.toString();
-        build();
-        return this;
+        return build();
     }
 
-    public HLabel (String _message) {
-        super(_message);
-        build();
+    @Override
+    public HLabel setStrategy (Strategy _strat) {
+        this.strat = _strat;
+        return build();
     }
 
     @Override
     public void getNotified(String _key, Object _value) {
-        this.setStyle("-fx-background-color: red");
+        if (this.strat != null) this.strat.execute(_key, _value, this);
     }
 
 }

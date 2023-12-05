@@ -10,7 +10,7 @@
 
 .ctaButton {
     -fx-background-color: green;
-    -fx-padding: 12 48 12 48;
+    -fx-padding: 12 64 12 64;
     -fx-border-width: 0;
     -fx-background-radius: 255;
     -fx-background-insets: 0;
@@ -33,7 +33,7 @@
 
 .destructiveButton {
     -fx-background-color: #dc143c;
-    -fx-padding: 12 48 12 48;
+    -fx-padding: 12 64 12 64;
     -fx-border-width: 0;
     -fx-background-radius: 255;
     -fx-background-insets: 0;
@@ -69,4 +69,13 @@
 .passwordTextfield {
     -fx-background-radius: 8;
     -fx-padding: 12 16 12 16;
+}
+
+.redBg {
+    -fx-background-color: #dc143c;
+    -fx-text-fill: white;
+}
+
+.redText {
+    -fx-text-fill: #dc143c;
 }

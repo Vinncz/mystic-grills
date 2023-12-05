@@ -1,26 +1,33 @@
 package views;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 import application_starter.App;
-import commands.AuthenticateCommand;
-import interfaces.Observer;
+import controllers.UserController;
+import design_patterns.observer_pattern.Observer;
+import design_patterns.strategy_pattern.LabelValidationStrategy;
+import design_patterns.strategy_pattern.TextfieldValidationStrategy;
+import design_patterns.strategy_pattern.VanishingLabelValidationStrategy;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import repositories.UserRepository;
+import values.SYSTEM_PROPERTIES;
+import values.strings.ValidationState;
 import views.components.buttons.CTAButton;
 import views.components.buttons.OutlineButton;
-import views.components.hboxes.CenteredVerticallyHBox;
 import views.components.hboxes.RootElement;
 import views.components.textfields.DefaultTextfield;
 import views.components.textfields.PasswordTextfield;
+import views.components.vboxes.BaseVBox;
+import views.components.vboxes.Container;
 import views.components.labels.H1Label;
 import views.components.labels.H3Label;
-import views.components.labels.H4Label;
 import views.components.labels.H5Label;
-import views.components.vboxes.Container;
-import views.components.vboxes.DefaultVBox;
 import views.guidelines.PageDeclarationGuideline_v1;
 
 public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1 {
@@ -36,51 +43,106 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
 
     private Label emailLabel, passwordLabel;
     private TextField emailField, passwordField;
+    private Label emailWarnLabel, passwordWarnLabel;
 
-    private VBox warningContainer;
-    private Label warningContainerTitleLabel, warningMessageLabel;
-
-    private HBox buttonContainer;
+    private VBox buttonContainer;
     private Button loginButton, registerButton;
 
     public LoginPage () {
         initializeScene();
     }
 
+    private ArrayList<ValidationState> errorToWatchForEmailRelatedElement = new ArrayList<>(){
+        {
+            add(ValidationState.EMPTY_EMAIL);
+            add(ValidationState.UNREGISTERED_EMAIL);
+        }
+    };
+    private ArrayList<ValidationState> errorToWatchForPasswordRelatedElement = new ArrayList<>(){
+        {
+            add(ValidationState.EMPTY_PASSWORD);
+            add(ValidationState.INCORRECT_PASSWORD);
+            add(ValidationState.INVALID_PASSWORD_LENGTH);
+        }
+    };
+
     @Override
     public void initializeControls() {
         rootElement    = new RootElement();
-        container      = new Container();
+        container      = new Container().centerHorizontally();
 
-        pageIdentifierContainer = new VBox();
-            brand          = new H1Label("Mystic Grills").extraBold();
-            pageTitle      = new H3Label("Login Portal").extraBold();
+        pageIdentifierContainer = new BaseVBox().withNoSpacing().centerHorizontally();
+            brand     = new H1Label("Mystic Grills").bold().withAlternateFont();
+            pageTitle = new H3Label("Login Portal").extraBold();
 
-        pageContent = new DefaultVBox();
-            emailFieldContainer = new DefaultVBox();
-                emailLabel    = new H5Label("Email");
-                emailField    = new DefaultTextfield("Email here").setId_("email");
-            passwordFieldContainer = new DefaultVBox();
-                passwordLabel = new H5Label("Password");
-                passwordField = new PasswordTextfield("Password here").setId_("password");
+        pageContent = new BaseVBox().withNormalSpacing();
+            emailFieldContainer = new BaseVBox().withTightSpacing();
+                emailLabel      = new H5Label("Email")
+                                        .setStrategy(
+                                            new LabelValidationStrategy()
+                                                .setRegisteredErrorWatchList(errorToWatchForEmailRelatedElement)
+                                        );
+                emailField      = new DefaultTextfield("Email here")
+                                        .setStrategy(
+                                            new TextfieldValidationStrategy()
+                                                .setRegisteredErrorWatchList(errorToWatchForEmailRelatedElement)
+                                        );
+                emailWarnLabel  = new H5Label("warn")
+                                        .setStrategy(
+                                            new VanishingLabelValidationStrategy()
+                                                .setRegisteredErrorWatchList(errorToWatchForEmailRelatedElement)
+                                        );
 
-        warningContainer = new DefaultVBox();
-            warningContainerTitleLabel = new H4Label("Warning:");
-            warningMessageLabel        = new H5Label("You entered an incorrect password!");
+            passwordFieldContainer = new BaseVBox().withTightSpacing();
+                passwordLabel      = new H5Label("Password")
+                                        .setStrategy(
+                                            new LabelValidationStrategy()
+                                                .setRegisteredErrorWatchList(errorToWatchForPasswordRelatedElement)
+                                        );
+                passwordField      = new PasswordTextfield("Password here")
+                                        .setStrategy(
+                                            new TextfieldValidationStrategy()
+                                                .setRegisteredErrorWatchList(errorToWatchForPasswordRelatedElement)
+                                        );
+                passwordWarnLabel  = new H5Label("warn")
+                                        .setStrategy(
+                                            new VanishingLabelValidationStrategy()
+                                                .setRegisteredErrorWatchList(errorToWatchForPasswordRelatedElement)
+                                        );
 
-        buttonContainer = new CenteredVerticallyHBox();
+        buttonContainer = new BaseVBox().withLooseSpacing().centerOnBothAxis();
             loginButton     = new CTAButton("Log me in");
             registerButton  = new OutlineButton("I don't have an account");
     }
 
     @Override
     public void configureElements() {
-        App.preferences.subscribe("failedAuth", (Observer) emailField);
-        App.preferences.subscribe("failedAuth", (Observer) passwordField);
-        App.preferences.subscribe("failedAuth", (Observer) warningContainer);
+        ArrayList<String> _errorToWatchForEmailRelatedElement = new ArrayList<>(errorToWatchForEmailRelatedElement.stream().map(ValidationState::value).collect(Collectors.toList()));
+        ArrayList<String> _errorToWatchForPasswordRelatedElement = new ArrayList<>(errorToWatchForPasswordRelatedElement.stream().map(ValidationState::value).collect(Collectors.toList()));
 
+        App.preferences.subscribeToMany(
+            _errorToWatchForPasswordRelatedElement,
 
-        warningContainer.setManaged(false);
+            (Observer) passwordLabel,
+            (Observer) passwordWarnLabel,
+            (Observer) passwordField
+        );
+
+        App.preferences.subscribeToMany(
+            _errorToWatchForEmailRelatedElement,
+
+            (Observer) emailLabel,
+            (Observer) emailField,
+            (Observer) emailWarnLabel
+        );
+
+        emailWarnLabel.setVisible(false);
+            emailWarnLabel.setManaged(false);
+        passwordWarnLabel.setVisible(false);
+            passwordWarnLabel.setManaged(false);
+
+        // pageContent.getStyleClass().add("redBg");
+        pageContent.setMaxWidth(Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_MIN_WIDTH.value));
         pageContent.getStyleClass().addAll("py-16");
         pageContent.setSpacing(24);
         buttonContainer.getStyleClass().addAll("pt-16");
@@ -90,11 +152,17 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
     @Override
     public void initializeEventListeners() {
         emailField.setOnMouseClicked(e -> {
-            App.preferences.putValue("failedAuth", false);
+            System.out.println(errorToWatchForEmailRelatedElement.size());
+            for (ValidationState vs : errorToWatchForEmailRelatedElement) {
+                App.preferences.putValue(vs.value, false);
+            }
         });
 
         passwordField.setOnMouseClicked(e -> {
-            App.preferences.putValue("failedAuth", false);
+            System.out.println(errorToWatchForPasswordRelatedElement.size());
+            for (ValidationState vs : errorToWatchForPasswordRelatedElement) {
+                App.preferences.putValue(vs.value, false);
+            }
         });
 
         registerButton.setOnMouseClicked(e -> {
@@ -102,13 +170,17 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
         });
 
         loginButton.setOnMouseClicked(e -> {
-            if ( new AuthenticateCommand(this).execute() != null ) {
-                System.out.println("Successfully logged in!");
+            String email = emailField.getText();
+            String password = passwordField.getText();
+
+            UserController uc = new UserController();
+            UserRepository.AuthenticationReturnDatatype authResult = uc.authenticateUser(email, password);
+
+            if ( authResult.getState() != null ) {
+                App.preferences.putValue(authResult.getState().value, true);
 
             } else {
-                App.preferences.putValue("failedAuth", true);
-                System.out.println("Authentication failed!");
-
+                // App.redirectTo( App.sceneBuilder(new LoginPage()) );
             }
         });
 
@@ -128,12 +200,14 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
 
         emailFieldContainer.getChildren().addAll(
             emailLabel,
-            emailField
+            emailField,
+            emailWarnLabel
         );
 
         passwordFieldContainer.getChildren().addAll(
             passwordLabel,
-            passwordField
+            passwordField,
+            passwordWarnLabel
         );
 
         pageContent.getChildren().addAll(
@@ -141,15 +215,9 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
             passwordFieldContainer
         );
 
-        warningContainer.getChildren().addAll(
-            warningContainerTitleLabel,
-            warningMessageLabel
-        );
-
         container.getChildren().addAll(
             pageIdentifierContainer,
             pageContent,
-            warningContainer,
             buttonContainer
         );
 

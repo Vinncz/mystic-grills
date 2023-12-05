@@ -3,17 +3,17 @@ package views.components.hboxes;
 import application_starter.App;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.layout.HBox;
+import values.spacings.Spacings;
 
-public class RootElement extends HBox {
+public class RootElement extends BaseHBox {
 
-    /**
-     * Should be designated as the parent element for every JavaFX page
-     */
     public RootElement () {
+        super();
+        growsHorizontally();
+        growsVertically();
         this.setPadding(new Insets(0, App.stagePadding, 0, App.stagePadding));
         this.setAlignment(Pos.TOP_CENTER);
-        this.setSpacing(HBoxConfig.DEFAULT_SPACING);
+        this.setSpacing(Spacings.NORMAL_SPACING.value);
     }
 
 }
