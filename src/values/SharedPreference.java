@@ -2,11 +2,12 @@ package values;
 
 import java.util.HashMap;
 import java.util.List;
+
+import design_patterns.observer_pattern.Observer;
+import design_patterns.observer_pattern.Publisher;
+
 import java.util.ArrayList;
 import java.util.Collections;
-
-import interfaces.Observer;
-import interfaces.Publisher;
 
 public class SharedPreference implements Publisher {
     private HashMap<String, List<Observer>> subscribers;
@@ -16,8 +17,23 @@ public class SharedPreference implements Publisher {
      * Adds the passed on _subscriber argument into a pool of other subscribers, that is also subscribing for a given key.
      */
     @Override
-    public void subscribe(String _key, Observer _subscriber) {
-        subscribers.computeIfAbsent(_key, k -> new ArrayList<>()).add(_subscriber);
+    public void subscribe(String _key, Observer... _subscribers) {
+        for (Observer o : _subscribers) {
+            subscribers.computeIfAbsent(_key, k -> new ArrayList<>()).add(o);
+
+        }
+    }
+
+    /**
+     * Adds the passed on {@code _subscribers} argument into a pool of other subscribers, that is also subscribing to the passed on {@code _keys}.
+     */
+    public void subscribeToMany(ArrayList<String> _keys, Observer... _subscribers) {
+        for (String _key: _keys) {
+            for (Observer _o : _subscribers) {
+                subscribers.computeIfAbsent(_key, k -> new ArrayList<>()).add(_o);
+
+            }
+        }
     }
 
     /**
@@ -44,9 +60,11 @@ public class SharedPreference implements Publisher {
      * @param _value • value to be associated with the specified key
      */
     public void putValue (String _key, Object _value) {
-        System.out.println("New value incoming for key " + _key + ", and the value is " + _value);
         Object o = preferences.put(_key, _value);
-        if (o != _value) notifyChanges(_key, _value);
+        if ( o != _value ) {
+            System.out.println("New value incoming for key " + _key + ", old value is " + o + " and the value is " + _value);
+            notifyChanges(_key, _value);
+        }
     }
 
     /**
