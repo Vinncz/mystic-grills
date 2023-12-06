@@ -2,7 +2,7 @@
 .settings/
 .temp/
 .vscode/
-bin/
+/bin/
 SYSTEM_PROPERTIES.java
 *.class
 *.env
