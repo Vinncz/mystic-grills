@@ -12,8 +12,6 @@ public class Container extends BaseVBox {
      * Compared to BaseVBox, Container is specialized to serve to be the ONLY ONE child element for the sole RootElement in a given Scene.
      * <br></br>
      * Featuring a clamping max-width, minimum width for safe display, and a top padding for modernity for the element of the page.
-     *
-     * @param _message
      */
     public Container () {
         super();

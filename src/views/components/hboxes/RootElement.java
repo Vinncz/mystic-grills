@@ -11,8 +11,6 @@ public class RootElement extends BaseHBox {
      * A variant of the BaseHBox, which is a customized HBox element that encorporate Builder, Strategy, and Observer pattern, which was built on top JavaFX's HBox.
      * <br></br>
      * Compared to BaseHBox, RootElement is specialized to serve to be the ONLY ONE parent element for a given Scene.
-     *
-     * @param _message
      */
     public RootElement () {
         super();
