@@ -11,6 +11,9 @@ public class PasswordTextfield extends PasswordField implements Observer, Settab
 
     private Strategy strat = null;
 
+    /**
+     * A customized PasswordField element that encorporate Builder, Strategy, and Observer pattern, which was built on top JavaFX's PasswordField.
+     */
     public PasswordTextfield (String _placeholder) {
         super();
         setPromptText(_placeholder);
@@ -37,8 +40,8 @@ public class PasswordTextfield extends PasswordField implements Observer, Settab
     }
 
     @Override
-    public void getNotified(String _key, Object _value) {
-        if (this.strat != null) this.strat.execute(_key, _value, this);
+    public void getNotified(Object _key, Object _value) {
+        if (this.strat != null) this.strat.execute((String) _key, _value, this);
     }
 
 }

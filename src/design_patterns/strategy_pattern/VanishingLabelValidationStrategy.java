@@ -10,6 +10,13 @@ public class VanishingLabelValidationStrategy implements ValidationStrategy<Vani
     private ArrayList<ValidationState> registeredError = new ArrayList<>();
     private Label objectReference;
 
+    /**
+     * A variation of LabelValidationStrategy, that should be passed on as argument into a class that extends from {@code javafx.scene.control.Label}.
+     *
+     * This class determine which action should be taken by a Label element, when its getNotified() function is called.
+     */
+    public VanishingLabelValidationStrategy () {}
+
     @Override
     public VanishingLabelValidationStrategy setRegisteredErrorWatchList (ArrayList<ValidationState> _registeredError) {
         this.registeredError = _registeredError;

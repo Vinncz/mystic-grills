@@ -117,8 +117,8 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
 
     @Override
     public void configureElements() {
-        ArrayList<String> _errorToWatchForEmailRelatedElement = new ArrayList<>(errorToWatchForEmailRelatedElement.stream().map(ValidationState::value).collect(Collectors.toList()));
-        ArrayList<String> _errorToWatchForPasswordRelatedElement = new ArrayList<>(errorToWatchForPasswordRelatedElement.stream().map(ValidationState::value).collect(Collectors.toList()));
+        ArrayList<Object> _errorToWatchForEmailRelatedElement = new ArrayList<>(errorToWatchForEmailRelatedElement.stream().map(ValidationState::value).collect(Collectors.toList()));
+        ArrayList<Object> _errorToWatchForPasswordRelatedElement = new ArrayList<>(errorToWatchForPasswordRelatedElement.stream().map(ValidationState::value).collect(Collectors.toList()));
 
         App.preferences.subscribeToMany(
             _errorToWatchForPasswordRelatedElement,
@@ -141,7 +141,6 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
         passwordWarnLabel.setVisible(false);
             passwordWarnLabel.setManaged(false);
 
-        // pageContent.getStyleClass().add("redBg");
         pageContent.setMaxWidth(Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_MIN_WIDTH.value));
         pageContent.getStyleClass().addAll("py-16");
         pageContent.setSpacing(24);

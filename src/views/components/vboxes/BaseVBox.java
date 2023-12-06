@@ -19,6 +19,9 @@ public class BaseVBox extends VBox implements Observer, CustomizableAlignment<Ba
     private Integer spacing;
     private Pos alignment;
 
+    /**
+     * A customized VBox element that encorporate Builder, Strategy, and Observer pattern, which was built on top JavaFX's VBox.
+     */
     public BaseVBox () {
         super();
         this.spacing = Spacings.NORMAL_SPACING.value;
@@ -112,8 +115,8 @@ public class BaseVBox extends VBox implements Observer, CustomizableAlignment<Ba
     }
 
     @Override
-    public void getNotified (String _key, Object _value) {
-        if (this.strat != null) this.strat.execute(_key, _value, this);
+    public void getNotified (Object _key, Object _value) {
+        if (this.strat != null) this.strat.execute((String) _key, _value, this);
     }
 
 }

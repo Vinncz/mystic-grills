@@ -10,6 +10,13 @@ public class VanishingHBoxValidationStrategy implements ValidationStrategy<Vanis
     private ArrayList<ValidationState> registeredError = new ArrayList<>();
     private HBox objectReference;
 
+    /**
+     * A subclass of ValidationStrategy, that should be passed on as argument into a class that extends from {@code javafx.scene.layout.HBox}.
+     *
+     * This class determine which action should be taken by a HBox element, when its getNotified() function is called.
+     */
+    public VanishingHBoxValidationStrategy () {}
+
     @Override
     public VanishingHBoxValidationStrategy setRegisteredErrorWatchList (ArrayList<ValidationState> _registeredError) {
         this.registeredError = _registeredError;

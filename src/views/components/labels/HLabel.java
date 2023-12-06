@@ -21,6 +21,9 @@ public class HLabel extends Label implements Observer, UsesStrategy<HLabel> {
     private String variant = REGULAR;
     private Integer fontSize = LabelConfig.FONT_SIZE_SMALLEST;
 
+    /**
+     * A customized Label element that encorporate Builder, Strategy, and Observer pattern, which was built on top JavaFX's Label.
+     */
     public HLabel (String _message) {
         super(_message);
         withDefaultFont();
@@ -111,8 +114,8 @@ public class HLabel extends Label implements Observer, UsesStrategy<HLabel> {
     }
 
     @Override
-    public void getNotified(String _key, Object _value) {
-        if (this.strat != null) this.strat.execute(_key, _value, this);
+    public void getNotified(Object _key, Object _value) {
+        if (this.strat != null) this.strat.execute((String) _key, _value, this);
     }
 
 }

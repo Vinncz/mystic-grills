@@ -8,27 +8,39 @@ import design_patterns.observer_pattern.Publisher;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class SharedPreference implements Publisher {
     private HashMap<String, List<Observer>> subscribers;
     private HashMap<String, Object> preferences;
 
     /**
-     * Adds the passed on _subscriber argument into a pool of other subscribers, that is also subscribing for a given key.
+     * Adds the passed on {@code _subscribers} argument into a pool of other subscribers, that is also subscribing for a given {@code _key}.
+     *
+     * @param _key • SharedPreference's key to be subscribed to
+     * @param _subscribers • Who will be subscribing
      */
     @Override
-    public void subscribe(String _key, Observer... _subscribers) {
+    public void subscribe(Object _key, Observer... _subscribers) {
         for (Observer o : _subscribers) {
-            subscribers.computeIfAbsent(_key, k -> new ArrayList<>()).add(o);
+            subscribers.computeIfAbsent((String) _key, k -> new ArrayList<>()).add(o);
 
         }
     }
 
     /**
-     * Adds the passed on {@code _subscribers} argument into a pool of other subscribers, that is also subscribing to the passed on {@code _keys}.
+     * Adds the passed on {@code _subscribers} argument into a pool of other subscribers, that is also subscribing for a given {@code _keys}.
+     *
+     * @param _keys • SharedPreference's keys to be subscribed to
+     * @param _subscribers • Who will be subscribing
      */
-    public void subscribeToMany(ArrayList<String> _keys, Observer... _subscribers) {
-        for (String _key: _keys) {
+    public void subscribeToMany(ArrayList<Object> _keys, Observer... _subscribers) {
+        ArrayList<String> stringKeys = _keys.stream()
+                                    .filter(String.class::isInstance)
+                                    .map(String.class::cast)
+                                    .collect(Collectors.toCollection(ArrayList::new));
+
+        for (String _key: stringKeys) {
             for (Observer _o : _subscribers) {
                 subscribers.computeIfAbsent(_key, k -> new ArrayList<>()).add(_o);
 
@@ -38,9 +50,12 @@ public class SharedPreference implements Publisher {
 
     /**
      * Notifies every subscriber for a given key, that a new object has replaced its old value.
+     *
+     * @param _key • The key whose value changed.
+     * @param _value • The new value who replaced the old one.
      */
     @Override
-    public void notifyChanges (String _key, Object _value) {
+    public void notifyChanges (Object _key, Object _value) {
         List<Observer> keySubscribers = subscribers.getOrDefault(_key, Collections.emptyList());
         for (Observer observer : keySubscribers) {
             observer.getNotified(_key, _value);

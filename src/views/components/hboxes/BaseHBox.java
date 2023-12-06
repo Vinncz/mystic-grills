@@ -19,6 +19,9 @@ public class BaseHBox extends HBox implements Observer, CustomizableAlignment<Ba
     private Pos alignment;
     private Strategy strat = null;
 
+    /**
+     * A customized HBox element that encorporate Builder, Strategy, and Observer pattern, which was built on top JavaFX's HBox.
+     */
     public BaseHBox () {
         super();
         setSpacing(Spacings.NORMAL_SPACING.value);
@@ -111,8 +114,8 @@ public class BaseHBox extends HBox implements Observer, CustomizableAlignment<Ba
     }
 
     @Override
-    public void getNotified (String _key, Object _value) {
-        if (this.strat != null) this.strat.execute(_key, _value, this);
+    public void getNotified (Object _key, Object _value) {
+        if (this.strat != null) this.strat.execute((String) _key, _value, this);
     }
 
 }

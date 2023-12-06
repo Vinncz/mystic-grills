@@ -10,6 +10,9 @@ public class DefaultTextfield extends TextField implements Observer, UsesStrateg
 
     private Strategy strat = null;
 
+    /**
+     * A customized TextField element that encorporate Builder, Strategy, and Observer pattern, which was built on top JavaFX's TextField.
+     */
     public DefaultTextfield (String _placeholder) {
         super();
         setPromptText(_placeholder);
@@ -35,8 +38,8 @@ public class DefaultTextfield extends TextField implements Observer, UsesStrateg
     }
 
     @Override
-    public void getNotified(String _key, Object _value) {
-        if (this.strat != null) this.strat.execute(_key, _value, this);
+    public void getNotified(Object _key, Object _value) {
+        if (this.strat != null) this.strat.execute((String) _key, _value, this);
     }
 
 }

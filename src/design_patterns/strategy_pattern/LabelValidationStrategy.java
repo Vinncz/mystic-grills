@@ -10,6 +10,13 @@ public class LabelValidationStrategy implements ValidationStrategy<LabelValidati
     private ArrayList<ValidationState> registeredError = new ArrayList<>();
     private Label objectReference;
 
+    /**
+     * A subclass of ValidationStrategy, that should be passed on as argument into a class that extends from {@code javafx.scene.control.Label}.
+     *
+     * This class determine which action should be taken by a Label element, when its getNotified() function is called.
+     */
+    public LabelValidationStrategy () {}
+
     @Override
     public LabelValidationStrategy setRegisteredErrorWatchList (ArrayList<ValidationState> _registeredError) {
         this.registeredError = _registeredError;
