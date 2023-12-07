@@ -1,5 +1,7 @@
 package views.components.labels;
 
+import views.components.interfaces.FontVariants;
+
 public class H4Label extends HLabel {
 
     /**
@@ -11,8 +13,8 @@ public class H4Label extends HLabel {
      */
     public H4Label (String _message) {
         super(_message);
-        super.setSize(LabelConfig.FONT_SIZE_SMALLER);
-        super.bold();
+        super.setSize(FontVariants.FONT_SIZE_SMALLER);
+        super.withBoldFont();
         this.getStyleClass().add("h4");
     }
 

@@ -72,8 +72,8 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
         container      = new Container().centerHorizontally();
 
         pageIdentifierContainer = new BaseVBox().withNoSpacing().centerHorizontally();
-            brand     = new H1Label("Mystic Grills").bold().withAlternateFont();
-            pageTitle = new H3Label("Login Portal").extraBold();
+            brand     = new H1Label("Mystic Grills").withBoldFont().withAlternateFont();
+            pageTitle = new H3Label("Login Portal").withExtraBoldFont();
 
         pageContent = new BaseVBox().withNormalSpacing();
             emailFieldContainer = new BaseVBox().withTightSpacing();
@@ -111,8 +111,8 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
                                         );
 
         buttonContainer = new BaseVBox().withLooseSpacing().centerOnBothAxis();
-            loginButton     = new CTAButton("Log me in");
-            registerButton  = new OutlineButton("I don't have an account");
+            loginButton     = new CTAButton("Log me in").withBoldFont();
+            registerButton  = new OutlineButton("I don't have an account").withLightFont().underlineTheText();
     }
 
     @Override

@@ -1,5 +1,7 @@
 package views.components.labels;
 
+import views.components.interfaces.FontVariants;
+
 public class H1Label extends HLabel {
 
     /**
@@ -11,7 +13,7 @@ public class H1Label extends HLabel {
      */
     public H1Label (String _message) {
         super(_message);
-        super.setSize(LabelConfig.FONT_SIZE_LARGE);
+        super.setSize(FontVariants.FONT_SIZE_LARGE);
         this.getStyleClass().add("h1");
     }
 

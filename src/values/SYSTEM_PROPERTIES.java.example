@@ -1,6 +1,9 @@
 package values;
 
 public enum SYSTEM_PROPERTIES {
+    ACTIVATE_LOG
+        ("true"),
+
     DATABASE_NAME
         (""),
 
@@ -14,7 +17,7 @@ public enum SYSTEM_PROPERTIES {
         (""),
 
     DATABASE_URL
-        (""),
+        (String.format("jdbc:mysql://localhost:%s/%s", DATABASE_PORT.value, DATABASE_NAME.value)),
 
     DATABASE_MENU_ITEM_TABLE
         (""),
@@ -31,8 +34,19 @@ public enum SYSTEM_PROPERTIES {
     DATABASE_USER_TABLE
         (""),
 
-    ACTIVATE_LOG
-        ("true");
+    APPLICATION_TARGET_WIDTH
+        ("1366"),
+
+    APPLICATION_TARGET_HEIGHT
+        ("768"),
+
+    APPLICATION_MIN_WIDTH
+        ("960"),
+
+    APPLICATION_MIN_HEIGHT
+        ("540"),
+
+    ;
 
     public final String value;
     private SYSTEM_PROPERTIES (String _value) {

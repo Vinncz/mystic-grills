@@ -4,22 +4,16 @@ import design_patterns.observer_pattern.Observer;
 import design_patterns.strategy_pattern.Strategy;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
+import views.components.interfaces.CustomizableFont;
+import views.components.interfaces.FontVariants;
 import views.components.interfaces.UsesStrategy;
 
-public class HLabel extends Label implements Observer, UsesStrategy<HLabel> {
-
-    public static final String BLACK = "Black";
-    public static final String EXTRA_BOLD = "Extrabold";
-    public static final String BOLD = "Bold";
-    public static final String SEMI_BOLD = "Semibold";
-    public static final String MEDIUM = "Medium";
-    public static final String REGULAR = "Regular";
-    public static final String LIGHT = "Light";
+public class HLabel extends Label implements Observer, UsesStrategy<HLabel>, CustomizableFont<HLabel> {
 
     private Boolean usesAlternateFont = false;
     private Strategy strat = null;
-    private String variant = REGULAR;
-    private Integer fontSize = LabelConfig.FONT_SIZE_SMALLEST;
+    private String variant = FontVariants.REGULAR;
+    private Integer fontSize = FontVariants.FONT_SIZE_SMALLEST;
 
     /**
      * A customized Label element that encorporate Builder, Strategy, and Observer pattern, which was built on top JavaFX's Label.
@@ -39,11 +33,13 @@ public class HLabel extends Label implements Observer, UsesStrategy<HLabel> {
         return build();
     }
 
+    @Override
     public HLabel withDefaultFont () {
         this.usesAlternateFont = false;
         return build();
     }
 
+    @Override
     public HLabel withAlternateFont () {
         this.usesAlternateFont = true;
         return build();
@@ -64,46 +60,52 @@ public class HLabel extends Label implements Observer, UsesStrategy<HLabel> {
         return this;
     }
 
-    public HLabel black () {
-        this.variant = BLACK;
+    @Override
+    public HLabel withBlackFont () {
+        this.variant = FontVariants.BLACK;
         return build();
     }
 
-    public HLabel extraBold () {
+    @Override
+    public HLabel withExtraBoldFont () {
         if (this.usesAlternateFont) {
-            this.variant = BOLD;
+            this.variant = FontVariants.BOLD;
 
         } else {
-            this.variant = EXTRA_BOLD;
+            this.variant = FontVariants.EXTRA_BOLD;
 
         }
         return build();
     }
 
-    public HLabel semiBold () {
+    @Override
+    public HLabel withSemiboldFont () {
         if (this.usesAlternateFont) {
-            this.variant = SEMI_BOLD;
+            this.variant = FontVariants.SEMI_BOLD;
 
         } else {
-            this.variant = MEDIUM;
+            this.variant = FontVariants.MEDIUM;
 
         }
 
         return build();
     }
 
-    public HLabel bold () {
-        this.variant = BOLD;
+    @Override
+    public HLabel withBoldFont () {
+        this.variant = FontVariants.BOLD;
         return build();
     }
 
-    public HLabel regular () {
-        this.variant = REGULAR.toString();
+    @Override
+    public HLabel withRegularFont () {
+        this.variant = FontVariants.REGULAR;
         return build();
     }
 
-    public HLabel light () {
-        this.variant = LIGHT.toString();
+    @Override
+    public HLabel withLightFont () {
+        this.variant = FontVariants.LIGHT;
         return build();
     }
 
