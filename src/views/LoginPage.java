@@ -19,7 +19,9 @@ import repositories.UserRepository;
 import values.SYSTEM_PROPERTIES;
 import values.strings.ValidationState;
 import views.components.buttons.CTAButton;
+import views.components.buttons.DisabledButton;
 import views.components.buttons.OutlineButton;
+import views.components.buttons.TextButton;
 import views.components.hboxes.RootElement;
 import views.components.textfields.DefaultTextfield;
 import views.components.textfields.PasswordTextfield;
@@ -112,7 +114,7 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
 
         buttonContainer = new BaseVBox().withLooseSpacing().centerOnBothAxis();
             loginButton     = new CTAButton("Log me in").withBoldFont();
-            registerButton  = new OutlineButton("I don't have an account").withLightFont().underlineTheText();
+            registerButton  = new TextButton("I don't have an account");
     }
 
     @Override

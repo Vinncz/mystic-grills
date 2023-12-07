@@ -1,0 +1,15 @@
+.root {
+    -transparent            : transparent;
+    -primary-black          : rgba( 54,  54,  54, 1);
+    -primary-black-on-hover : rgba(144, 144, 144, 1);
+    -primary-white          : rgba(255, 255, 255, 1);
+    -primary-lightgray      : rgba(228, 228, 228, 1);
+    -primary-gray           : rgba(154, 154, 154, 1);
+    -primary-gray-on-hover  : rgba(119, 119, 119, 1);
+    -primary-red            : rgba(219,  20,  60, 1);
+    -primary-red-on-hover   : rgba(172,  32,  60, 1);
+    -primary-green          : rgba(  0, 128,   0, 1);
+    -primary-green-on-hover : rgba(116, 199, 116, 1);
+    -primary-orange         : rgba(255, 194,  80, 1);
+    -primary-orange-on-hover: rgba(199, 150,  59, 1);
+}

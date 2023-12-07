@@ -1,4 +1,7 @@
-@import url('spacings.css');
+@import url('spacing.css');
+@import url('button.css');
+@import url('textfield.css');
+@import url('color.css');
 
 .root {
     -fx-letter-spacing: 1.5;
@@ -6,42 +9,6 @@
 
 .letterSpacingLoose {
     -fx-letter-spacing: 1.5;
-}
-
-.ctaButton {
-    -fx-background-color: green;
-    -fx-padding: 12 64 12 64;
-    -fx-border-width: 0;
-    -fx-background-radius: 255;
-    -fx-background-insets: 0;
-    -fx-text-fill: white;
-}
-
-.ctaButton:hover {
-    -fx-background-color: rgb(116, 199, 116);
-}
-
-.outlineButton {
-    -fx-background-color: rgba(0, 0, 0, 0);
-    -fx-border-width: 0;
-    /* -fx-background-color: rgb(146, 45, 38); */
-}
-
-.outlineButton:hover {
-    -fx-text-fill: rgb(144, 144, 144);
-}
-
-.destructiveButton {
-    -fx-background-color: #dc143c;
-    -fx-padding: 12 64 12 64;
-    -fx-border-width: 0;
-    -fx-background-radius: 255;
-    -fx-background-insets: 0;
-    -fx-text-fill: white;
-}
-
-.destructiveButton:hover {
-    -fx-background-color: #ac1f3b;
 }
 
 .underline {
@@ -56,26 +23,12 @@
     -fx-cursor: hand;
 }
 
-.defaultTextfield {
-    /* -fx-background-color: #2fa02f, #2f2d2f; */
-    /* -fx-text-fill: #ffffff; */
-    /* -fx-display-caret: false; */
-    -fx-background-radius: 8;
-    -fx-padding: 12 16 12 16;
-
-    /* -fx-alignment: center-right; */
+.errorRedBackground {
+    -fx-background-color: -primary-red;
+    -fx-prompt-text-fill: -primary-lightgray;
+    -fx-text-fill: -primary-white;
 }
 
-.passwordTextfield {
-    -fx-background-radius: 8;
-    -fx-padding: 12 16 12 16;
-}
-
-.redBg {
-    -fx-background-color: #dc143c;
-    -fx-text-fill: white;
-}
-
-.redText {
-    -fx-text-fill: #dc143c;
+.errorRedText {
+    -fx-text-fill: -primary-red;
 }

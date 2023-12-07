@@ -47,7 +47,7 @@ public class VanishingLabelValidationStrategy implements ValidationStrategy<Vani
     @Override
     public void switchToErrorState(String _key, Object _value) {
         this.objectReference.setText(_key);
-        this.objectReference.getStyleClass().add("redText");
+        this.objectReference.getStyleClass().add(ValidationState.ERROR_STATE_TEXT.value);
         this.objectReference.setVisible(true);
         this.objectReference.setManaged(true);
     }
@@ -55,7 +55,7 @@ public class VanishingLabelValidationStrategy implements ValidationStrategy<Vani
     @Override
     public void revertToNormalState(String _key, Object _value) {
         this.objectReference.setText("");
-        this.objectReference.getStyleClass().remove("redText");
+        this.objectReference.getStyleClass().remove(ValidationState.ERROR_STATE_TEXT.value);
         this.objectReference.setVisible(false);
         this.objectReference.setManaged(false);
     }

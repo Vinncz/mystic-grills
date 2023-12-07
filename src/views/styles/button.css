@@ -1,0 +1,73 @@
+.root {
+    -button-padding: 12 64 12 64;
+
+    -button-background-radius: 255;
+
+    -button-border-width: 1;
+    -button-border-radius: 255;
+}
+
+.ctaButton {
+    -fx-background-color: -primary-green;
+    -fx-padding: 12 64 12 64;
+    -fx-background-radius: 255;
+    -fx-text-fill: -primary-white;
+}
+
+.ctaButton:hover {
+    -fx-background-color: -primary-green-on-hover;
+}
+
+.outlineButton {
+    -fx-background-color: -transparent;
+    -fx-border-radius: 255;
+    -fx-padding: 12 64 12 64;
+    -fx-border-width: -button-border-width;
+    -fx-border-color: -primary-black;
+}
+
+.outlineButton:hover {
+    -fx-text-fill: -primary-black-on-hover;
+    -fx-border-color: -primary-black-on-hover;
+}
+
+.destructiveButton {
+    -fx-background-color: -primary-red;
+    -fx-padding: 12 64 12 64;
+    -fx-background-radius: 255;
+    -fx-text-fill: -primary-white;
+}
+
+.destructiveButton:hover {
+    -fx-background-color: -primary-red-on-hover;
+}
+
+.editButton {
+    -fx-background-color: -primary-orange;
+    -fx-padding: 12 64 12 64;
+    -fx-background-radius: 255;
+    -fx-text-fill: -primary-black;
+}
+
+.editButton:hover {
+    -fx-background-color: -primary-orange-on-hover;
+    -fx-text-fill: -primary-white;
+}
+
+.textButton {
+    -fx-background-color: -transparent;
+    -fx-padding: 12 32 12 32;
+    -fx-text-fill: -primary-black;
+}
+
+.textButton:hover {
+    -fx-text-fill: -primary-black-on-hover;
+}
+
+.disabledButton {
+    -fx-cursor: default !important;
+    -fx-background-color: -primary-gray;
+    -fx-padding: 12 64 12 64;
+    -fx-background-radius: 255;
+    -fx-text-fill: -primary-white;
+}

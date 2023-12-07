@@ -45,12 +45,12 @@ public class TextfieldValidationStrategy implements ValidationStrategy<Textfield
 
     @Override
     public void switchToErrorState (String _key, Object _value) {
-        this.objectReference.getStyleClass().add("redBg");
+        this.objectReference.getStyleClass().add(ValidationState.ERROR_STATE_BACKGROUND.value);
     }
 
     @Override
     public void revertToNormalState (String _key, Object _value) {
-        this.objectReference.getStyleClass().remove("redBg");
+        this.objectReference.getStyleClass().remove(ValidationState.ERROR_STATE_BACKGROUND.value);
     }
 
 }

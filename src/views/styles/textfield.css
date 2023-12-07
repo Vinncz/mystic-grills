@@ -1,0 +1,9 @@
+.defaultTextfield {
+    -fx-background-radius: 8;
+    -fx-padding: 12 16 12 16;
+}
+
+.passwordTextfield {
+    -fx-background-radius: 8;
+    -fx-padding: 12 16 12 16;
+}

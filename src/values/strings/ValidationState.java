@@ -29,7 +29,13 @@ public enum ValidationState {
         ("Incorrect password entered"),
 
     GENERIC_INVALID_ARGUMENT
-        ("Invalid input!");
+        ("Invalid input!"),
+
+    ERROR_STATE_BACKGROUND
+        ("errorRedBackground"),
+
+    ERROR_STATE_TEXT
+        ("errorRedText");
 
     public String value;
     private ValidationState (String _value) {

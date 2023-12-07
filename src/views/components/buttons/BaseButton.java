@@ -18,6 +18,7 @@ public class BaseButton extends Button implements Observer, UsesStrategy<BaseBut
     private static final String VARIANT_CALL_TO_ACTION = "ctaButton";
     private static final String VARIANT_OUTLINE        = "outlineButton";
     private static final String VARIANT_EDIT           = "editButton";
+    private static final String VARIANT_TEXT           = "textButton";
     private static final String VARIANT_DISABLED       = "disabledButton";
 
     private Boolean usesAlternateFont = false;
@@ -51,6 +52,11 @@ public class BaseButton extends Button implements Observer, UsesStrategy<BaseBut
 
     public BaseButton editVariant () {
         this.buttonVariant = VARIANT_EDIT;
+        return build();
+    }
+
+    public BaseButton textVariant () {
+        this.buttonVariant = VARIANT_TEXT;
         return build();
     }
 
@@ -93,6 +99,7 @@ public class BaseButton extends Button implements Observer, UsesStrategy<BaseBut
 
         return this;
     }
+
 
     @Override
     public BaseButton growsHorizontally() {
