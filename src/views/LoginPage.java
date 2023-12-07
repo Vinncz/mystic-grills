@@ -19,8 +19,7 @@ import repositories.UserRepository;
 import values.SYSTEM_PROPERTIES;
 import values.strings.ValidationState;
 import views.components.buttons.CTAButton;
-import views.components.buttons.DisabledButton;
-import views.components.buttons.OutlineButton;
+
 import views.components.buttons.TextButton;
 import views.components.hboxes.RootElement;
 import views.components.textfields.DefaultTextfield;
@@ -30,6 +29,8 @@ import views.components.vboxes.Container;
 import views.components.labels.H1Label;
 import views.components.labels.H3Label;
 import views.components.labels.H5Label;
+import views.components.number_inputs.BaseNumberfield;
+import views.components.number_inputs.BaseNumberfieldBuilder;
 import views.guidelines.PageDeclarationGuideline_v1;
 
 public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1 {
@@ -48,6 +49,7 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
     private Label emailWarnLabel, passwordWarnLabel;
 
     private VBox buttonContainer;
+    private HBox numberInput;
     private Button loginButton, registerButton;
 
     public LoginPage () {
@@ -71,9 +73,9 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
     @Override
     public void initializeControls() {
         rootElement    = new RootElement();
-        container      = new Container().centerHorizontally();
+        container      = new Container().centerContentHorizontally();
 
-        pageIdentifierContainer = new BaseVBox().withNoSpacing().centerHorizontally();
+        pageIdentifierContainer = new BaseVBox().withNoSpacing().centerContentHorizontally();
             brand     = new H1Label("Mystic Grills").withBoldFont().withAlternateFont();
             pageTitle = new H3Label("Login Portal").withExtraBoldFont();
 
@@ -112,7 +114,7 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
                                                 .setRegisteredErrorWatchList(errorToWatchForPasswordRelatedElement)
                                         );
 
-        buttonContainer = new BaseVBox().withLooseSpacing().centerOnBothAxis();
+        buttonContainer = new BaseVBox().withTightSpacing().centerContentBothAxis();
             loginButton     = new CTAButton("Log me in").withBoldFont();
             registerButton  = new TextButton("I don't have an account");
     }
@@ -148,19 +150,19 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
         pageContent.setSpacing(24);
         buttonContainer.getStyleClass().addAll("pt-16");
 
+        ((BaseNumberfield) numberInput).getInputField().setMaxWidth(150);
+
     }
 
     @Override
     public void initializeEventListeners() {
         emailField.setOnMouseClicked(e -> {
-            System.out.println(errorToWatchForEmailRelatedElement.size());
             for (ValidationState vs : errorToWatchForEmailRelatedElement) {
                 App.preferences.putValue(vs.value, false);
             }
         });
 
         passwordField.setOnMouseClicked(e -> {
-            System.out.println(errorToWatchForPasswordRelatedElement.size());
             for (ValidationState vs : errorToWatchForPasswordRelatedElement) {
                 App.preferences.putValue(vs.value, false);
             }
@@ -181,7 +183,8 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
                 App.preferences.putValue(authResult.getState().value, true);
 
             } else {
-                // App.redirectTo( App.sceneBuilder(new LoginPage()) );
+                App.redirectTo( App.sceneBuilder(new temp()) );
+
             }
         });
 
@@ -195,6 +198,7 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
         );
 
         buttonContainer.getChildren().addAll(
+            numberInput,
             loginButton,
             registerButton
         );

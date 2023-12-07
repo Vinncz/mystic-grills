@@ -76,9 +76,16 @@ public class SharedPreference implements Publisher {
      */
     public void putValue (String _key, Object _value) {
         Object o = preferences.put(_key, _value);
+        log(_key, _value, o);
+    }
+
+    private void log(String _key, Object _value, Object o) {
         if ( o != _value ) {
-            System.out.println("New value incoming for key " + _key + ", old value is " + o + " and the value is " + _value);
             notifyChanges(_key, _value);
+            if ( SYSTEM_PROPERTIES.ACTIVATE_LOG.value.equalsIgnoreCase("true") ) {
+                System.out.println("New value incoming for key " + _key + ", old value is " + o + " and the value is " + _value);
+            }
+
         }
     }
 

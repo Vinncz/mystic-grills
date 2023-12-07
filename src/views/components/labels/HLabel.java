@@ -120,4 +120,10 @@ public class HLabel extends Label implements Observer, UsesStrategy<HLabel>, Cus
         if (this.strat != null) this.strat.execute((String) _key, _value, this);
     }
 
+    @Override
+    public HLabel withSizeOf(Integer _fontSize) {
+        this.fontSize = _fontSize;
+        return build();
+    }
+
 }
