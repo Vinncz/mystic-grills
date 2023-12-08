@@ -2,8 +2,34 @@ package views.components.interfaces;
 
 public interface CustomizableAlignment <T> {
 
-    public T centerHorizontally ();
-    public T centerVertically ();
-    public T centerOnBothAxis ();
+    /**
+     * <pre>
+     * content starts here:
+     *- ○ -
+     *- - -
+     *- - -
+     * </pre>
+     */
+    public T centerContentHorizontally ();
+
+    /**
+     * <pre>
+     * content starts here:
+     *- - -
+     *○ - -
+     *- - -
+     * </pre>
+     */
+    public T centerContentVertically ();
+
+    /**
+     * <pre>
+     * content starts here:
+     *- - -
+     *- ○ -
+     *- - -
+     * </pre>
+     */
+    public T centerContentBothAxis ();
 
 }

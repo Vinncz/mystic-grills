@@ -2,6 +2,7 @@ package views.components.textfields;
 
 import design_patterns.observer_pattern.Observer;
 import design_patterns.strategy_pattern.Strategy;
+import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 import views.components.interfaces.UsesStrategy;
@@ -16,6 +17,7 @@ public class DefaultTextfield extends TextField implements Observer, UsesStrateg
     public DefaultTextfield (String _placeholder) {
         super();
         setPromptText(_placeholder);
+        setAlignment(Pos.TOP_LEFT);
         initialize();
     }
 

@@ -48,19 +48,19 @@ public class BaseVBox extends VBox implements Observer, CustomizableAlignment<Ba
     }
 
     @Override
-    public BaseVBox centerHorizontally () {
+    public BaseVBox centerContentHorizontally () {
         this.alignment = Pos.TOP_CENTER;
         return build();
     }
 
     @Override
-    public BaseVBox centerVertically () {
+    public BaseVBox centerContentVertically () {
         this.alignment = Pos.CENTER_LEFT;
         return build();
     }
 
     @Override
-    public BaseVBox centerOnBothAxis () {
+    public BaseVBox centerContentBothAxis () {
         this.alignment = Pos.CENTER;
         return build();
     }

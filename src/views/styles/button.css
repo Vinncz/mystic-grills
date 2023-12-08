@@ -1,16 +1,17 @@
-.root {
-    -button-padding: 12 64 12 64;
+.baseButton {
+    -fx-padding: 14 15 13 15;
+    -fx-background-color: -primary-lightgray;
+}
 
-    -button-background-radius: 255;
-
-    -button-border-width: 1;
-    -button-border-radius: 255;
+.baseButton:hover {
+    -fx-background-color: -primary-gray-on-hover;
+    -fx-text-fill: -primary-white;
 }
 
 .ctaButton {
     -fx-background-color: -primary-green;
     -fx-padding: 12 64 12 64;
-    -fx-background-radius: 255;
+    -fx-background-radius: 255px;
     -fx-text-fill: -primary-white;
 }
 
@@ -20,9 +21,9 @@
 
 .outlineButton {
     -fx-background-color: -transparent;
-    -fx-border-radius: 255;
+    -fx-border-radius: 255px;
     -fx-padding: 12 64 12 64;
-    -fx-border-width: -button-border-width;
+    -fx-border-width: 1px;
     -fx-border-color: -primary-black;
 }
 
@@ -45,7 +46,7 @@
 .editButton {
     -fx-background-color: -primary-orange;
     -fx-padding: 12 64 12 64;
-    -fx-background-radius: 255;
+    -fx-background-radius: 255px;
     -fx-text-fill: -primary-black;
 }
 
@@ -68,6 +69,6 @@
     -fx-cursor: default !important;
     -fx-background-color: -primary-gray;
     -fx-padding: 12 64 12 64;
-    -fx-background-radius: 255;
+    -fx-background-radius: 255px;
     -fx-text-fill: -primary-white;
 }

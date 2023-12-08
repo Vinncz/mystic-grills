@@ -2,6 +2,7 @@ package views.components.textfields;
 
 import design_patterns.observer_pattern.Observer;
 import design_patterns.strategy_pattern.Strategy;
+import javafx.geometry.Pos;
 import javafx.scene.control.PasswordField;
 import javafx.scene.text.Font;
 import views.components.interfaces.SettableIdBuilder;
@@ -17,6 +18,7 @@ public class PasswordTextfield extends PasswordField implements Observer, Settab
     public PasswordTextfield (String _placeholder) {
         super();
         setPromptText(_placeholder);
+        setAlignment(Pos.TOP_LEFT);
         initialize();
     }
 

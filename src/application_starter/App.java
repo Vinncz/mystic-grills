@@ -23,6 +23,10 @@ public class App extends Application {
 
 	public static Integer stagePadding = 60;
 
+	public static Double STAGE_WIDTH  = -1.0;
+	public static Double STAGE_HEIGHT = -1.0;
+	public static Boolean IS_MAXIMIZED = false;
+
 	public static void main (String [] args) {
 
 		// debugMenuItemRepository();
@@ -158,6 +162,8 @@ public class App extends Application {
 
 		primaryStage.show();
 
+		STAGE_HEIGHT = primaryStage.getHeight();
+		STAGE_WIDTH = primaryStage.getWidth();
 	}
 
 	/**
@@ -182,9 +188,17 @@ public class App extends Application {
      * @param _targetScene • The scene who will replace the scene that is currently shown.
      */
     public static void redirectTo (Scene _targetScene) {
-		_targetScene = attachStylesheet(_targetScene);
+		STAGE_HEIGHT = primaryStage.getHeight() >= 0 ? primaryStage.getHeight(): Double.parseDouble(SYSTEM_PROPERTIES.APPLICATION_TARGET_HEIGHT.value);
+		STAGE_WIDTH  = primaryStage.getWidth()  >= 0 ? primaryStage.getWidth() : Double.parseDouble(SYSTEM_PROPERTIES.APPLICATION_TARGET_WIDTH.value);
+		IS_MAXIMIZED = primaryStage.isMaximized();
 
+		_targetScene = attachStylesheet(_targetScene);
 		primaryStage.setScene(_targetScene);
+
+		primaryStage.setWidth(STAGE_WIDTH);
+		primaryStage.setHeight(STAGE_HEIGHT);
+
+		primaryStage.setMaximized(IS_MAXIMIZED);
 	}
 
 	/**
@@ -194,11 +208,25 @@ public class App extends Application {
 	 * @return The created scene object
 	 */
 	public static Scene sceneBuilder (Pane _page) {
-		return new Scene (
-			_page,
-			Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_TARGET_WIDTH.value),
-			Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_TARGET_HEIGHT.value)
-		);
+
+		if (STAGE_HEIGHT == -1 && STAGE_WIDTH == -1) {
+			return new Scene (
+				_page,
+				Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_TARGET_WIDTH.value),
+				Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_TARGET_HEIGHT.value)
+			);
+
+		} else {
+			STAGE_HEIGHT = primaryStage.getHeight();
+			STAGE_WIDTH  = primaryStage.getWidth();
+
+			return new Scene (
+				_page,
+				STAGE_WIDTH,
+				STAGE_HEIGHT
+			);
+
+		}
 	}
 
 }

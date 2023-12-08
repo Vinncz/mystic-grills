@@ -36,4 +36,6 @@ public interface CustomizableFont <T> {
      */
     public T withLightFont();
 
+    public T withSizeOf(Integer _fontSize);
+
 }

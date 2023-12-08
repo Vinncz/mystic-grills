@@ -14,6 +14,7 @@ import views.components.interfaces.UsesStrategy;
 
 public class BaseButton extends Button implements Observer, UsesStrategy<BaseButton>, CustomizableGrowingDirection<BaseButton>, CustomizableFont<BaseButton> {
 
+    private static final String VARIANT_BASE           = "baseButton";
     private static final String VARIANT_DESTRUCTIVE    = "destructiveButton";
     private static final String VARIANT_CALL_TO_ACTION = "ctaButton";
     private static final String VARIANT_OUTLINE        = "outlineButton";
@@ -30,9 +31,14 @@ public class BaseButton extends Button implements Observer, UsesStrategy<BaseBut
 
     public BaseButton ( String _textForButton ) {
         super(_textForButton);
-        this.buttonVariant = VARIANT_CALL_TO_ACTION;
+        this.buttonVariant = VARIANT_BASE;
         build();
 
+    }
+
+    public BaseButton baseVariant () {
+        this.buttonVariant = VARIANT_BASE;
+        return build();
     }
 
     public BaseButton ctaVariant () {
@@ -183,6 +189,12 @@ public class BaseButton extends Button implements Observer, UsesStrategy<BaseBut
 	@Override
 	public BaseButton withLightFont() {
 		this.fontVariant = FontVariants.LIGHT;
+        return build();
+    }
+
+    @Override
+    public BaseButton withSizeOf (Integer _fontSize) {
+        this.fontSize = _fontSize;
         return build();
     }
 

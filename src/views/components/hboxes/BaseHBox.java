@@ -47,19 +47,19 @@ public class BaseHBox extends HBox implements Observer, CustomizableAlignment<Ba
     }
 
     @Override
-    public BaseHBox centerHorizontally () {
+    public BaseHBox centerContentHorizontally () {
         this.alignment = Pos.TOP_CENTER;
         return build();
     }
 
     @Override
-    public BaseHBox centerVertically () {
+    public BaseHBox centerContentVertically () {
         this.alignment = Pos.CENTER_LEFT;
         return build();
     }
 
     @Override
-    public BaseHBox centerOnBothAxis () {
+    public BaseHBox centerContentBothAxis () {
         this.alignment = Pos.CENTER;
         return build();
     }
