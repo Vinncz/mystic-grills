@@ -190,6 +190,7 @@ public class NewMenuItemPage extends BorderPane implements PageDeclarationGuidel
         String menuPrice = menuPriceField.getText();
         String meneuDescription = menuDescriptionField.getText();
 
+
     }
 
     @Override
