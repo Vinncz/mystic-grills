@@ -137,7 +137,7 @@ public class NewMenuItemPage extends BorderPane implements PageDeclarationGuidel
                                                 .setRegisteredErrorWatchList(errorToWatchForMenuDescriptionRelatedElement)
                                         );
             
-        buttonContainer = new BaseVBox().withLooseSpacing().centerVertically();
+        buttonContainer = new BaseVBox().withLooseSpacing();
             saveButton = new CTAButton("Save");
     }
 
@@ -190,6 +190,7 @@ public class NewMenuItemPage extends BorderPane implements PageDeclarationGuidel
         String menuPrice = menuPriceField.getText();
         String meneuDescription = menuDescriptionField.getText();
 
+        // add
 
     }
 
