@@ -10,10 +10,13 @@ import design_patterns.strategy_pattern.LabelValidationStrategy;
 import design_patterns.strategy_pattern.TextfieldValidationStrategy;
 import design_patterns.strategy_pattern.VanishingLabelValidationStrategy;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import repositories.UserRepository;
 import values.SYSTEM_PROPERTIES;
@@ -21,6 +24,7 @@ import values.strings.ValidationState;
 import views.components.buttons.CTAButton;
 
 import views.components.buttons.TextButton;
+import views.components.combo_boxes.ComboBoxData;
 import views.components.hboxes.RootElement;
 import views.components.textfields.DefaultTextfield;
 import views.components.textfields.PasswordTextfield;
@@ -29,14 +33,14 @@ import views.components.vboxes.Container;
 import views.components.labels.H1Label;
 import views.components.labels.H3Label;
 import views.components.labels.H5Label;
-import views.components.number_inputs.BaseNumberfield;
-import views.components.number_inputs.BaseNumberfieldBuilder;
+import views.components.scroll_panes.BaseScrollPane;
 import views.guidelines.PageDeclarationGuideline_v1;
 
 public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1 {
 
     private HBox rootElement;
     private VBox container;
+    private ScrollPane scrollSupport;
 
     private VBox pageIdentifierContainer;
     private Label brand, pageTitle;
@@ -49,12 +53,21 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
     private Label emailWarnLabel, passwordWarnLabel;
 
     private VBox buttonContainer;
-    private HBox numberInput;
+    private ComboBox<ComboBoxData> comBox;
+    private Pane baseButtonRadioGroup;
     private Button loginButton, registerButton;
 
     public LoginPage () {
         initializeScene();
     }
+
+    ArrayList<ComboBoxData> cbdatas = new ArrayList<>(){
+                {
+                    add( new ComboBoxData("One", "OneSupport") );
+                    add( new ComboBoxData("Two", "TwoSupport") );
+                    add( new ComboBoxData("Three", "ThreeSupport") );
+                }
+            };
 
     private ArrayList<ValidationState> errorToWatchForEmailRelatedElement = new ArrayList<>(){
         {
@@ -74,6 +87,7 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
     public void initializeControls() {
         rootElement    = new RootElement();
         container      = new Container().centerContentHorizontally();
+        scrollSupport  = new BaseScrollPane(rootElement);
 
         pageIdentifierContainer = new BaseVBox().withNoSpacing().centerContentHorizontally();
             brand     = new H1Label("Mystic Grills").withBoldFont().withAlternateFont();
@@ -150,8 +164,6 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
         pageContent.setSpacing(24);
         buttonContainer.getStyleClass().addAll("pt-16");
 
-        ((BaseNumberfield) numberInput).getInputField().setMaxWidth(150);
-
     }
 
     @Override
@@ -198,7 +210,8 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
         );
 
         buttonContainer.getChildren().addAll(
-            numberInput,
+            baseButtonRadioGroup,
+            comBox,
             loginButton,
             registerButton
         );
@@ -234,7 +247,7 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
 
     @Override
     public void setupScene() {
-        setCenter(rootElement);
+        setCenter(scrollSupport);
 
     }
 

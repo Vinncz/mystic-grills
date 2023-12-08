@@ -72,3 +72,27 @@
     -fx-background-radius: 255px;
     -fx-text-fill: -primary-white;
 }
+
+.radioButton {
+    -fx-background-color: -primary-lightgray;
+    -fx-border-color: -primary-gray;
+    -fx-text-fill: -primary-black-on-hover;
+    -fx-padding: 12 24 12 24;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.radioButton:hover {
+    -fx-background-color: -primary-lightgray-on-hover;
+}
+
+.radioButtonSelected {
+    -fx-background-color: -primary-lightblue;
+    -fx-border-color: -border-lightblue;
+    -fx-text-fill: -text-lightblue;
+    -fx-padding: 12 24 12 24;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
