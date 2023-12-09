@@ -10,13 +10,11 @@ import design_patterns.strategy_pattern.LabelValidationStrategy;
 import design_patterns.strategy_pattern.TextfieldValidationStrategy;
 import design_patterns.strategy_pattern.VanishingLabelValidationStrategy;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import repositories.UserRepository;
 import values.SYSTEM_PROPERTIES;
@@ -38,9 +36,9 @@ import views.guidelines.PageDeclarationGuideline_v1;
 
 public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1 {
 
+    private ScrollPane scrollSupport;
     private HBox rootElement;
     private VBox container;
-    private ScrollPane scrollSupport;
 
     private VBox pageIdentifierContainer;
     private Label brand, pageTitle;
@@ -53,8 +51,6 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
     private Label emailWarnLabel, passwordWarnLabel;
 
     private VBox buttonContainer;
-    private ComboBox<ComboBoxData> comBox;
-    private Pane baseButtonRadioGroup;
     private Button loginButton, registerButton;
 
     public LoginPage () {
@@ -181,7 +177,7 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
         });
 
         registerButton.setOnMouseClicked(e -> {
-            App.redirectTo( App.sceneBuilder(new temp()) );
+            App.redirectTo( App.sceneBuilder(new RegisterPage()) );
         });
 
         loginButton.setOnMouseClicked(e -> {
@@ -210,8 +206,6 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
         );
 
         buttonContainer.getChildren().addAll(
-            baseButtonRadioGroup,
-            comBox,
             loginButton,
             registerButton
         );

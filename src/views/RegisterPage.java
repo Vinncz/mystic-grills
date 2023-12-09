@@ -11,14 +11,12 @@ import design_patterns.strategy_pattern.TextfieldValidationStrategy;
 import design_patterns.strategy_pattern.VanishingLabelValidationStrategy;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import models.User;
-import models.User.UserRole;
 import repositories.UserRepository;
-import values.SYSTEM_PROPERTIES;
 import values.strings.ValidationState;
 import views.components.buttons.CTAButton;
 import views.components.buttons.TextButton;
@@ -27,7 +25,7 @@ import views.components.hboxes.RootElement;
 import views.components.labels.H1Label;
 import views.components.labels.H3Label;
 import views.components.labels.H5Label;
-import views.components.number_inputs.BaseNumberfield;
+import views.components.scroll_panes.BaseScrollPane;
 import views.components.textfields.DefaultTextfield;
 import views.components.textfields.PasswordTextfield;
 import views.components.vboxes.BaseVBox;
@@ -36,6 +34,7 @@ import views.guidelines.PageDeclarationGuideline_v1;
 
 public class RegisterPage extends BorderPane implements PageDeclarationGuideline_v1 {
 
+	private ScrollPane scrollSupport;
 	private HBox rootElement;
 	private VBox container;
 
@@ -64,20 +63,20 @@ public class RegisterPage extends BorderPane implements PageDeclarationGuideline
 	};
 	private ArrayList<ValidationState> errorToWatchForEmailRelatedElements = new ArrayList<>() {
 		{
-			add(ValidationState.DUPLICATE_EMAIL);
 			add(ValidationState.EMPTY_EMAIL);
+			add(ValidationState.DUPLICATE_EMAIL);
 		}
 	};
 	private ArrayList<ValidationState> errorToWatchForPasswordRelatedElements = new ArrayList<>() {
 		{
-			add(ValidationState.INVALID_PASSWORD_LENGTH);
 			add(ValidationState.EMPTY_PASSWORD);
+			add(ValidationState.INVALID_PASSWORD_LENGTH);
 		}
 	};
 	private ArrayList<ValidationState> errorToWatchForPasswordConfirmationRelatedElements = new ArrayList<>() {
 		{
-			add(ValidationState.INCORRECT_CONFIRMATION_PASSWORD);
 			add(ValidationState.EMPTY_CONFIRMATION_PASSWORD);
+			add(ValidationState.INCORRECT_CONFIRMATION_PASSWORD);
 		}
 	};
 
@@ -85,14 +84,15 @@ public class RegisterPage extends BorderPane implements PageDeclarationGuideline
 	public void initializeControls() {
 		rootElement 	= new RootElement();
 		container 		= new Container().centerContentHorizontally();
+		scrollSupport   = new BaseScrollPane(rootElement);
 
 		pageIdentifierContainer = new BaseVBox().withNoSpacing().centerContentHorizontally();
 			brand     = new H1Label("Mystic Grills").withBoldFont().withAlternateFont();
-			pageTitle = new H3Label("Register Portal").withExtraBoldFont();
+			pageTitle = new H3Label("Registration Portal").withExtraBoldFont();
 
 		pageContent = new BaseVBox().withNormalSpacing().centerContentHorizontally();
 		userSectionContainer = new BaseHBox().withTightSpacing().centerContentHorizontally();
-			userFieldContainer	= new BaseVBox().withTightSpacing();
+			userFieldContainer	= new BaseVBox().withTightSpacing().growsHorizontally();
 				usernameLabel	= new H5Label("Username")
 										.setStrategy(
 												new LabelValidationStrategy()
@@ -109,7 +109,7 @@ public class RegisterPage extends BorderPane implements PageDeclarationGuideline
 													.setRegisteredErrorWatchList(errorToWatchForUsernameRelatedElements)
 										);
 
-			emailFieldContainer = new BaseVBox().withTightSpacing();
+			emailFieldContainer = new BaseVBox().withTightSpacing().growsHorizontally();
 				emailLabel		= new H5Label("Email")
 										.setStrategy(
 												new LabelValidationStrategy()
@@ -127,7 +127,7 @@ public class RegisterPage extends BorderPane implements PageDeclarationGuideline
 										);
 
 		passwordSectionContainer = new BaseHBox().withTightSpacing().centerContentHorizontally();
-			passwordFieldContainer = new BaseVBox().withTightSpacing();
+			passwordFieldContainer = new BaseVBox().withTightSpacing().growsHorizontally();
 				passwordLabel	= new H5Label("Password")
 										.setStrategy(
 											new LabelValidationStrategy()
@@ -144,7 +144,7 @@ public class RegisterPage extends BorderPane implements PageDeclarationGuideline
 												.setRegisteredErrorWatchList(errorToWatchForPasswordRelatedElements)
 										);
 
-			passwordConfirmationContainer = new BaseVBox().withTightSpacing();
+			passwordConfirmationContainer = new BaseVBox().withTightSpacing().growsHorizontally();
 				passwordConfirmationLabel = new H5Label("Password Confirmation")
 												.setStrategy(
 													new LabelValidationStrategy()
@@ -205,6 +205,11 @@ public class RegisterPage extends BorderPane implements PageDeclarationGuideline
 			(Observer) passwordConfirmationField
 		);
 
+		userFieldContainer.setMaxWidth(500);
+		emailFieldContainer.setMaxWidth(500);
+		passwordFieldContainer.setMaxWidth(500);
+		passwordConfirmationContainer.setMaxWidth(500);
+
 		usernameWarnLabel.setVisible(false);
 			usernameWarnLabel.setManaged(false);
 		emailWarnLabel.setVisible(false);
@@ -214,7 +219,6 @@ public class RegisterPage extends BorderPane implements PageDeclarationGuideline
 		passwordConfirmationWarnLabel.setVisible(false);
 			passwordConfirmationWarnLabel.setManaged(false);
 
-		pageContent.setMaxWidth(Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_MIN_WIDTH.value));
 		pageContent.getStyleClass().addAll("py-16");
 		pageContent.setSpacing(24);
 		buttonContainer.getStyleClass().addAll("pt-16");
@@ -252,24 +256,19 @@ public class RegisterPage extends BorderPane implements PageDeclarationGuideline
 		});
 
 		registerButton.setOnMouseClicked(e -> {
-			String username = usernameField.getText();
-			String email = emailField.getText();
-			String password = passwordField.getText();
+			String username             = usernameField.getText();
+			String email                = emailField.getText();
+			String password             = passwordField.getText();
 			String passwordConfirmation = passwordConfirmationField.getText();
 
 			UserController uc = new UserController();
-			UserRepository.AuthenticationReturnDatatype valResult = uc.validateRegistration(username, email, password, passwordConfirmation);
+			UserRepository.AuthenticationReturnDatatype registrationResult = uc.validateRegistration(username, email, password, passwordConfirmation);
 
-			if (valResult.getState() != null) {
-				App.preferences.putValue(valResult.getState().value, true);
-			}else {
-				User u = new User();
-				u.setUserName(username);
-				u.setUserEmail(email);
-				u.setUserRole(UserRole.CUSTOMER);
-				u.setUserPassword(password);
+			if (registrationResult.getState() != null) {
+				App.preferences.putValue(registrationResult.getState().value, true);
 
-				uc.post(u);
+			} else {
+				App.preferences.putValue(App.CURRENT_USER_KEY, registrationResult.getAssociatedUser());
 
 				App.redirectTo(App.sceneBuilder(new temp()));
 			}
@@ -340,7 +339,7 @@ public class RegisterPage extends BorderPane implements PageDeclarationGuideline
 
 	@Override
 	public void setupScene() {
-		setCenter(rootElement);
+		setCenter(scrollSupport);
 	}
 
 }

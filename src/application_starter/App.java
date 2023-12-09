@@ -17,6 +17,8 @@ import views.LoginPage;
 
 public class App extends Application {
 
+	public static final String CURRENT_USER_KEY = "currentlyLoggedInUser";
+
 	private static Stage primaryStage;
 	public  static SharedPreference preferences = new SharedPreference();
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import models.User;
+import models.User.UserRole;
 import repositories.UserRepository;
 import values.strings.ValidationState;
 
@@ -46,55 +47,67 @@ public class UserController {
         return userRepo.authenticateUser(_userEmail, _userPassword);
 
     }
-    
-    /** 
-     * Validates user registration with the inputed username, email, password, and confirmation password.
-     * 
+
+    /**
+     * Validates user registration data. If everything's clean, proceed to make and then return the new account.
+     *
      * @param _username • The username of the user to validate.
      * @param _userEmail • The email of the user to validate.
      * @param _userPassword • The password of the user to validate.
      * @param _userConfirmPassword • The confirmation password of the user to validate.
      * @return An instance of {@code AuthenticationReturnDatatype}, which indicates the whether the validation is successfully done or not through its state;
      */
-    public UserRepository.AuthenticationReturnDatatype validateRegistration (String _username, String _email, String _password, String _confirmationPassword) {
-    	UserRepository.AuthenticationReturnDatatype returnValidation = new UserRepository.AuthenticationReturnDatatype();
-    	
-    	Optional<User> target = userRepo.getUserByEmail(_email);
-    	
-    	if (validator.isBlank(_username)) {
-			returnValidation.setState(ValidationState.EMPTY_USERNAME);
-			
-			return returnValidation;
-    	}
-    	if (validator.isBlank(_email)) {
-			returnValidation.setState(ValidationState.EMPTY_EMAIL);
-			
-			return returnValidation;
-    	}else if (!target.isEmpty()) {
-    		returnValidation.setState(ValidationState.DUPLICATE_EMAIL);
-    		
-    		return returnValidation;
-    	}
-    	if (validator.isBlank(_password)) {
-			returnValidation.setState(ValidationState.EMPTY_PASSWORD);
-			
-			return returnValidation;
-    	}else if (validator.lessThanNCharacters(_password, 6)) {
-    		returnValidation.setState(ValidationState.INVALID_PASSWORD_LENGTH);
-    		
-    		return returnValidation;
-    	}
-    	if (validator.isBlank(_confirmationPassword)) {
-			returnValidation.setState(ValidationState.EMPTY_CONFIRMATION_PASSWORD);
-			
-			return returnValidation;
-    	}else if (!_password.equals(_confirmationPassword)) {
-    		returnValidation.setState(ValidationState.INCORRECT_CONFIRMATION_PASSWORD);
-    		
-    		return returnValidation;
-    	}
-    	
-		return returnValidation;
+    public UserRepository.AuthenticationReturnDatatype validateRegistration(String _username, String _email, String _password, String _confirmationPassword) {
+        UserRepository.AuthenticationReturnDatatype returnObject = new UserRepository.AuthenticationReturnDatatype();
+
+        if (validator.isBlank(_username)) {
+            returnObject.setState(ValidationState.EMPTY_USERNAME);
+            return returnObject;
+        }
+
+        if (validator.isBlank(_email)) {
+            returnObject.setState(ValidationState.EMPTY_EMAIL);
+            return returnObject;
+        }
+
+        Optional<User> target = userRepo.getUserByEmail(_email);
+        if (target.isPresent()) {
+            returnObject.setState(ValidationState.DUPLICATE_EMAIL);
+            return returnObject;
+        }
+
+        if (validator.isBlank(_password)) {
+            returnObject.setState(ValidationState.EMPTY_PASSWORD);
+            return returnObject;
+        }
+
+        if (validator.lessThanNCharacters(_password, 6)) {
+            returnObject.setState(ValidationState.INVALID_PASSWORD_LENGTH);
+            return returnObject;
+        }
+
+        if (validator.isBlank(_confirmationPassword)) {
+            returnObject.setState(ValidationState.EMPTY_CONFIRMATION_PASSWORD);
+            return returnObject;
+        }
+
+        if (!_password.equals(_confirmationPassword)) {
+            returnObject.setState(ValidationState.INCORRECT_CONFIRMATION_PASSWORD);
+            return returnObject;
+        }
+
+        /* if the code manages to reach this point, then the data is assumed to be sterile */
+        User u = new User();
+        u.setUserName(_username);
+        u.setUserEmail(_email);
+        u.setUserPassword(_confirmationPassword);
+        u.setUserRole(UserRole.CUSTOMER);
+
+        u = userRepo.post(u);
+
+        returnObject.setAssociatedUser(u);
+
+        return returnObject;
     }
 
     /**
