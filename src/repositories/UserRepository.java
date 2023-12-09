@@ -19,7 +19,7 @@ public class UserRepository extends BaseRepository<User> {
 
             String.format("SELECT * FROM %s WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_USER_TABLE.value),
             String.format("SELECT * FROM %s", SYSTEM_PROPERTIES.DATABASE_USER_TABLE.value),
-            String.format("INSERT INTO %s (menu_item_id, quantity) VALUES (?, ?)", SYSTEM_PROPERTIES.DATABASE_USER_TABLE.value),
+            String.format("INSERT INTO %s (role, name, email, password) VALUES (?, ?, ?, ?)", SYSTEM_PROPERTIES.DATABASE_USER_TABLE.value),
             String.format("UPDATE %s SET menu_item_id = ?, quantity = ? WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_USER_TABLE.value),
             String.format("DELETE FROM %s WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_USER_TABLE.value)
         );

@@ -46,6 +46,56 @@ public class UserController {
         return userRepo.authenticateUser(_userEmail, _userPassword);
 
     }
+    
+    /** 
+     * Validates user registration with the inputed username, email, password, and confirmation password.
+     * 
+     * @param _username • The username of the user to validate.
+     * @param _userEmail • The email of the user to validate.
+     * @param _userPassword • The password of the user to validate.
+     * @param _userConfirmPassword • The confirmation password of the user to validate.
+     * @return An instance of {@code AuthenticationReturnDatatype}, which indicates the whether the validation is successfully done or not through its state;
+     */
+    public UserRepository.AuthenticationReturnDatatype validateRegistration (String _username, String _email, String _password, String _confirmationPassword) {
+    	UserRepository.AuthenticationReturnDatatype returnValidation = new UserRepository.AuthenticationReturnDatatype();
+    	
+    	Optional<User> target = userRepo.getUserByEmail(_email);
+    	
+    	if (validator.isBlank(_username)) {
+			returnValidation.setState(ValidationState.EMPTY_USERNAME);
+			
+			return returnValidation;
+    	}
+    	if (validator.isBlank(_email)) {
+			returnValidation.setState(ValidationState.EMPTY_EMAIL);
+			
+			return returnValidation;
+    	}else if (!target.isEmpty()) {
+    		returnValidation.setState(ValidationState.DUPLICATE_EMAIL);
+    		
+    		return returnValidation;
+    	}
+    	if (validator.isBlank(_password)) {
+			returnValidation.setState(ValidationState.EMPTY_PASSWORD);
+			
+			return returnValidation;
+    	}else if (validator.lessThanNCharacters(_password, 6)) {
+    		returnValidation.setState(ValidationState.INVALID_PASSWORD_LENGTH);
+    		
+    		return returnValidation;
+    	}
+    	if (validator.isBlank(_confirmationPassword)) {
+			returnValidation.setState(ValidationState.EMPTY_CONFIRMATION_PASSWORD);
+			
+			return returnValidation;
+    	}else if (!_password.equals(_confirmationPassword)) {
+    		returnValidation.setState(ValidationState.INCORRECT_CONFIRMATION_PASSWORD);
+    		
+    		return returnValidation;
+    	}
+    	
+		return returnValidation;
+    }
 
     /**
      * Communicates with the {@code UserRepository} to bring you the associated account for the given email (if any)
