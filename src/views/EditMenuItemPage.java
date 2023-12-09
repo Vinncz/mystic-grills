@@ -29,7 +29,7 @@ import views.components.vboxes.Container;
 import views.guidelines.PageDeclarationGuideline_v1;
 
 
-public class NewMenuItemPage extends BorderPane implements PageDeclarationGuideline_v1
+public class EditMenuItemPage extends BorderPane implements PageDeclarationGuideline_v1
 {
     private HBox rootElement;
     private VBox container;
@@ -47,7 +47,7 @@ public class NewMenuItemPage extends BorderPane implements PageDeclarationGuidel
     private VBox buttonContainer;
     private Button saveButton;
 
-    public NewMenuItemPage()
+    public EditMenuItemPage()
     {
         initializeScene();
     }
@@ -78,7 +78,7 @@ public class NewMenuItemPage extends BorderPane implements PageDeclarationGuidel
         container = new Container();
 
         pageIdentifierContainer = new BaseVBox();
-            pageTitle = new H1Label("New Menu Item").withExtraBoldFont();
+            pageTitle = new H1Label("Edit Menu Item").withExtraBoldFont();
         
         pageContent = new BaseVBox().withNormalSpacing();
             menuNameFieldContainer = new BaseVBox().withTightSpacing();
@@ -107,7 +107,7 @@ public class NewMenuItemPage extends BorderPane implements PageDeclarationGuidel
                                                 .setRegisteredErrorWatchList(errorToWatchForMenuNameRelatedElement)
                                         );
 
-                menuPriceField = new DefaultTextfield("Menu Price here")
+                menuPriceField = new DefaultTextfield("Menu price here")
                                         .setStrategy(
                                             new TextfieldValidationStrategy()
                                                 .setRegisteredErrorWatchList(errorToWatchForMenuPriceRelatedElement)
