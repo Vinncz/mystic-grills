@@ -14,6 +14,7 @@ import repositories.OrderRepository;
 import values.SYSTEM_PROPERTIES;
 import values.SharedPreference;
 import views.LoginPage;
+import views.NewMenuItemPage;
 
 public class App extends Application {
 
@@ -152,7 +153,7 @@ public class App extends Application {
 	public void start(Stage _primaryStage) throws Exception {
 		primaryStage = _primaryStage;
 
-		final Scene defaultStartupScene = attachStylesheet( sceneBuilder( new LoginPage() ) );
+		final Scene defaultStartupScene = attachStylesheet( sceneBuilder( new NewMenuItemPage() ) );
 		primaryStage.setScene(defaultStartupScene);
 
 		primaryStage.setMinHeight(Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_MIN_HEIGHT.value) + (stagePadding * 2) );

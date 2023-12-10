@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import models.MenuItem;
+import models.User;
 import repositories.helpers.DatabaseExceptionExplainer;
 import repositories.interfaces.BaseRepository;
 import values.SYSTEM_PROPERTIES;
+import values.strings.ValidationState;
 
 public class MenuItemRepository extends BaseRepository<MenuItem> {
 
@@ -22,6 +24,56 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
             String.format("UPDATE %s SET name = ?, description = ?, price = ? WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value),
             String.format("DELETE FROM %s WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_MENU_ITEM_TABLE.value)
         );
+    }
+
+    public static class ValidateReturnDatatype {
+        private ValidationState state = null;
+        private User associatedUser = null;
+
+        public ValidateReturnDatatype () {}
+
+        public String getMessage() {
+            return this.state.value;
+        }
+
+        public ValidationState getState() {
+            return state;
+        }
+
+        public void setState(ValidationState _state) {
+            this.state = _state;
+        }
+
+        public User getAssociatedUser() {
+            return associatedUser;
+        }
+
+        public void setAssociatedUser(User associatedUser) {
+            this.associatedUser = associatedUser;
+        }
+    }
+
+    public Optional<MenuItem> getMenuItemByName(String _menuItemName) {
+        Optional<MenuItem> retrievedObject = Optional.empty();
+        final String query = String.format("SELECT * FROM %s WHERE email = ?", TABLE_NAME);
+
+        try {
+            BaseRepository<MenuItem>.executeQueryReturnDatatypes getByMenuItemNameReport = executeQuery(db, query, _menuItemName);
+            retrievedObject = parse(getByMenuItemNameReport.getResultSet());
+
+            getByMenuItemNameReport.getResultSet().close();
+            getByMenuItemNameReport.getPreparedStatement().close();
+
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainParseFault(_problemDuringQueryExecution);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
+
+        }
+
+        return retrievedObject;
     }
 
     @Override

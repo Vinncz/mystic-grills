@@ -22,4 +22,7 @@ public class ValidationController {
         return _s.isBlank();
     }
 
+    public Boolean longerThanOrEqualsNNumber(Double _s, Double _n) {
+        return _s != null && _s >= _n ? true : false;
+    }
 }
