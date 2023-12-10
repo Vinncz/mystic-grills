@@ -129,9 +129,11 @@ public abstract class BaseRepository <T> {
 
     /**
      * Unparses a concrete object's attribute from the given parameter into an array of Objects.
+     * <br></br>
      * <b> Do note </b> that the unparsed attribute's sequence MUST MATCH with the declared sequence of COLUMN, of a table.
      * <br></br>
-     * ㅤ
+     * <b> Do NOT </b> unparse the ID of an object.
+     *
      * <br></br>
      *     <b> For example: </b> let there be a table that is declared as follows: {@code (name VARCHAR(64), price INT)}.
      * <br></br>
@@ -139,7 +141,7 @@ public abstract class BaseRepository <T> {
      * <br></br>
      * <pre> return new Object [] { _object.getName(), _object.getPrice() } </pre>
      *
-     *
+     * @apiNote DO NOT unparse the ID of an object
      * @param _object • Object to be unparsed.
      * @return Array of objects that vary in size, according to the passed parameter's datatype.
      */

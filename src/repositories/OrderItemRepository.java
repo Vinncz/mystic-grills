@@ -147,7 +147,6 @@ public class OrderItemRepository extends BaseRepository<OrderItem> {
     @Override
     public Object[] unparseAttributes (OrderItem _object) {
         Object [] attributes = {
-                                    _object.getOrderItemId(),
                                     _object.getOrderId(),
                                     _object.getMenuItem().getMenuItemId(),
                                     _object.getQuantity()

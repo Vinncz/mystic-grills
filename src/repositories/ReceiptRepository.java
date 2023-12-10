@@ -132,7 +132,6 @@ public class ReceiptRepository extends BaseRepository<Receipt> {
     @Override
     public Object[] unparseAttributes(Receipt _object) {
         Object [] attributes = {
-                                    _object.getReceiptId(),
                                     _object.getReceiptOrder().getOrderId(),
                                     _object.getReceiptAmountPaid(),
                                     _object.getReceiptPaymentDate(),
