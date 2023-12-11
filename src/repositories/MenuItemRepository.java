@@ -55,7 +55,7 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
 
     public Optional<MenuItem> getMenuItemByName(String _menuItemName) {
         Optional<MenuItem> retrievedObject = Optional.empty();
-        final String query = String.format("SELECT * FROM %s WHERE email = ?", TABLE_NAME);
+        final String query = String.format("SELECT * FROM %s WHERE name = ?", TABLE_NAME);
 
         try {
             BaseRepository<MenuItem>.executeQueryReturnDatatypes getByMenuItemNameReport = executeQuery(db, query, _menuItemName);
