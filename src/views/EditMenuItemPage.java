@@ -1,6 +1,7 @@
 package views;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import application_starter.App;
@@ -29,8 +30,8 @@ import views.components.vboxes.Container;
 import views.guidelines.PageDeclarationGuideline_v1;
 
 
-public class EditMenuItemPage extends BorderPane implements PageDeclarationGuideline_v1
-{
+public class EditMenuItemPage extends BorderPane implements PageDeclarationGuideline_v1 {
+
     private HBox rootElement;
     private VBox container;
 
@@ -47,39 +48,44 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
     private VBox buttonContainer;
     private Button saveButton;
 
-    public EditMenuItemPage()
-    {
+    public EditMenuItemPage() {
         initializeScene();
     }
 
     private ArrayList<ValidationState> errorToWatchForMenuNameRelatedElement = new ArrayList<>(){
         {
             add(ValidationState.EMPTY_MENUITEM_NAME);
-            add(ValidationState.DUPLICATE_MENUITEM_NAME); 
+            add(ValidationState.DUPLICATE_MENUITEM_NAME);
         }
     };
 
     private ArrayList<ValidationState> errorToWatchForMenuPriceRelatedElement = new ArrayList<>(){
         {
+            add(ValidationState.EMPTY_MENUITEM_PRICE);
             add(ValidationState.INVALID_MENUITEM_PRICE_RANGE);
         }
     };
 
     private ArrayList<ValidationState> errorToWatchForMenuDescriptionRelatedElement = new ArrayList<>(){
         {
+            add(ValidationState.EMPTY_MENUITEM_DESCRIPTION);
             add(ValidationState.INVALID_MENUITEM_DESCRIPTION_LENGTH);
         }
     };
 
     @Override
-    public void initializeControls() 
-    {
+    public void initializeControls() {
+        Integer menuItemId = (Integer) App.preferences.getValue(App.PASSING_ID_CHANNEL_FOR_MODIFICATION);
+        Optional<MenuItem> menuItem = new MenuItemController().getById(menuItemId);
+
+        // if ( menuItem.isEmpty() ) // TODO go back to the previous page
+
         rootElement = new RootElement();
         container = new Container();
 
         pageIdentifierContainer = new BaseVBox();
             pageTitle = new H1Label("Edit Menu Item").withExtraBoldFont();
-        
+
         pageContent = new BaseVBox().withNormalSpacing();
             menuNameFieldContainer = new BaseVBox().withTightSpacing();
                 menuNameLabel = new H5Label("Menu Name")
@@ -88,7 +94,7 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
                                                 .setRegisteredErrorWatchList(errorToWatchForMenuNameRelatedElement)
                                         );
 
-                menuNameField = new DefaultTextfield("Menu name here")
+                menuNameField = new DefaultTextfield(menuItem.get().getMenuItemName())
                                         .setStrategy(
                                             new TextfieldValidationStrategy()
                                                 .setRegisteredErrorWatchList(errorToWatchForMenuNameRelatedElement)
@@ -99,15 +105,15 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
                                             new VanishingLabelValidationStrategy()
                                                 .setRegisteredErrorWatchList(errorToWatchForMenuNameRelatedElement)
                                         );
-            
+
             menuPriceFieldContainer = new BaseVBox().withTightSpacing();
                 menuPriceLabel = new H5Label("Menu Price")
                                         .setStrategy(
                                             new LabelValidationStrategy()
-                                                .setRegisteredErrorWatchList(errorToWatchForMenuNameRelatedElement)
+                                                .setRegisteredErrorWatchList(errorToWatchForMenuPriceRelatedElement)
                                         );
 
-                menuPriceField = new DefaultTextfield("Menu price here")
+                menuPriceField = new DefaultTextfield(Integer.toString(menuItem.get().getMenuItemPrice()))
                                         .setStrategy(
                                             new TextfieldValidationStrategy()
                                                 .setRegisteredErrorWatchList(errorToWatchForMenuPriceRelatedElement)
@@ -115,8 +121,8 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
 
                 menuPriceWarnLabel = new H5Label("warn")
                                         .setStrategy(
-                                            new LabelValidationStrategy()
-                                                .setRegisteredErrorWatchList(errorToWatchForMenuNameRelatedElement)
+                                            new VanishingLabelValidationStrategy()
+                                                .setRegisteredErrorWatchList(errorToWatchForMenuPriceRelatedElement)
                                         );
 
             menuDescriptionFieldContainer = new BaseVBox().withTightSpacing();
@@ -126,7 +132,7 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
                                                 .setRegisteredErrorWatchList(errorToWatchForMenuDescriptionRelatedElement)
                                         );
 
-                menuDescriptionField = new DefaultTextfield("Menu Description here")
+                menuDescriptionField = new DefaultTextfield(menuItem.get().getMenuItemDescription())
                                         .setStrategy(
                                             new TextfieldValidationStrategy()
                                                 .setRegisteredErrorWatchList(errorToWatchForMenuDescriptionRelatedElement)
@@ -134,21 +140,20 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
 
                 menuDescriptionWarnLabel = new H5Label("warn")
                                         .setStrategy(
-                                            new LabelValidationStrategy()
+                                            new VanishingLabelValidationStrategy()
                                                 .setRegisteredErrorWatchList(errorToWatchForMenuDescriptionRelatedElement)
                                         );
-            
+
         buttonContainer = new BaseVBox().withLooseSpacing();
             saveButton = new CTAButton("Save");
     }
 
     @Override
-    public void configureElements() 
-    {
+    public void configureElements() {
         ArrayList<Object> _errorToWatchForMenuNameRelatedElement = new ArrayList<>(errorToWatchForMenuNameRelatedElement.stream().map(ValidationState::value).collect(Collectors.toList()));
         ArrayList<Object> _errorToWatchForMenuPriceRelatedElement = new ArrayList<>(errorToWatchForMenuPriceRelatedElement.stream().map(ValidationState::value).collect(Collectors.toList()));
         ArrayList<Object> _errorToWatchForMenuDescriptionRelatedElement = new ArrayList<>(errorToWatchForMenuDescriptionRelatedElement.stream().map(ValidationState::value).collect(Collectors.toList()));
-        
+
         App.preferences.subscribeToMany(
             _errorToWatchForMenuNameRelatedElement,
 
@@ -169,7 +174,7 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
             _errorToWatchForMenuDescriptionRelatedElement,
 
             (Observer) menuDescriptionLabel,
-            (Observer) menuDescriptionWarnLabel,
+            (Observer) menuDescriptionField,
             (Observer) menuDescriptionWarnLabel
         );
 
@@ -185,8 +190,7 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
     }
 
     @Override
-    public void initializeEventListeners() 
-    {
+    public void initializeEventListeners() {
         menuNameField.setOnMouseClicked(e -> {
             for (ValidationState vs : errorToWatchForMenuNameRelatedElement) {
                 App.preferences.putValue(vs.value, false);
@@ -206,22 +210,19 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
         });
 
         saveButton.setOnMouseClicked(e -> {
+            Integer menuItemId = (Integer) App.preferences.getValue(App.PASSING_ID_CHANNEL_FOR_MODIFICATION);
             String menuItemName = menuNameField.getText();
             String menuItemPrice = menuPriceField.getText();
             String menuItemDesc = menuDescriptionField.getText();
 
-            MenuItem menuItem = new MenuItem();
-            menuItem.setMenuItemName(menuItemName);
-            menuItem.setMenuItemPrice(Integer.parseInt(menuItemPrice));
-            menuItem.setMenuItemDescription(menuItemDesc);
-
             MenuItemController menuItemController = new MenuItemController();
-            MenuItemRepository.ValidateReturnDatatype result = menuItemController.post(menuItem);
+            MenuItemRepository.ValidateReturnDatatype result = menuItemController.put(menuItemId,menuItemName,menuItemPrice,menuItemDesc);
 
             if ( result.getState() != null ) {
                 App.preferences.putValue(result.getState().value, true);
 
             } else {
+                resetErrosrs();
                 App.redirectTo( App.sceneBuilder(new temp()) );
 
             }
@@ -231,8 +232,7 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
     }
 
     @Override
-    public void assembleLayout() 
-    {
+    public void assembleLayout() {
         pageIdentifierContainer.getChildren().addAll(
             pageTitle
         );
@@ -277,9 +277,17 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
     }
 
     @Override
-    public void setupScene() 
-    {
+    public void setupScene() {
         setCenter(rootElement);
     }
-    
+
+    private void resetErrosrs() {
+        ArrayList<ValidationState> errors = new ArrayList<>(){{
+            addAll(errorToWatchForMenuNameRelatedElement);
+            addAll(errorToWatchForMenuPriceRelatedElement);
+            addAll(errorToWatchForMenuDescriptionRelatedElement);
+        }};
+
+        errors.forEach(f -> App.preferences.putValue(f.value, false));
+    }
 }

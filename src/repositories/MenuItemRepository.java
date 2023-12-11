@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import models.MenuItem;
-import models.User;
 import repositories.helpers.DatabaseExceptionExplainer;
 import repositories.interfaces.BaseRepository;
 import values.SYSTEM_PROPERTIES;
@@ -28,7 +27,7 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
 
     public static class ValidateReturnDatatype {
         private ValidationState state = null;
-        private User associatedUser = null;
+        private MenuItem associatedObject = null;
 
         public ValidateReturnDatatype () {}
 
@@ -44,12 +43,12 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
             this.state = _state;
         }
 
-        public User getAssociatedUser() {
-            return associatedUser;
+        public MenuItem getAssociatedMenuItem () {
+            return associatedObject;
         }
 
-        public void setAssociatedUser(User associatedUser) {
-            this.associatedUser = associatedUser;
+        public void setAssociatedMenuItem (MenuItem _associatedMenuItem) {
+            this.associatedObject = _associatedMenuItem;
         }
     }
 

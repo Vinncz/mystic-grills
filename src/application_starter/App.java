@@ -18,6 +18,7 @@ import views.LoginPage;
 public class App extends Application {
 
 	public static final String CURRENT_USER_KEY = "currentlyLoggedInUser";
+	public static final String PASSING_ID_CHANNEL_FOR_MODIFICATION = "channelWhichIsUsedToPassIdForModificationPage";
 
 	private static Stage primaryStage;
 	public  static SharedPreference preferences = new SharedPreference();

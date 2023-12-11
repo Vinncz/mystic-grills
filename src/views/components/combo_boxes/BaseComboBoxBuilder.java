@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import design_patterns.observer_pattern.Observer;
 import design_patterns.strategy_pattern.Strategy;
-import design_patterns.strategy_pattern.ValidationStrategy;
 import javafx.scene.control.ComboBox;
 import views.components.interfaces.UsesStrategy;
 
