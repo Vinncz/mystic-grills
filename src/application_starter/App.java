@@ -13,10 +13,11 @@ import repositories.MenuItemRepository;
 import repositories.OrderRepository;
 import values.SYSTEM_PROPERTIES;
 import values.SharedPreference;
-import views.LoginPage;
-import views.NewMenuItemPage;
+import views.EditMenuItemPage;
 
 public class App extends Application {
+
+	public static final String PASSING_ID_CHANNEL_FOR_MODIFICATION = "buatGantiHakam";
 
 	private static Stage primaryStage;
 	public  static SharedPreference preferences = new SharedPreference();
@@ -151,7 +152,7 @@ public class App extends Application {
 	public void start(Stage _primaryStage) throws Exception {
 		primaryStage = _primaryStage;
 
-		final Scene defaultStartupScene = attachStylesheet( sceneBuilder( new NewMenuItemPage() ) );
+		final Scene defaultStartupScene = attachStylesheet( sceneBuilder( new EditMenuItemPage() ) );
 		primaryStage.setScene(defaultStartupScene);
 
 		primaryStage.setMinHeight(Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_MIN_HEIGHT.value) + (stagePadding * 2) );

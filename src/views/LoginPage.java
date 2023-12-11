@@ -19,18 +19,16 @@ import repositories.UserRepository;
 import values.SYSTEM_PROPERTIES;
 import values.strings.ValidationState;
 import views.components.buttons.CTAButton;
-
 import views.components.buttons.TextButton;
 import views.components.hboxes.RootElement;
-import views.components.textfields.DefaultTextfield;
-import views.components.textfields.PasswordTextfield;
-import views.components.vboxes.BaseVBox;
-import views.components.vboxes.Container;
 import views.components.labels.H1Label;
 import views.components.labels.H3Label;
 import views.components.labels.H5Label;
 import views.components.number_inputs.BaseNumberfield;
-import views.components.number_inputs.BaseNumberfieldBuilder;
+import views.components.textfields.DefaultTextfield;
+import views.components.textfields.PasswordTextfield;
+import views.components.vboxes.BaseVBox;
+import views.components.vboxes.Container;
 import views.guidelines.PageDeclarationGuideline_v1;
 
 public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1 {

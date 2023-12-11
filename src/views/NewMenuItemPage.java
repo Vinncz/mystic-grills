@@ -16,7 +16,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import models.MenuItem;
 import repositories.MenuItemRepository;
 import values.strings.ValidationState;
 import views.components.buttons.CTAButton;
@@ -61,12 +60,14 @@ public class NewMenuItemPage extends BorderPane implements PageDeclarationGuidel
 
     private ArrayList<ValidationState> errorToWatchForMenuPriceRelatedElement = new ArrayList<>(){
         {
+            add(ValidationState.EMPTY_MENUITEM_PRICE);
             add(ValidationState.INVALID_MENUITEM_PRICE_RANGE);
         }
     };
 
     private ArrayList<ValidationState> errorToWatchForMenuDescriptionRelatedElement = new ArrayList<>(){
         {
+            add(ValidationState.EMPTY_MENUITEM_DESCRIPTION);
             add(ValidationState.INVALID_MENUITEM_DESCRIPTION_LENGTH);
         }
     };
@@ -104,7 +105,7 @@ public class NewMenuItemPage extends BorderPane implements PageDeclarationGuidel
                 menuPriceLabel = new H5Label("Menu Price")
                                         .setStrategy(
                                             new LabelValidationStrategy()
-                                                .setRegisteredErrorWatchList(errorToWatchForMenuNameRelatedElement)
+                                                .setRegisteredErrorWatchList(errorToWatchForMenuPriceRelatedElement)
                                         );
 
                 menuPriceField = new DefaultTextfield("Menu Price here")
@@ -115,8 +116,8 @@ public class NewMenuItemPage extends BorderPane implements PageDeclarationGuidel
 
                 menuPriceWarnLabel = new H5Label("warn")
                                         .setStrategy(
-                                            new LabelValidationStrategy()
-                                                .setRegisteredErrorWatchList(errorToWatchForMenuNameRelatedElement)
+                                            new VanishingLabelValidationStrategy()
+                                                .setRegisteredErrorWatchList(errorToWatchForMenuPriceRelatedElement)
                                         );
 
             menuDescriptionFieldContainer = new BaseVBox().withTightSpacing();
@@ -134,7 +135,7 @@ public class NewMenuItemPage extends BorderPane implements PageDeclarationGuidel
 
                 menuDescriptionWarnLabel = new H5Label("warn")
                                         .setStrategy(
-                                            new LabelValidationStrategy()
+                                            new VanishingLabelValidationStrategy()
                                                 .setRegisteredErrorWatchList(errorToWatchForMenuDescriptionRelatedElement)
                                         );
             
@@ -169,7 +170,7 @@ public class NewMenuItemPage extends BorderPane implements PageDeclarationGuidel
             _errorToWatchForMenuDescriptionRelatedElement,
 
             (Observer) menuDescriptionLabel,
-            (Observer) menuDescriptionWarnLabel,
+            (Observer) menuDescriptionField,
             (Observer) menuDescriptionWarnLabel
         );
 
@@ -210,18 +211,14 @@ public class NewMenuItemPage extends BorderPane implements PageDeclarationGuidel
             String menuItemPrice = menuPriceField.getText();
             String menuItemDesc = menuDescriptionField.getText();
 
-            MenuItem menuItem = new MenuItem();
-            menuItem.setMenuItemName(menuItemName);
-            menuItem.setMenuItemPrice(Integer.parseInt(menuItemPrice));
-            menuItem.setMenuItemDescription(menuItemDesc);
-
             MenuItemController menuItemController = new MenuItemController();
-            MenuItemRepository.ValidateReturnDatatype result = menuItemController.post(menuItem);
+            MenuItemRepository.ValidateReturnDatatype result = menuItemController.post(menuItemName,menuItemPrice,menuItemDesc);
 
             if ( result.getState() != null ) {
                 App.preferences.putValue(result.getState().value, true);
 
             } else {
+                resetErrosrs();
                 App.redirectTo( App.sceneBuilder(new temp()) );
 
             }
@@ -280,6 +277,16 @@ public class NewMenuItemPage extends BorderPane implements PageDeclarationGuidel
     public void setupScene() 
     {
         setCenter(rootElement);
+    }
+
+    private void resetErrosrs(){
+        ArrayList<ValidationState> errors = new ArrayList<>(){{
+            addAll(errorToWatchForMenuNameRelatedElement);
+            addAll(errorToWatchForMenuPriceRelatedElement);
+            addAll(errorToWatchForMenuDescriptionRelatedElement);
+        }};
+
+        errors.forEach(f -> App.preferences.putValue(f.value, false));
     }
     
 }
