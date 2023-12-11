@@ -30,9 +30,8 @@ import views.components.vboxes.Container;
 import views.guidelines.PageDeclarationGuideline_v1;
 
 
-public class EditMenuItemPage extends BorderPane implements PageDeclarationGuideline_v1
-{
-    
+public class EditMenuItemPage extends BorderPane implements PageDeclarationGuideline_v1 {
+
     private HBox rootElement;
     private VBox container;
 
@@ -49,15 +48,14 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
     private VBox buttonContainer;
     private Button saveButton;
 
-    public EditMenuItemPage()
-    {
+    public EditMenuItemPage() {
         initializeScene();
     }
 
     private ArrayList<ValidationState> errorToWatchForMenuNameRelatedElement = new ArrayList<>(){
         {
             add(ValidationState.EMPTY_MENUITEM_NAME);
-            add(ValidationState.DUPLICATE_MENUITEM_NAME); 
+            add(ValidationState.DUPLICATE_MENUITEM_NAME);
         }
     };
 
@@ -76,17 +74,18 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
     };
 
     @Override
-    public void initializeControls() 
-    {
+    public void initializeControls() {
         Integer menuItemId = (Integer) App.preferences.getValue(App.PASSING_ID_CHANNEL_FOR_MODIFICATION);
         Optional<MenuItem> menuItem = new MenuItemController().getById(menuItemId);
+
+        // if ( menuItem.isEmpty() ) // TODO go back to the previous page
 
         rootElement = new RootElement();
         container = new Container();
 
         pageIdentifierContainer = new BaseVBox();
             pageTitle = new H1Label("New Menu Item").withExtraBoldFont();
-        
+
         pageContent = new BaseVBox().withNormalSpacing();
             menuNameFieldContainer = new BaseVBox().withTightSpacing();
                 menuNameLabel = new H5Label("Menu Name")
@@ -106,7 +105,7 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
                                             new VanishingLabelValidationStrategy()
                                                 .setRegisteredErrorWatchList(errorToWatchForMenuNameRelatedElement)
                                         );
-            
+
             menuPriceFieldContainer = new BaseVBox().withTightSpacing();
                 menuPriceLabel = new H5Label("Menu Price")
                                         .setStrategy(
@@ -144,18 +143,17 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
                                             new VanishingLabelValidationStrategy()
                                                 .setRegisteredErrorWatchList(errorToWatchForMenuDescriptionRelatedElement)
                                         );
-            
+
         buttonContainer = new BaseVBox().withLooseSpacing();
             saveButton = new CTAButton("Save");
     }
 
     @Override
-    public void configureElements() 
-    {
+    public void configureElements() {
         ArrayList<Object> _errorToWatchForMenuNameRelatedElement = new ArrayList<>(errorToWatchForMenuNameRelatedElement.stream().map(ValidationState::value).collect(Collectors.toList()));
         ArrayList<Object> _errorToWatchForMenuPriceRelatedElement = new ArrayList<>(errorToWatchForMenuPriceRelatedElement.stream().map(ValidationState::value).collect(Collectors.toList()));
         ArrayList<Object> _errorToWatchForMenuDescriptionRelatedElement = new ArrayList<>(errorToWatchForMenuDescriptionRelatedElement.stream().map(ValidationState::value).collect(Collectors.toList()));
-        
+
         App.preferences.subscribeToMany(
             _errorToWatchForMenuNameRelatedElement,
 
@@ -192,8 +190,7 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
     }
 
     @Override
-    public void initializeEventListeners() 
-    {
+    public void initializeEventListeners() {
         menuNameField.setOnMouseClicked(e -> {
             for (ValidationState vs : errorToWatchForMenuNameRelatedElement) {
                 App.preferences.putValue(vs.value, false);
@@ -235,8 +232,7 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
     }
 
     @Override
-    public void assembleLayout() 
-    {
+    public void assembleLayout() {
         pageIdentifierContainer.getChildren().addAll(
             pageTitle
         );
@@ -281,11 +277,11 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
     }
 
     @Override
-    public void setupScene(){
+    public void setupScene() {
         setCenter(rootElement);
     }
-    
-    private void resetErrosrs(){
+
+    private void resetErrosrs() {
         ArrayList<ValidationState> errors = new ArrayList<>(){{
             addAll(errorToWatchForMenuNameRelatedElement);
             addAll(errorToWatchForMenuPriceRelatedElement);

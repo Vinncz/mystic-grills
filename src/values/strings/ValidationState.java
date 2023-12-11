@@ -30,16 +30,16 @@ public enum ValidationState {
 
     EMPTY_MENUITEM_NAME
         ("Menu item name must be filled"),
-    
+
     DUPLICATE_MENUITEM_NAME
         ("Menu item name must be unique"),
 
     EMPTY_MENUITEM_DESCRIPTION
-    ("Menu item description must be filled"),
+        ("Menu item description must be filled"),
 
     INVALID_MENUITEM_DESCRIPTION_LENGTH
         ("Menu item description must be more than 10 characters"),
-    
+
     EMPTY_MENUITEM_PRICE
         ("Menu item price must be filled"),
 

@@ -34,38 +34,38 @@ public class MenuItemController {
     public MenuItemRepository.ValidateReturnDatatype post (String menuItemName , String menuItemPrice , String menuItemDescription) {
 
         MenuItemRepository.ValidateReturnDatatype returnObject = new MenuItemRepository.ValidateReturnDatatype();
-        
-        if ( validator.isBlank(menuItemName)) {
+
+        if ( validator.isBlank(menuItemName) ) {
             returnObject.setState(ValidationState.EMPTY_MENUITEM_NAME);
 
             return returnObject;
         }
 
-        if(menuItemRepo.getMenuItemByName(menuItemName) != null) {
+        if( menuItemRepo.getMenuItemByName(menuItemName).isPresent() ) {
             returnObject.setState(ValidationState.DUPLICATE_MENUITEM_NAME);
 
             return returnObject;
         }
 
-        if(validator.isBlank(menuItemPrice)) {
+        if( validator.isBlank(menuItemPrice) ) {
             returnObject.setState(ValidationState.EMPTY_MENUITEM_PRICE);
 
-            return returnObject;  
+            return returnObject;
         }
 
         if(validator.isBlank(menuItemDescription)) {
             returnObject.setState(ValidationState.EMPTY_MENUITEM_DESCRIPTION);
 
-            return returnObject;   
+            return returnObject;
         }
 
         if ( validator.longerThanNCharacters(menuItemDescription, 10) ) {
-                returnObject.setState(ValidationState.INVALID_MENUITEM_DESCRIPTION_LENGTH);
+            returnObject.setState(ValidationState.INVALID_MENUITEM_DESCRIPTION_LENGTH);
 
-                return returnObject;
+            return returnObject;
         }
 
-        
+
         if ( validator.lessThanNNumber(Double.parseDouble(menuItemPrice) , 2.5d) ) {
             returnObject.setState(ValidationState.INVALID_MENUITEM_PRICE_RANGE);
 
@@ -77,63 +77,69 @@ public class MenuItemController {
         menuItem.setMenuItemPrice(Integer.parseInt(menuItemPrice));
         menuItem.setMenuItemDescription(menuItemDescription);
 
-        menuItemRepo.post(menuItem);
+        menuItem = menuItemRepo.post(menuItem);
+        returnObject.setAssociatedMenuItem(menuItem);
 
-        return null;
+        return returnObject;
     }
 
-    public MenuItemRepository.ValidateReturnDatatype put (Integer menuItemId , String menuItemName , String menuItemPrice , String menuItemDescription) {
+    public MenuItemRepository.ValidateReturnDatatype put (Integer _menuItemId , String _menuItemName , String _menuItemPrice , String _menuItemDescription) {
         MenuItemRepository.ValidateReturnDatatype returnObject = new MenuItemRepository.ValidateReturnDatatype();
-        
-        if ( validator.isBlank(menuItemName)) {
+
+        if ( validator.isBlank(_menuItemName)) {
             returnObject.setState(ValidationState.EMPTY_MENUITEM_NAME);
 
             return returnObject;
         }
 
-        if(menuItemRepo.getMenuItemByName(menuItemName) != null) {
+        if(menuItemRepo.getMenuItemByName(_menuItemName) != null) {
             returnObject.setState(ValidationState.DUPLICATE_MENUITEM_NAME);
 
             return returnObject;
         }
 
-        if(validator.isBlank(menuItemPrice)) {
+        if(validator.isBlank(_menuItemPrice)) {
             returnObject.setState(ValidationState.EMPTY_MENUITEM_PRICE);
 
-            return returnObject;  
+            return returnObject;
         }
 
-        if(validator.isBlank(menuItemDescription)) {
+        if(validator.isBlank(_menuItemDescription)) {
             returnObject.setState(ValidationState.EMPTY_MENUITEM_DESCRIPTION);
 
-            return returnObject;   
+            return returnObject;
         }
 
-        if ( validator.longerThanNCharacters(menuItemDescription, 10) ) {
-                returnObject.setState(ValidationState.INVALID_MENUITEM_DESCRIPTION_LENGTH);
+        if ( validator.longerThanNCharacters(_menuItemDescription, 10) ) {
+            returnObject.setState(ValidationState.INVALID_MENUITEM_DESCRIPTION_LENGTH);
 
-                return returnObject;
+            return returnObject;
         }
 
-        
-        if ( validator.lessThanNNumber(Double.parseDouble(menuItemPrice) , 2.5d) ) {
+
+        if ( validator.lessThanNNumber(Double.parseDouble(_menuItemPrice) , 2.5d) ) {
             returnObject.setState(ValidationState.INVALID_MENUITEM_PRICE_RANGE);
 
             return returnObject;
         }
 
-        Optional<MenuItem> menuItem = menuItemRepo.getById(menuItemId);
-        menuItem.get().setMenuItemName(menuItemName);
-        menuItem.get().setMenuItemPrice(Integer.parseInt(menuItemPrice));
-        menuItem.get().setMenuItemDescription(menuItemDescription);
+        Optional<MenuItem> menuItem = menuItemRepo.getById(_menuItemId);
+        if ( menuItem.isPresent() ) {
+            MenuItem mi = menuItem.get();
 
-        menuItemRepo.put(menuItem.get());
+            mi.setMenuItemName(_menuItemName);
+            mi.setMenuItemPrice(Integer.parseInt(_menuItemPrice));
+            mi.setMenuItemDescription(_menuItemDescription);
 
-        return null;
+            menuItemRepo.put(mi);
+            returnObject.setAssociatedMenuItem(mi);
+        }
+
+        return returnObject;
     }
 
     public Boolean delete (Integer _idOfAnObjectToBeDeleted) {
         return menuItemRepo.delete(_idOfAnObjectToBeDeleted);
 
-    }    
+    }
 }
