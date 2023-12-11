@@ -2,10 +2,12 @@ package views.components.number_inputs;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Font;
 import views.components.buttons.BaseButton;
 import views.components.hboxes.BaseHBox;
 import views.components.interfaces.FontVariants;
 import views.components.textfields.DefaultTextfield;
+import views.components.textfields.TextfieldConfig;
 import views.guidelines.PageDeclarationGuideline_v1;
 
 public class BaseNumberfield extends BaseHBox implements PageDeclarationGuideline_v1 {
@@ -22,6 +24,9 @@ public class BaseNumberfield extends BaseHBox implements PageDeclarationGuidelin
     @Override
     public void initializeControls() {
         inputField = new DefaultTextfield("");
+        inputField.setFont(
+            Font.loadFont(getClass().getResourceAsStream("/views/fonts/cabinet_grotesk/CabinetGrotesk-Bold.otf"), TextfieldConfig.FONT_SIZE_SMALLER)
+        );
         decrement  = new BaseButton("-").withBoldFont().withSizeOf(FontVariants.FONT_SIZE_SMALLER);
         increment  = new BaseButton("+").withBoldFont().withSizeOf(FontVariants.FONT_SIZE_SMALLER);
     }

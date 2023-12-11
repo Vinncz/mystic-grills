@@ -63,8 +63,8 @@ public class RegisterPage extends BorderPane implements PageDeclarationGuideline
 	};
 	private ArrayList<ValidationState> errorToWatchForEmailRelatedElements = new ArrayList<>() {
 		{
-			add(ValidationState.EMPTY_EMAIL);
 			add(ValidationState.DUPLICATE_EMAIL);
+			add(ValidationState.EMPTY_EMAIL);
 		}
 	};
 	private ArrayList<ValidationState> errorToWatchForPasswordRelatedElements = new ArrayList<>() {
@@ -185,16 +185,16 @@ public class RegisterPage extends BorderPane implements PageDeclarationGuideline
 			_errorToWatchForEmailRelatedElements,
 
 			(Observer) emailLabel,
-			(Observer) emailWarnLabel,
-			(Observer) emailField
+			(Observer) emailField,
+			(Observer) emailWarnLabel
 		);
 
 		App.preferences.subscribeToMany(
 			_errorToWatchForPasswordRelatedElements,
 
 			(Observer) passwordLabel,
-			(Observer) passwordWarnLabel,
-			(Observer) passwordField
+			(Observer) passwordField,
+			(Observer) passwordWarnLabel
 		);
 
 		App.preferences.subscribeToMany(
@@ -252,6 +252,7 @@ public class RegisterPage extends BorderPane implements PageDeclarationGuideline
 		});
 
 		loginButton.setOnMouseClicked(e -> {
+			resetErrors();
 			App.redirectTo(App.sceneBuilder(new LoginPage()));
 		});
 
@@ -265,7 +266,7 @@ public class RegisterPage extends BorderPane implements PageDeclarationGuideline
 			UserRepository.AuthenticationReturnDatatype registrationResult = uc.validateRegistration(username, email, password, passwordConfirmation);
 
 			if (registrationResult.getState() != null) {
-				App.preferences.putValue(registrationResult.getState().value, true);
+				App.preferences.putValue(registrationResult.getMessage(), true);
 
 			} else {
 				App.preferences.putValue(App.CURRENT_USER_KEY, registrationResult.getAssociatedUser());
@@ -340,6 +341,17 @@ public class RegisterPage extends BorderPane implements PageDeclarationGuideline
 	@Override
 	public void setupScene() {
 		setCenter(scrollSupport);
+	}
+
+	private void resetErrors() {
+		ArrayList<ValidationState> errors = new ArrayList<>() {{
+			addAll(errorToWatchForUsernameRelatedElements);
+			addAll(errorToWatchForEmailRelatedElements);
+			addAll(errorToWatchForPasswordRelatedElements);
+			addAll(errorToWatchForPasswordConfirmationRelatedElements);
+		}};
+
+		errors.forEach(f -> App.preferences.putValue(f.value, false));
 	}
 
 }

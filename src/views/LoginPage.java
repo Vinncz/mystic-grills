@@ -22,7 +22,6 @@ import values.strings.ValidationState;
 import views.components.buttons.CTAButton;
 
 import views.components.buttons.TextButton;
-import views.components.combo_boxes.ComboBoxData;
 import views.components.hboxes.RootElement;
 import views.components.textfields.DefaultTextfield;
 import views.components.textfields.PasswordTextfield;
@@ -57,22 +56,13 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
         initializeScene();
     }
 
-    ArrayList<ComboBoxData> cbdatas = new ArrayList<>(){
-                {
-                    add( new ComboBoxData("One", "OneSupport") );
-                    add( new ComboBoxData("Two", "TwoSupport") );
-                    add( new ComboBoxData("Three", "ThreeSupport") );
-                }
-            };
-
     private ArrayList<ValidationState> errorToWatchForEmailRelatedElement = new ArrayList<>(){
         {
             add(ValidationState.EMPTY_EMAIL);
             add(ValidationState.UNREGISTERED_EMAIL);
         }
     };
-    private ArrayList<ValidationState> errorToWatchForPasswordRelatedElement = new ArrayList<>(){
-        {
+    private ArrayList<ValidationState> errorToWatchForPasswordRelatedElement = new ArrayList<>(){{
             add(ValidationState.EMPTY_PASSWORD);
             add(ValidationState.INCORRECT_PASSWORD);
             add(ValidationState.INVALID_PASSWORD_LENGTH);
@@ -177,6 +167,7 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
         });
 
         registerButton.setOnMouseClicked(e -> {
+            resetErrors();
             App.redirectTo( App.sceneBuilder(new RegisterPage()) );
         });
 
@@ -191,7 +182,9 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
                 App.preferences.putValue(authResult.getState().value, true);
 
             } else {
-                App.redirectTo( App.sceneBuilder(new temp()) );
+                App.preferences.putValue(App.CURRENT_USER_KEY, authResult.getAssociatedUser());
+
+				App.redirectTo(App.sceneBuilder(new temp()));
 
             }
         });
@@ -243,6 +236,15 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
     public void setupScene() {
         setCenter(scrollSupport);
 
+    }
+
+    private void resetErrors() {
+        ArrayList<ValidationState> errors = new ArrayList<>() {{
+        	addAll(errorToWatchForEmailRelatedElement);
+        	addAll(errorToWatchForPasswordRelatedElement);
+        }};
+
+        errors.forEach( f -> App.preferences.putValue(f.value, false) );
     }
 
 }
