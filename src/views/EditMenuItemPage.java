@@ -13,6 +13,7 @@ import design_patterns.strategy_pattern.VanishingLabelValidationStrategy;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -24,6 +25,7 @@ import views.components.buttons.CTAButton;
 import views.components.hboxes.RootElement;
 import views.components.labels.H1Label;
 import views.components.labels.H5Label;
+import views.components.scroll_panes.BaseScrollPane;
 import views.components.textfields.DefaultTextfield;
 import views.components.vboxes.BaseVBox;
 import views.components.vboxes.Container;
@@ -32,6 +34,7 @@ import views.guidelines.PageDeclarationGuideline_v1;
 
 public class EditMenuItemPage extends BorderPane implements PageDeclarationGuideline_v1 {
 
+    private ScrollPane scrollSupport;
     private HBox rootElement;
     private VBox container;
 
@@ -82,6 +85,7 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
 
         rootElement = new RootElement();
         container = new Container();
+        scrollSupport = new BaseScrollPane(rootElement);
 
         pageIdentifierContainer = new BaseVBox();
             pageTitle = new H1Label("Edit Menu Item").withExtraBoldFont();
@@ -278,7 +282,7 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
 
     @Override
     public void setupScene() {
-        setCenter(rootElement);
+        setCenter(scrollSupport);
     }
 
     private void resetErrosrs() {
