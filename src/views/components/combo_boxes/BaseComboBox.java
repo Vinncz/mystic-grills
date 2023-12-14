@@ -73,6 +73,9 @@ public class BaseComboBox implements Observer, UsesStrategy<BaseComboBox>, PageD
         return this.objectInCreation;
     }
 
+    /**
+     * Returns the display object without having to re-render it.
+     */
     public ComboBox<ComboBoxData> getInstance () {
         return this.objectInCreation;
     }
