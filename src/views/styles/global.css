@@ -3,6 +3,7 @@
 @import url('textfield.css');
 @import url('color.css');
 @import url('combo_box.css');
+@import url('card_view.css');
 
 .root {
     -fx-letter-spacing: 1.5;

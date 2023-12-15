@@ -81,5 +81,4 @@ public class BaseCardView implements PageDeclarationGuideline_v1, Observer, Uses
     public void getNotified(Object _key, Object _value) {
         if (this.strat != null) this.strat.execute((String) _key, _value, this);
     }
-
 }
