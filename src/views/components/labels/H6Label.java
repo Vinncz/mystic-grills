@@ -15,7 +15,7 @@ public class H6Label extends HLabel {
         super(_message);
         super.setSize(FontVariants.FONT_SIZE_SMALLESTEST);
         super.withBoldFont();
-        this.getStyleClass().add("h5");
+        this.getStyleClass().add("h6");
     }
 
 }
