@@ -23,12 +23,35 @@ public class OrderRepository extends BaseRepository<Order> {
             String.format("SELECT * FROM %s WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_ORDER_TABLE.value),
             String.format("SELECT * FROM %s", SYSTEM_PROPERTIES.DATABASE_ORDER_TABLE.value),
             String.format("INSERT INTO %s (user_id, status, date, total) VALUES (?, ?, ?, ?)", SYSTEM_PROPERTIES.DATABASE_ORDER_TABLE.value),
-            String.format("UPDATE %s SET menu_item_id = ?, quantity = ? WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_ORDER_TABLE.value),
+            String.format("UPDATE %s SET user_id = ?, status = ?, date = ?, total = ? WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_ORDER_TABLE.value),
             String.format("DELETE FROM %s WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_ORDER_TABLE.value)
         );
 
         userRepo = new UserRepository();
         orderItemRepo = new OrderItemRepository();
+    }
+
+    public ArrayList<Order> getByStatus (Order.OrderStatus _status) {
+        final String query = String.format("SELECT * FROM %d WHERE status = ?", TABLE_NAME);
+        ArrayList<Order> retrievedObject = new ArrayList<>();
+
+        try {
+            BaseRepository<Order>.executeQueryReturnDatatypes report = executeQuery(db, query, _status.toString());
+            retrievedObject = parseMany(report.getResultSet());
+
+            report.getResultSet().close();
+            report.getPreparedStatement().close();
+
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
+
+        }
+
+        return retrievedObject;
     }
 
     @Override

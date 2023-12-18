@@ -9,9 +9,10 @@ public abstract class FontVariants {
     public static final String REGULAR    = "Regular";
     public static final String LIGHT      = "Light";
 
-    public static final int FONT_SIZE_LARGE    = 72;
-    public static final int FONT_SIZE_MEDIUM   = 56;
-    public static final int FONT_SIZE_SMALL    = 32;
-    public static final int FONT_SIZE_SMALLER  = 24;
-    public static final int FONT_SIZE_SMALLEST = 20;
+    public static final int FONT_SIZE_LARGE       = 72;
+    public static final int FONT_SIZE_MEDIUM      = 56;
+    public static final int FONT_SIZE_SMALL       = 32;
+    public static final int FONT_SIZE_SMALLER     = 24;
+    public static final int FONT_SIZE_SMALLEST    = 20;
+    public static final int FONT_SIZE_SMALLESTEST = 16;
 }
