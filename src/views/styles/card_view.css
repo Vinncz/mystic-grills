@@ -3,4 +3,5 @@
     -fx-border-color: -primary-lightgray;
     -fx-background-color: -transparent;
     -fx-border-radius: 8;
+    -fx-padding: 20;
 }

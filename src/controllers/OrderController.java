@@ -18,6 +18,7 @@ public class OrderController {
     public Order post(User _user, Order.OrderStatus _orderStatus, String _orderDate , Double _orderTotal){
         
         Order order = new Order();
+        
         order.setOrderUser(_user);
         order.setOrderStatus(_orderStatus);
         order.setOrderDate(_orderDate);
@@ -28,14 +29,9 @@ public class OrderController {
 
     public Boolean put(Integer _orderId,User _user, Order.OrderStatus _orderStatus, String _orderDate , Double _orderTotal){
         
-        Optional<Order> order = orderRepository.getById(_orderId);
+        Order updatedOrder = new Order();
 
-        if(order == null){
-            return false;
-        }
-
-        Order updatedOrder = order.get();
-
+        updatedOrder.setOrderId(_orderId);
         updatedOrder.setOrderUser(_user);
         updatedOrder.setOrderStatus(_orderStatus);
         updatedOrder.setOrderDate(_orderDate);
@@ -50,6 +46,10 @@ public class OrderController {
 
     public ArrayList<Order> getAll(){
         return orderRepository.getAll();
+    }
+
+    public Optional<Order> getById(Integer _orderId){
+        return orderRepository.getById(_orderId);
     }
 
 }

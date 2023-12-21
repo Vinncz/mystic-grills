@@ -1,7 +1,6 @@
 package views;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import application_starter.App;
 import controllers.MenuItemController;
@@ -12,9 +11,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
 import models.MenuItem;
 import views.components.buttons.CTAButton;
 import views.components.card_views.BaseCardView;
+import views.components.hboxes.BaseHBox;
 import views.components.hboxes.RootElement;
 import views.components.labels.H1Label;
 import views.components.labels.H4Label;
@@ -61,7 +62,7 @@ public class CustomerDashboard extends BorderPane implements PageDeclarationGuid
         rootElement    = new RootElement();
         container      = new Container().centerContentHorizontally();
         scrollSupport  = new BaseScrollPane(rootElement);
-        
+
         pageIdentifierContainer = new BorderPane();
             pageTitle = new H1Label("Available Menu").withBoldFont().withAlternateFont();
             myOrdersBtn = new CTAButton("My Orders").withSizeOf(16);
@@ -77,32 +78,42 @@ public class CustomerDashboard extends BorderPane implements PageDeclarationGuid
         menuItems = menuItemController.getAll();
 
         for(MenuItem menuItem : menuItems){
+        
+            BaseCardView cardView = new BaseCardView();
 
-            VBox content1 = new BaseVBox();
-                menuItemNameLabel = new H4Label(menuItem.getMenuItemName()).withBoldFont();
-                menuItemDescLabel = new Label(menuItem.getMenuItemDescription());
+                VBox content1 = new BaseVBox();
+                    menuItemNameLabel = new H4Label(menuItem.getMenuItemName()).withBoldFont();
+                    menuItemDescLabel = new Label(menuItem.getMenuItemDescription());
+
+                HBox linePane = new BaseHBox();        
+                    Line line = new Line(0, 0, 350, 0); 
                 
-            VBox content2 = new BaseVBox();
-                priceTitle = new H5Label("Price").withLightFont();
-                menuItemPriceLabel = new H4Label("Rp" + Integer.toString(menuItem.getMenuItemPrice()) + ",-").withBlackFont();
+                VBox content2 = new BaseVBox().withTightSpacing();
+                    priceTitle = new H5Label("Price").withLightFont();
+                    menuItemPriceLabel = new H4Label("Rp" + Integer.toString(menuItem.getMenuItemPrice()) + ",-").withBlackFont();
+                    baseNumberfieldBuilder = new BaseNumberfieldBuilder().withMaximumValueOf(10).withMinimumValueOf(0).withInitialValueOf(0);
+                    baseNumberfieldObj = baseNumberfieldBuilder.build();
 
-            baseNumberfieldBuilder = new BaseNumberfieldBuilder().withMaximumValueOf(10).withMinimumValueOf(0).withInitialValueOf(0);
-            baseNumberfieldObj = baseNumberfieldBuilder.build();
+            line.prefWidth(370);
+            line.setStyle("-fx-stroke: #C5C5C5;"); 
+
 
             content1.getChildren().addAll(
                 menuItemNameLabel,
-                menuItemDescLabel
+                menuItemDescLabel,
+                line
             );
+
+            linePane.getChildren().add(line);
 
             content2.getChildren().addAll(
                 priceTitle,
                 menuItemPriceLabel
             );
 
-            BaseCardView cardView = new BaseCardView();
-
             cardView.setContent(
                 content1,
+                linePane,
                 content2,
                 baseNumberfieldObj
             );
@@ -115,18 +126,26 @@ public class CustomerDashboard extends BorderPane implements PageDeclarationGuid
     @Override
     public void configureElements() {
         
+        for(BaseCardView cardView : cardViews){
+            cardView.getInstance().setPrefWidth(400);
+        }
+
+        pageContent.setVgap(15);
+        pageContent.setHgap(15);
+
     }
 
     @Override
     public void initializeEventListeners() {
     
         myOrdersBtn.setOnMouseClicked(e -> {
-    
+            App.redirectTo(App.sceneBuilder(new MyOrderPageCustomer()));
         });
 
         checkoutBtn.setOnMouseClicked(e -> {
-            
-            HashMap<MenuItem,Integer> checkout_menuItems = new HashMap<>();
+
+            ArrayList<MenuItem> menuItems_checkout = new ArrayList<>();
+            ArrayList<Integer> quantity_checkout = new ArrayList<>();
 
             for (BaseNumberfield numInput : numberFields){
                 
@@ -135,17 +154,22 @@ public class CustomerDashboard extends BorderPane implements PageDeclarationGuid
                 if(quantity > 0){
                     
                     MenuItem menuItem = menuItems.get(numberFields.indexOf(numInput));
-                    checkout_menuItems.put(menuItem, quantity);
+                    menuItems_checkout.add(menuItem);
+                    quantity_checkout.add(quantity);
                 }
             }
 
-            
             App.preferences.putValue(
-                App.PASSING_ORDERS_CHANNEL_FOR_CHECKOUT,
-                checkout_menuItems
+                App.PASSING_ITEM_ORDER_CHANNEL_FOR_CHECKOUT,
+                menuItems_checkout
             );
 
-            App.redirectTo(App.sceneBuilder(new CheckoutPage()));
+            App.preferences.putValue(
+                App.PASSING_QUANTITY_ORDER_CHANNEL_FOR_CHECKOUT,
+                quantity_checkout
+            );
+
+            App.redirectTo(App.sceneBuilder(new CheckoutPageCustomer()));
         });
 
     }

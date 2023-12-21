@@ -13,13 +13,15 @@ import repositories.MenuItemRepository;
 import repositories.OrderRepository;
 import values.SYSTEM_PROPERTIES;
 import values.SharedPreference;
-import views.CheckoutPage;
+import views.CustomerDashboard;
 
 public class App extends Application {
 
 	public static final String CURRENT_USER_KEY = "currentlyLoggedInUser";
 	public static final String PASSING_ID_CHANNEL_FOR_MODIFICATION = "channelWhichIsUsedToPassIdForModificationPage";
-	public static final String PASSING_ORDERS_CHANNEL_FOR_CHECKOUT = "https://www.youtube.com/watch?v=wh9QLjk3M2k&t=92s";
+	public static final String PASSING_ITEM_ORDER_CHANNEL_FOR_CHECKOUT = "https://www.youtube.com/watch?v=wh9QLjk3M2k&t=92s";	
+	public static final String PASSING_QUANTITY_ORDER_CHANNEL_FOR_CHECKOUT = "https://www.youtube.com/watch?v=AWM5ZNdWlqw";
+	public static final String PASSING_ORDER_CHANNEL_FOR_CHECK_ORDER_DETAIL = "https://www.youtube.com/watch?v=AYil1j5vS_4";
 
 	private static Stage primaryStage;
 	public  static SharedPreference preferences = new SharedPreference();
@@ -179,7 +181,7 @@ public class App extends Application {
 	public void start(Stage _primaryStage) throws Exception {
 		primaryStage = _primaryStage;
 
-		final Scene defaultStartupScene = attachStylesheet( sceneBuilder( new CheckoutPage() ) );
+		final Scene defaultStartupScene = attachStylesheet( sceneBuilder( new CustomerDashboard() ) );
 		primaryStage.setScene(defaultStartupScene);
 
 		primaryStage.setMinHeight(Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_MIN_HEIGHT.value) + (stagePadding * 2) );

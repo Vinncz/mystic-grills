@@ -1,7 +1,6 @@
 package controllers;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import models.MenuItem;
 import models.OrderItem;
@@ -29,20 +28,19 @@ public class OrderItemController {
     
     public Boolean put(Integer _orderItemId, Integer _orderId, MenuItem _menuItem , Integer _quantity){
         
-        Optional<OrderItem> orderItem = orderItemRepository.getById(_orderId);
-
-        if(orderItem == null){
-            return false;
-        }
-
-        OrderItem updatedOrderItem = orderItem.get();
-
+        OrderItem updatedOrderItem = new OrderItem();
+        
         updatedOrderItem.setOrderItemId(_orderItemId);
         updatedOrderItem.setOrderId(_orderId);
         updatedOrderItem.setMenuItem(_menuItem);
         updatedOrderItem.setQuantity(_quantity);
 
         return orderItemRepository.put(updatedOrderItem);
+    }
+    
+
+    public ArrayList<OrderItem> getByOrderId(Integer _orderId){
+        return orderItemRepository.getByOrderId(_orderId);
     }
 
     public Boolean delete(Integer _orderItemId){
