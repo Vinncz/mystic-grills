@@ -1,4 +1,5 @@
 package views;
+
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.BorderStrokeStyle;
@@ -7,21 +8,12 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import values.SYSTEM_PROPERTIES;
 import javafx.scene.control.Label;
 import application_starter.App;
-import design_patterns.strategy_pattern.LabelValidationStrategy;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Border;
 import views.components.buttons.BaseButton;
-import views.components.buttons.CTAButton;
-import views.components.buttons.DestructiveButton;
-import views.components.buttons.DisabledButton;
-import views.components.buttons.EditButton;
-import views.components.buttons.OutlineButton;
-import views.components.buttons.TextButton;
 import views.components.hboxes.BaseHBox;
 import views.components.hboxes.RootElement;
 import views.components.vboxes.BaseVBox;
@@ -71,7 +63,7 @@ public class AdminDashboardPage extends BorderPane implements PageDeclarationGui
                 menuManagementLabel = new H3Label("Menu Item Management Studio").withBoldFont().withAlternateFont();
                 menuManagementDescLabel = new H5Label("Simply click this button to check menu item management");
                 menuManagementButton = new BaseButton("Take me there");
-            
+
             userManagementContainer = new BaseVBox().withTightSpacing();
                 userManagementLabel = new H3Label("User Management Studio").withBoldFont().withAlternateFont();
                 userManagementDescLabel = new H5Label("Simply click this button to check user management");
@@ -153,7 +145,7 @@ public class AdminDashboardPage extends BorderPane implements PageDeclarationGui
         menuManagementButton.setOnMouseEntered(e -> {
             menuManagementButton.setStyle("-fx-background-color: #7E615D; -fx-text-fill: #ffffff;-fx-background-radius: 5;");
         });
-        
+
         menuManagementButton.setOnMouseExited(e -> {
             menuManagementButton.setStyle("-fx-background-color: #463634; -fx-text-fill: #ffffff;-fx-background-radius: 5;");
         });
@@ -165,7 +157,7 @@ public class AdminDashboardPage extends BorderPane implements PageDeclarationGui
         userManagementButton.setOnMouseEntered(e -> {
             userManagementButton.setStyle("-fx-background-color: #7E615D; -fx-text-fill: #ffffff; -fx-background-radius: 5;");
         });
-        
+
         userManagementButton.setOnMouseExited(e -> {
             userManagementButton.setStyle("-fx-background-color: #463634; -fx-text-fill: #ffffff; -fx-background-radius: 5;");
         });

@@ -16,6 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import models.User;
 import repositories.UserRepository;
 import values.SYSTEM_PROPERTIES;
 import values.strings.ValidationState;
@@ -181,9 +182,25 @@ public class LoginPage extends BorderPane implements PageDeclarationGuideline_v1
                 App.preferences.putValue(authResult.getState().value, true);
 
             } else {
-                App.preferences.putValue(App.CURRENT_USER_KEY, authResult.getAssociatedUser());
+                User authenticatedUser = authResult.getAssociatedUser();
+                App.preferences.putValue(App.CURRENT_USER_KEY, authenticatedUser);
 
-				App.redirectTo(App.sceneBuilder(new temp()));
+                if ( authenticatedUser.getUserRole().equals(User.UserRole.ADMIN) ) {
+                    App.redirectTo( App.sceneBuilder( new AdminDashboardPage() ) );
+
+                } else if ( authenticatedUser.getUserRole().equals(User.UserRole.CUSTOMER) ) {
+                    App.redirectTo( App.sceneBuilder( new CustomerDashboardPage() ) );
+
+                } else if ( authenticatedUser.getUserRole().equals(User.UserRole.CASHIER) ) {
+                    App.redirectTo( App.sceneBuilder( new CashierDashboardPage() ) );
+
+                } else if ( authenticatedUser.getUserRole().equals(User.UserRole.CHEF) ) {
+                    App.redirectTo( App.sceneBuilder( new ViewOrderPage() ) );
+
+                } else if ( authenticatedUser.getUserRole().equals(User.UserRole.WAITER) ) {
+                    App.redirectTo( App.sceneBuilder( new ViewOrderPage() ) );
+
+                }
 
             }
         });

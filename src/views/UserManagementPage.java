@@ -1,27 +1,21 @@
 package views;
 
 import java.util.ArrayList;
-import java.util.Vector;
 
+import application_starter.App;
 import controllers.UserController;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
-import javafx.util.converter.DefaultStringConverter;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -29,7 +23,6 @@ import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import models.User;
 import models.User.UserRole;
-import values.SYSTEM_PROPERTIES;
 import views.components.buttons.CTAButton;
 import views.components.buttons.DestructiveButton;
 import views.components.buttons.DisabledButton;
@@ -54,7 +47,7 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
 
     private VBox pageContent;
     TableView<User> table;
-	TableColumn<User,String> usernameColumn, emailColumn, passwordColumn; 
+	TableColumn<User,String> usernameColumn, emailColumn, passwordColumn;
     TableColumn<User,UserRole> roleColumn;
     TableColumn deleteColumn;
 
@@ -83,14 +76,14 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
     {
         initializeScene();
     }
-   
+
     @Override
     public void initializeControls()
     {
         rootElement    = new RootElement();
         container      = new Container().centerContentHorizontally();
-        scrollSupport  = new BaseScrollPane(rootElement);  
-        
+        scrollSupport  = new BaseScrollPane(rootElement);
+
         pageIdentifierContainer = new BaseVBox();
             pageTitle = new H1Label("Mystic Grills").withBoldFont().withAlternateFont();
 
@@ -106,7 +99,7 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
                 passwordColumn.setCellValueFactory(new PropertyValueFactory<>("userPassword"));
                 emailColumn.setCellValueFactory(new PropertyValueFactory<>("userEmail"));
                 roleColumn.setCellValueFactory(new PropertyValueFactory<User, UserRole>("userRole"));
-                
+
         buttonContainer = new BaseHBox().withTightSpacing();
             saveButton = new CTAButton("Save");
             discardButton = new DestructiveButton("Discard");
@@ -122,7 +115,7 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
         public String toString(UserRole object) {
             return object == null ? null : object.toString();
         }
-    
+
         @Override
         public UserRole fromString(String string) {
             return string == null ? null : UserRole.valueOf(string);
@@ -136,11 +129,11 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
         pageContent.setPrefHeight(500);
         pageContent.getStyleClass().addAll("py-16");
         pageContent.setSpacing(24);
-        
+
 
         buttonContainer.getStyleClass().addAll("pt-16");
         buttonContainer.setAlignment(Pos.CENTER_RIGHT);
-        VBox.setMargin(buttonContainer, new Insets(0, 0, 20, 0));        
+        VBox.setMargin(buttonContainer, new Insets(0, 0, 20, 0));
 
         table.setPrefWidth(1000);
         double columnWidth = (table.getPrefWidth()-5)/5;
@@ -150,7 +143,7 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
         roleColumn.setPrefWidth(columnWidth);
         deleteColumn.setPrefWidth(columnWidth);
 
-        
+
         BorderPane.setMargin(buttonContainer, new Insets(30, 30, 30, 30));
     }
 
@@ -161,7 +154,7 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
             {
                 setAlignment(Pos.CENTER);
             }
-    
+
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -172,13 +165,13 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
                 }
             }
         });
-    
+
         // Set alignment for emailColumn
         emailColumn.setCellFactory(col -> new TableCell<User, String>() {
             {
                 setAlignment(Pos.CENTER);
             }
-    
+
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -189,13 +182,13 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
                 }
             }
         });
-    
+
         // Set alignment for passwordColumn
         passwordColumn.setCellFactory(col -> new TableCell<User, String>() {
             {
                 setAlignment(Pos.CENTER);
             }
-    
+
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -206,13 +199,13 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
                 }
             }
         });
-    
+
         // Set alignment for roleColumn
         roleColumn.setCellFactory(col -> new TableCell<User, UserRole>() {
             {
                 setAlignment(Pos.CENTER);
             }
-    
+
             @Override
             protected void updateItem(UserRole item, boolean empty) {
                 super.updateItem(item, empty);
@@ -223,14 +216,14 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
                 }
             }
         });
-    
+
         // Set alignment for deleteColumn
         deleteColumn.setCellFactory(col -> new TableCell<User, Void>() {
 
             private final Button deleteButton = new Button("Delete");
             {
                 setAlignment(Pos.CENTER);
-    
+
                 // Add action to the delete button
                 deleteButton.setOnAction(event -> {
                     User user = getTableView().getItems().get(getIndex());
@@ -242,10 +235,10 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
                         updateSaveButtonStyle();
                         table.getItems().clear();
 		                table.getItems().addAll(users);
-                    }               
+                    }
                 });
             }
-    
+
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
@@ -261,7 +254,7 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
         saveButton.setOnMouseClicked(e->{
             for (User user : table.getItems()) {
                 boolean success = uc.put(user);
-        
+
                 if (success) {
                     System.out.println("User with ID " + user.getUserId() + " updated successfully.");
                 } else {
@@ -269,15 +262,16 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
                 }
             }
 
-            for (User user : userToDeleteList)
-            {
+            for (User user : userToDeleteList) {
                 uc.delete(user.getUserId());
             }
+
             userToDeleteList.clear();
 
             changesMade = false;
             updateSaveButtonStyle();
-        }); 
+            App.redirectTo( App.sceneBuilder( new AdminDashboardPage() ) );
+        });
 
         discardButton.setOnMouseClicked(e->{
             userToDeleteList.clear();
@@ -304,7 +298,7 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
 
         if (changesMade) {
             saveButton = new CTAButton("Save");
-            saveButton.setDisable(false);  
+            saveButton.setDisable(false);
         } else {
             saveButton = new DisabledButton("Save");
         }
@@ -316,11 +310,11 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
         pageIdentifierContainer.getChildren().addAll(
             pageTitle
         );
-        
+
 
         buttonContainer.getChildren().addAll(
-            discardButton,    
-            saveButton   
+            discardButton,
+            saveButton
         );
 
         table.getColumns().addAll(
@@ -335,7 +329,7 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
         pageContent.getChildren().addAll(
             table
         );
-        
+
 
         container.getChildren().addAll(
             pageIdentifierContainer,
@@ -346,7 +340,7 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
         rootElement.getChildren().addAll(
             container
         );
-        
+
     }
 
     public void select()
@@ -358,7 +352,7 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
         userRole = FXCollections.observableArrayList(User.UserRole.values());
         roleColumn.setCellFactory(column -> {
             ComboBoxTableCell<User, UserRole> cell = new ComboBoxTableCell<>(new UserRoleStringConverter(), userRole);
-            cell.setComboBoxEditable(true); 
+            cell.setComboBoxEditable(true);
             return cell;
         });
 
@@ -367,7 +361,7 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
             int rowIndex = event.getTablePosition().getRow();
             User user = event.getTableView().getItems().get(rowIndex);
             user.setUserRole(event.getNewValue());
-            
+
             changesMade = true;
             updateSaveButtonStyle();
 
@@ -379,7 +373,7 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
             //     System.out.println("Database updated successfully.");
             // } else {
             //     System.out.println("Failed to update database.");
-            //   
+            //
             // }
         });
 

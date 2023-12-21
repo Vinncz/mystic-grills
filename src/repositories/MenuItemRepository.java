@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import exceptions.DatabaseModificationPolicyViolatedException;
 import models.MenuItem;
 import repositories.helpers.DatabaseExceptionExplainer;
 import repositories.interfaces.BaseRepository;
@@ -78,6 +79,45 @@ public class MenuItemRepository extends BaseRepository<MenuItem> {
     @Override
     protected Integer getObjectId (MenuItem _object) {
         return _object.getMenuItemId();
+    }
+
+    /**
+     * Provides a way to delete a concrete object from the database
+     *
+     * @param _idOfAnObjectToBeDeleted • The id of which object you wish to remove
+     * @return Confirmation of whether the deletion operation is successful or not.
+     */
+    public Boolean delete (Integer _idOfAnObjectToBeDeleted) {
+        try {
+            OrderItemRepository ortemrepo = new OrderItemRepository();
+            ortemrepo.deleteByMenuItemId(_idOfAnObjectToBeDeleted);
+
+            BaseRepository<MenuItem>.executeUpdateReturnDatatypes updateReport = executeUpdate(
+                db,
+                DELETE_QUERY,
+
+                _idOfAnObjectToBeDeleted
+            );
+
+            Integer rowsAffected = updateReport.getRowsAffected();
+            if ( modificationFollowsDatabasePolicy(rowsAffected) )
+                return save(db);
+
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+            rollback(db);
+
+        } catch (DatabaseModificationPolicyViolatedException _modificationDidNotFollowDatabasePolicy) {
+            DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_modificationDidNotFollowDatabasePolicy);
+            rollback(db);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
+
+        }
+
+        return false;
     }
 
     @Override

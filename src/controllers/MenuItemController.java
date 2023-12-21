@@ -58,7 +58,7 @@ public class MenuItemController {
 
             return returnObject;
         }
-        
+
         if ( validator.lessThanNCharacters(menuItemDescription, 11) ) {
             returnObject.setState(ValidationState.INVALID_MENUITEM_DESCRIPTION_LENGTH);
 
@@ -92,7 +92,8 @@ public class MenuItemController {
             return returnObject;
         }
 
-        if(menuItemRepo.getMenuItemByName(_menuItemName) != null) {
+        Optional<MenuItem> objectWithTheSameName = menuItemRepo.getMenuItemByName(_menuItemName);
+        if ( objectWithTheSameName.isPresent() && objectWithTheSameName.get().getMenuItemId() != _menuItemId ) {
             returnObject.setState(ValidationState.DUPLICATE_MENUITEM_NAME);
 
             return returnObject;
@@ -110,7 +111,7 @@ public class MenuItemController {
             return returnObject;
         }
 
-        if ( validator.longerThanNCharacters(_menuItemDescription, 10) ) {
+        if ( validator.lessThanNCharacters(_menuItemDescription, 10) ) {
             returnObject.setState(ValidationState.INVALID_MENUITEM_DESCRIPTION_LENGTH);
 
             return returnObject;

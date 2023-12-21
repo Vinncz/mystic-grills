@@ -2,12 +2,10 @@ package views;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Optional;
 
 import application_starter.App;
 import controllers.OrderController;
 import controllers.OrderItemController;
-import controllers.UserController;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -15,6 +13,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import models.MenuItem;
+import models.OrderItem;
 import models.Order.OrderStatus;
 import models.User;
 import views.components.buttons.BaseButton;
@@ -32,8 +31,8 @@ import views.components.vboxes.BaseVBox;
 import views.components.vboxes.Container;
 import views.guidelines.PageDeclarationGuideline_v1;
 
-public class CheckoutPageCustomer extends BorderPane implements PageDeclarationGuideline_v1{
-    
+public class CheckoutPage extends BorderPane implements PageDeclarationGuideline_v1{
+
     private ScrollPane scrollSupport;
     private HBox rootElement;
     private VBox container;
@@ -48,7 +47,7 @@ public class CheckoutPageCustomer extends BorderPane implements PageDeclarationG
     private VBox content;
     private BorderPane bottomPageContent;
 
-    private Label totalLabel , totalPrice , toplabel; 
+    private Label totalLabel , totalPrice , toplabel;
 
     private HBox buttonContainer;
     private Button confirmOrderBtn;
@@ -65,44 +64,35 @@ public class CheckoutPageCustomer extends BorderPane implements PageDeclarationG
     private Double tempTotalPrice;
 
 
-    public CheckoutPageCustomer()
-    {
+    public CheckoutPage () {
+        menuItems_checkout = getCheckoutItems(App.PASSING_ITEM_ORDER_CHANNEL_FOR_CHECKOUT);
+        quantity_checkout  = getCheckoutItems(App.PASSING_ORDER_QUANTITY_CHANNEL_FOR_CHECKOUT);
+
         initializeScene();
     }
 
     @Override
     public void initializeControls() {
-
-        
-        menuItems_checkout = getCheckoutItems(App.PASSING_ITEM_ORDER_CHANNEL_FOR_CHECKOUT);
-        quantity_checkout = getCheckoutItems(App.PASSING_QUANTITY_ORDER_CHANNEL_FOR_CHECKOUT);
-
-        rootElement    = new RootElement();
-        container      = new Container().centerContentHorizontally();
-        scrollSupport  = new BaseScrollPane(rootElement);
+        rootElement   = new RootElement();
+        container     = new Container().centerContentHorizontally();
+        scrollSupport = new BaseScrollPane(rootElement);
 
         pageIdentifierContainer = new BaseVBox();
-            backBtn = new BaseButton("Back");    
-            pageTitle = new H1Label("Checkout Menu").withBoldFont();
-        
+            backBtn             = new BaseButton("Back");
+            pageTitle           = new H1Label("Checkout Menu").withBoldFont();
+
         pageContent = new BaseVBox();
             topPageContent = new BaseHBox();
                 toplabel = new H5Label("Detail Pesanan");
-            
+
             content = new BaseVBox();
                 cardViews = new ArrayList<>();
-
                 tempTotalPrice = 0d;
-                
                 for(MenuItem menuItem : menuItems_checkout){
-
                     Integer quantity = quantity_checkout.get(menuItems_checkout.indexOf(menuItem));
-
                     BaseCardView cardView = new BaseCardView();
 
                     BorderPane orderItemView = new BorderPane();
-                    
-
                             HBox orderItemContent = new BaseHBox();
                                 Label menuName = new H5Label(menuItem.getMenuItemName());
                                 Label menuPrice = new H5Label("Rp"+Integer.toString(menuItem.getMenuItemPrice()));
@@ -115,7 +105,7 @@ public class CheckoutPageCustomer extends BorderPane implements PageDeclarationG
 
                     orderItemContent.getChildren().addAll(
                         menuName,
-                        menuPrice                        
+                        menuPrice
                     );
 
                     orderItemView.setLeft(orderItemContent);
@@ -126,14 +116,14 @@ public class CheckoutPageCustomer extends BorderPane implements PageDeclarationG
 
                     tempTotalPrice = tempTotalPrice + menuItem.getMenuItemPrice() * quantity;
                 }
-            
+
             bottomPageContent = new BorderPane();
                 totalLabel = new H3Label("Total").withBoldFont();
                 totalPrice = new H3Label("Rp"+String.format("%.2f", tempTotalPrice));
-        
+
         buttonContainer = new BaseHBox();
             confirmOrderBtn = new CTAButton("Confirm Order");
-    }   
+    }
 
     @Override
     public void configureElements() {
@@ -142,36 +132,35 @@ public class CheckoutPageCustomer extends BorderPane implements PageDeclarationG
 
     @Override
     public void initializeEventListeners() {
-        
         backBtn.setOnMouseClicked(e ->{
-            App.redirectTo(App.sceneBuilder(new CustomerDashboard()));
+            App.redirectTo(
+                App.sceneBuilder( new CustomerDashboardPage() )
+            );
         });
 
         confirmOrderBtn.setOnMouseClicked(e -> {
-
             OrderController orderController = new OrderController();
             OrderItemController OrderItemController = new OrderItemController();
-            UserController userController = new UserController();
-            
-            // User user = (User) App.preferences.getValue(App.CURRENT_USER_KEY);
 
-            Optional<User> user = userController.getById(1);
+            User user = (User) App.preferences.getValue(App.CURRENT_USER_KEY);
+            Integer orderId = orderController.post(user , OrderStatus.PENDING, getDateTime(), tempTotalPrice).getOrderId();
 
-            Integer orderId = orderController.post(user.get() , OrderStatus.PENDING, getDateTime(), tempTotalPrice).getOrderId();
+            for (MenuItem menuItem : menuItems_checkout) {
+                OrderItem oi = new OrderItem();
+                oi.setMenuItem(menuItem);
+                oi.setOrderId(orderId);
+                oi.setQuantity(quantity_checkout.get(menuItems_checkout.indexOf(menuItem)));
 
-            for (MenuItem  menuItem : menuItems_checkout) {
-                OrderItemController.post(orderId,menuItem,quantity_checkout.get(menuItems_checkout.indexOf(menuItem)));
+                OrderItemController.post(oi);
             }
 
-            App.redirectTo(App.sceneBuilder(new CustomerDashboard()));
-
+            App.redirectTo(App.sceneBuilder(new CustomerDashboardPage()));
         });
 
     }
 
     @Override
     public void assembleLayout() {
-
         pageIdentifierContainer.getChildren().addAll(
             backBtn,
             pageTitle
@@ -199,13 +188,13 @@ public class CheckoutPageCustomer extends BorderPane implements PageDeclarationG
             content,
             bottomPageContent
         );
-        
+
         container.getChildren().addAll(
             pageIdentifierContainer,
             pageContent,
             buttonContainer
         );
-        
+
         rootElement.getChildren().addAll(
             container
         );
@@ -218,7 +207,7 @@ public class CheckoutPageCustomer extends BorderPane implements PageDeclarationG
 
     private <T> ArrayList<T> getCheckoutItems(String channel) {
         Object rawItems = App.preferences.getValue(channel);
-    
+
         if (rawItems instanceof ArrayList<?>) {
             @SuppressWarnings("unchecked")
             ArrayList<T> checkoutItems = (ArrayList<T>) rawItems;
@@ -229,7 +218,6 @@ public class CheckoutPageCustomer extends BorderPane implements PageDeclarationG
     }
 
     public static String getDateTime() {
-     
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
         String formattedDateTime = currentTimestamp.toString();

@@ -76,12 +76,11 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
         }
     };
 
+    Integer menuItemId = (Integer) App.preferences.getValue(App.PASSING_ID_CHANNEL_FOR_MODIFICATION);
+    Optional<MenuItem> menuItem = new MenuItemController().getById(menuItemId);
+
     @Override
     public void initializeControls() {
-        Integer menuItemId = (Integer) App.preferences.getValue(App.PASSING_ID_CHANNEL_FOR_MODIFICATION);
-        Optional<MenuItem> menuItem = new MenuItemController().getById(menuItemId);
-
-
         rootElement = new RootElement();
         container = new Container();
         scrollSupport = new BaseScrollPane(rootElement);
@@ -153,6 +152,10 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
 
     @Override
     public void configureElements() {
+        menuNameField.setText(menuItem.get().getMenuItemName());
+        menuPriceField.setText(menuItem.get().getMenuItemPrice().toString());
+        menuDescriptionField.setText(menuItem.get().getMenuItemDescription());
+
         ArrayList<Object> _errorToWatchForMenuNameRelatedElement = new ArrayList<>(errorToWatchForMenuNameRelatedElement.stream().map(ValidationState::value).collect(Collectors.toList()));
         ArrayList<Object> _errorToWatchForMenuPriceRelatedElement = new ArrayList<>(errorToWatchForMenuPriceRelatedElement.stream().map(ValidationState::value).collect(Collectors.toList()));
         ArrayList<Object> _errorToWatchForMenuDescriptionRelatedElement = new ArrayList<>(errorToWatchForMenuDescriptionRelatedElement.stream().map(ValidationState::value).collect(Collectors.toList()));

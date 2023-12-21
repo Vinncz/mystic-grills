@@ -84,10 +84,10 @@ public class CashierDashboardPage extends BorderPane implements PageDeclarationG
     @Override
     public void initializeEventListeners() {
         buttonsForCardViews.get(0).setOnMouseClicked(e -> {
-            App.redirectTo(App.sceneBuilder(new LoginPage()));
+            App.redirectTo(App.sceneBuilder(new ViewOrderPage()));
         });
         buttonsForCardViews.get(1).setOnMouseClicked(e -> {
-            App.redirectTo(App.sceneBuilder(new RegisterPage()));
+            App.redirectTo(App.sceneBuilder(new temp())); // TODO: RECEIPT MANAGEMENT BELOM
         });
     }
 

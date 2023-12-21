@@ -13,6 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import models.Order;
+import models.User;
 import views.components.buttons.BaseButton;
 import views.components.card_views.BaseCardView;
 import views.components.hboxes.BaseHBox;
@@ -26,7 +27,7 @@ import views.components.vboxes.Container;
 import views.guidelines.PageDeclarationGuideline_v1;
 
 public class MyOrderPageCustomer extends BorderPane implements PageDeclarationGuideline_v1{
-    
+
     private ScrollPane scrollSupport;
     private HBox rootElement;
     private VBox container;
@@ -42,40 +43,37 @@ public class MyOrderPageCustomer extends BorderPane implements PageDeclarationGu
     private ArrayList<Order> orders;
     private ArrayList<Button> checkOrderBtns;
 
-    public MyOrderPageCustomer()
-    {
+    public MyOrderPageCustomer () {
         initializeScene();
     }
 
     @Override
     public void initializeControls() {
+        User currentlyLoggedUser = (User) App.preferences.getValue(App.CURRENT_USER_KEY);
 
         OrderController orderController = new OrderController();
-        
-        orders = orderController.getAll();
-        
+        orders = orderController.getByUserId(currentlyLoggedUser.getUserId());
 
         rootElement    = new RootElement();
         container      = new Container().centerContentHorizontally();
         scrollSupport  = new BaseScrollPane(rootElement);
 
         pageIdentifierContainer = new BaseVBox();
-            backBtn = new BaseButton("Back");    
+            backBtn = new BaseButton("Back");
             pageTitle = new H1Label("My Orders").withBlackFont();
-        
+
         pageContent = new FlowPane();
             cardViews = new ArrayList<>();
                 checkOrderBtns = new ArrayList<>();
-            
-                for(Order order : orders){
-                    
+
+                for (Order order : orders){
                     BaseCardView cardView = new BaseCardView();
 
-                        VBox content1 = new BaseVBox().withTightSpacing();                    
+                        VBox content1 = new BaseVBox().withTightSpacing();
                             Label nomorOrderLabel = new H5Label("Nomor Order").withLightFont();
                             Label nomorOrder = new H4Label(order.getOrderId().toString()).withBoldFont();
 
-                        HBox linePane = new BaseHBox();        
+                        HBox linePane = new BaseHBox();
                             Line line = new Line(0, 0, 350, 0);
 
                         VBox content2 = new BaseVBox().withTightSpacing();
@@ -84,9 +82,9 @@ public class MyOrderPageCustomer extends BorderPane implements PageDeclarationGu
 
                         HBox btnContent = new BaseHBox();
                             Button checkOrder = new BaseButton("Check Order");
-                        
+
                     line.prefWidth(100);
-                    line.setStyle("-fx-stroke: #C5C5C5;");  
+                    line.setStyle("-fx-stroke: #C5C5C5;");
 
                     content1.getChildren().addAll(
                         nomorOrderLabel,
@@ -116,9 +114,9 @@ public class MyOrderPageCustomer extends BorderPane implements PageDeclarationGu
                     checkOrderBtns.add(checkOrder);
                     cardViews.add(cardView);
                 }
-                
-    
-    }   
+
+
+    }
 
     @Override
     public void configureElements() {
@@ -128,18 +126,15 @@ public class MyOrderPageCustomer extends BorderPane implements PageDeclarationGu
 
     @Override
     public void initializeEventListeners() {
-        
+
         backBtn.setOnMouseClicked(e ->{
-            App.redirectTo(App.sceneBuilder(new CustomerDashboard()));
+            App.redirectTo(App.sceneBuilder(new CustomerDashboardPage()));
         });
 
         for(Button checkOrderBtn : checkOrderBtns){
             checkOrderBtn.setOnMouseClicked(e -> {
-                
                 Integer index = checkOrderBtns.indexOf(checkOrderBtn);
-
-                App.preferences.putValue(App.PASSING_ORDER_CHANNEL_FOR_CHECK_ORDER_DETAIL,orders.get(index).getOrderId());
-            
+                App.preferences.putValue(App.PASSING_ORDER_CHANNEL_FOR_CHECK_ORDER_DETAIL, orders.get(index).getOrderId());
                 App.redirectTo(App.sceneBuilder(new ViewOrderMenuPageCustomer()));
 
             });
@@ -150,7 +145,6 @@ public class MyOrderPageCustomer extends BorderPane implements PageDeclarationGu
 
     @Override
     public void assembleLayout() {
-
         pageIdentifierContainer.getChildren().addAll(
             backBtn,
             pageTitle
@@ -166,7 +160,7 @@ public class MyOrderPageCustomer extends BorderPane implements PageDeclarationGu
             pageIdentifierContainer,
             pageContent
         );
-       
+
         rootElement.getChildren().addAll(
             container
         );

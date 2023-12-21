@@ -27,7 +27,7 @@ import views.components.vboxes.BaseVBox;
 import views.components.vboxes.Container;
 import views.guidelines.PageDeclarationGuideline_v1;
 
-public class CustomerDashboard extends BorderPane implements PageDeclarationGuideline_v1  {
+public class CustomerDashboardPage extends BorderPane implements PageDeclarationGuideline_v1  {
 
     private ScrollPane scrollSupport;
     private HBox rootElement;
@@ -52,13 +52,12 @@ public class CustomerDashboard extends BorderPane implements PageDeclarationGuid
 
     private MenuItemController menuItemController;
 
-    public CustomerDashboard(){
-        initializeScene();        
+    public CustomerDashboardPage () {
+        initializeScene();
     }
 
     @Override
     public void initializeControls() {
-    
         rootElement    = new RootElement();
         container      = new Container().centerContentHorizontally();
         scrollSupport  = new BaseScrollPane(rootElement);
@@ -66,28 +65,28 @@ public class CustomerDashboard extends BorderPane implements PageDeclarationGuid
         pageIdentifierContainer = new BorderPane();
             pageTitle = new H1Label("Available Menu").withBoldFont().withAlternateFont();
             myOrdersBtn = new CTAButton("My Orders").withSizeOf(16);
-        
+
         pageContent = new FlowPane();
             numberFields = new ArrayList<>();
             cardViews  = new ArrayList<>();
-        
+
         buttonContainer = new BorderPane();
             checkoutBtn = new CTAButton("check out").withSizeOf(16);
-        
+
         menuItemController = new MenuItemController();
         menuItems = menuItemController.getAll();
 
         for(MenuItem menuItem : menuItems){
-        
+
             BaseCardView cardView = new BaseCardView();
 
                 VBox content1 = new BaseVBox();
                     menuItemNameLabel = new H4Label(menuItem.getMenuItemName()).withBoldFont();
                     menuItemDescLabel = new Label(menuItem.getMenuItemDescription());
 
-                HBox linePane = new BaseHBox();        
-                    Line line = new Line(0, 0, 350, 0); 
-                
+                HBox linePane = new BaseHBox();
+                    Line line = new Line(0, 0, 350, 0);
+
                 VBox content2 = new BaseVBox().withTightSpacing();
                     priceTitle = new H5Label("Price").withLightFont();
                     menuItemPriceLabel = new H4Label("Rp" + Integer.toString(menuItem.getMenuItemPrice()) + ",-").withBlackFont();
@@ -95,7 +94,7 @@ public class CustomerDashboard extends BorderPane implements PageDeclarationGuid
                     baseNumberfieldObj = baseNumberfieldBuilder.build();
 
             line.prefWidth(370);
-            line.setStyle("-fx-stroke: #C5C5C5;"); 
+            line.setStyle("-fx-stroke: #C5C5C5;");
 
 
             content1.getChildren().addAll(
@@ -125,7 +124,7 @@ public class CustomerDashboard extends BorderPane implements PageDeclarationGuid
 
     @Override
     public void configureElements() {
-        
+
         for(BaseCardView cardView : cardViews){
             cardView.getInstance().setPrefWidth(400);
         }
@@ -137,22 +136,19 @@ public class CustomerDashboard extends BorderPane implements PageDeclarationGuid
 
     @Override
     public void initializeEventListeners() {
-    
+
         myOrdersBtn.setOnMouseClicked(e -> {
             App.redirectTo(App.sceneBuilder(new MyOrderPageCustomer()));
         });
 
         checkoutBtn.setOnMouseClicked(e -> {
-
             ArrayList<MenuItem> menuItems_checkout = new ArrayList<>();
             ArrayList<Integer> quantity_checkout = new ArrayList<>();
 
             for (BaseNumberfield numInput : numberFields){
-                
                 Integer quantity = Integer.parseInt(numInput.getInputField().getText());
 
-                if(quantity > 0){
-                    
+                if (quantity > 0) {
                     MenuItem menuItem = menuItems.get(numberFields.indexOf(numInput));
                     menuItems_checkout.add(menuItem);
                     quantity_checkout.add(quantity);
@@ -165,11 +161,11 @@ public class CustomerDashboard extends BorderPane implements PageDeclarationGuid
             );
 
             App.preferences.putValue(
-                App.PASSING_QUANTITY_ORDER_CHANNEL_FOR_CHECKOUT,
+                App.PASSING_ORDER_QUANTITY_CHANNEL_FOR_CHECKOUT,
                 quantity_checkout
             );
 
-            App.redirectTo(App.sceneBuilder(new CheckoutPageCustomer()));
+            App.redirectTo(App.sceneBuilder(new CheckoutPage()));
         });
 
     }

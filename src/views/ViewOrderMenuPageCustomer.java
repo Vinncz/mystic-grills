@@ -31,7 +31,7 @@ import views.components.vboxes.Container;
 import views.guidelines.PageDeclarationGuideline_v1;
 
 public class ViewOrderMenuPageCustomer extends BorderPane implements PageDeclarationGuideline_v1{
-    
+
     private ScrollPane scrollSupport;
     private HBox rootElement;
     private VBox container;
@@ -46,7 +46,7 @@ public class ViewOrderMenuPageCustomer extends BorderPane implements PageDeclara
     private VBox content;
     private BorderPane bottomPageContent;
 
-    private Label totalLabel , totalPrice , toplabel; 
+    private Label totalLabel , totalPrice , toplabel;
 
     private HBox buttonContainer;
     private Button confirmChangeBtn , discardChangeBtn;
@@ -59,16 +59,14 @@ public class ViewOrderMenuPageCustomer extends BorderPane implements PageDeclara
     private Double tempTotalPrice;
     private Integer orderId;
 
-    public ViewOrderMenuPageCustomer()
-    {
+    public ViewOrderMenuPageCustomer() {
         initializeScene();
     }
 
     @Override
     public void initializeControls() {
-
         orderId = (Integer) App.preferences.getValue(App.PASSING_ORDER_CHANNEL_FOR_CHECK_ORDER_DETAIL);
-        
+
         OrderItemController orderItemController = new OrderItemController();
 
         orderItems = orderItemController.getByOrderId(orderId);
@@ -79,19 +77,19 @@ public class ViewOrderMenuPageCustomer extends BorderPane implements PageDeclara
         scrollSupport  = new BaseScrollPane(rootElement);
 
         pageIdentifierContainer = new BaseVBox();
-            backBtn = new BaseButton("Back");    
+            backBtn = new BaseButton("Back");
             pageTitle = new H1Label("View Ordered Menu").withBoldFont();
-        
+
         pageContent = new BaseVBox();
             topPageContent = new BaseHBox();
                 toplabel = new H5Label("Detail Pesanan");
-            
+
             content = new BaseVBox();
                 cardViews = new ArrayList<>();
                     baseNumberfields = new ArrayList<>();
-                    
+
                 tempTotalPrice = 0d;
-                
+
                 for(OrderItem orderItem : orderItems){
 
                     BaseCardView cardView = new BaseCardView();
@@ -107,14 +105,14 @@ public class ViewOrderMenuPageCustomer extends BorderPane implements PageDeclara
                                                                 .withMinimumValueOf(0)
                                                                 .withInitialValueOf(orderItem.getQuantity());
                                 BaseNumberfield baseNumberfieldObj = baseNumberfieldBuilder.build();
-                                
+
                                 baseNumberfields.add(baseNumberfieldObj);
 
                     orderItemContent.getChildren().addAll(
                         menuName,
-                        menuPrice                        
+                        menuPrice
                     );
-                    
+
 
                     orderItemView.setLeft(orderItemContent);
                     orderItemView.setRight(baseNumberfieldObj);
@@ -122,27 +120,27 @@ public class ViewOrderMenuPageCustomer extends BorderPane implements PageDeclara
                     cardView.setContent(orderItemView);
                     cardViews.add(cardView);
 
-                    
+
                     tempTotalPrice = tempTotalPrice + orderItem.getMenuItem().getMenuItemPrice() * orderItem.getQuantity();
                 }
-            
+
             bottomPageContent = new BorderPane();
                 totalLabel = new H3Label("Total").withBoldFont();
                 totalPrice = new H3Label("Rp"+String.format("%.2f", tempTotalPrice));
-        
+
         buttonContainer = new BaseHBox();
             confirmChangeBtn = new CTAButton("Confirm Order");
             discardChangeBtn = new DestructiveButton("Discard Change");
-    }   
+    }
 
     @Override
     public void configureElements() {
-        
+
     }
 
     @Override
     public void initializeEventListeners() {
-        
+
         backBtn.setOnMouseClicked(e ->{
             App.redirectTo(App.sceneBuilder(new MyOrderPageCustomer()));
         });
@@ -152,16 +150,14 @@ public class ViewOrderMenuPageCustomer extends BorderPane implements PageDeclara
         });
 
         confirmChangeBtn.setOnMouseClicked(e -> {
-
             OrderItemController OrderItemController = new OrderItemController();
             OrderController orderController = new OrderController();
-            
+
             Order currentOrder = orderController.getById(orderId).get();
 
             tempTotalPrice = 0d;
-            
-            for (OrderItem  orderItem : orderItems) {
 
+            for (OrderItem  orderItem : orderItems) {
                 Integer updatedQuantity = Integer.parseInt(baseNumberfields.get(orderItems.indexOf(orderItem)).getInputField().getText());
                 Integer orderItemPrice = orderItem.getMenuItem().getMenuItemPrice();
 
@@ -209,13 +205,13 @@ public class ViewOrderMenuPageCustomer extends BorderPane implements PageDeclara
             content,
             bottomPageContent
         );
-        
+
         container.getChildren().addAll(
             pageIdentifierContainer,
             pageContent,
             buttonContainer
         );
-        
+
         rootElement.getChildren().addAll(
             container
         );
@@ -227,7 +223,7 @@ public class ViewOrderMenuPageCustomer extends BorderPane implements PageDeclara
     }
 
     public static String getDateTime() {
-     
+
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
         String formattedDateTime = currentTimestamp.toString();

@@ -271,7 +271,7 @@ public class RegisterPage extends BorderPane implements PageDeclarationGuideline
 			} else {
 				App.preferences.putValue(App.CURRENT_USER_KEY, registrationResult.getAssociatedUser());
 
-				App.redirectTo(App.sceneBuilder(new temp()));
+				App.redirectTo(App.sceneBuilder(new CustomerDashboardPage()));
 			}
 		});
 	}

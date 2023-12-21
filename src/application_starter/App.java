@@ -1,28 +1,19 @@
 package application_starter;
 
-import java.util.ArrayList;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import models.MenuItem;
-import models.Order;
-import models.OrderItem;
-import repositories.MenuItemRepository;
-import repositories.OrderRepository;
-import repositories.UserRepository;
 import values.SYSTEM_PROPERTIES;
 import values.SharedPreference;
-import views.CashierDashboardPage;
 import views.LoginPage;
-import views.OrderDetailPage;
 
 public class App extends Application {
+
 	public static final String CURRENT_USER_KEY = "currentlyLoggedInUser";
 	public static final String PASSING_ID_CHANNEL_FOR_MODIFICATION = "channelWhichIsUsedToPassIdForModificationPage";
 	public static final String PASSING_ITEM_ORDER_CHANNEL_FOR_CHECKOUT = "https://www.youtube.com/watch?v=wh9QLjk3M2k&t=92s";
-	public static final String PASSING_QUANTITY_ORDER_CHANNEL_FOR_CHECKOUT = "https://www.youtube.com/watch?v=AWM5ZNdWlqw";
+	public static final String PASSING_ORDER_QUANTITY_CHANNEL_FOR_CHECKOUT = "https://www.youtube.com/watch?v=AWM5ZNdWlqw";
 	public static final String PASSING_ORDER_CHANNEL_FOR_CHECK_ORDER_DETAIL = "https://www.youtube.com/watch?v=AYil1j5vS_4";
 
 	private static Stage primaryStage;
@@ -35,167 +26,14 @@ public class App extends Application {
 	public static Boolean IS_MAXIMIZED = false;
 
 	public static void main (String [] args) {
-
-		// debugMenuItemRepository();
-		// debugOrderRepository();
-		// debugUserRepository();
-		// debugOrderRepository2();
-
 		launch(args);
-
-		// OrderRepository orderRepository = new OrderRepository();
-		// OrderItemRepository orderItemRepository = new OrderItemRepository();
-		// MenuItemRepository menuItemRepository = new MenuItemRepository();
-		// UserRepository userRepository = new UserRepository();
-
-
-		// User user = userRepository.getById(2).get();
-		// OrderItem orderItem = new OrderItem();
-		// Order order = new Order();
-
-		// order.setOrderUser(user);
-		// order.setOrderDate("2023-12-15 14:30:00");
-		// order.setOrderStatus(OrderStatus.PAID);
-		// order.setOrderTotal(100D);
-
-		// orderRepository.post(order);
-
-		// orderItem.setMenuItem(menuItem);
-		// orderItem.setOrderId(1);
-		// orderItem.setQuantity(2);
-
-		// orderItemRepository.post(orderItem);
-
-
-
-	}
-
-	public static void debugUserRepository () {
-		UserRepository userRepo = new UserRepository();
-		userRepo.delete(19);
-	}
-
-	public static void debugOrderRepository2 () {
-		OrderRepository orderRepo = new OrderRepository();
-		orderRepo.delete(1);
-	}
-
-	public static void debugOrderRepository () {
-		OrderRepository orepo = new OrderRepository();
-		ArrayList<Order> orders = orepo.getAll();
-
-		// System.out.println("\n\nDELETE ALL BELOW ___");
-		// for (Order o : orders) {
-		// 	orepo.delete(o.getOrderId());
-		// }
-
-		// Optional<Order> opto = orepo.getById(1);
-		// if (opto.isPresent()) {
-		System.out.println("");
-		for (Order o : orders) {
-			boolean flag = false;
-			// Order o = opto.get();
-			System.out.println("OrderID: " + o.getOrderId());
-			System.out.println("    OrderDate: " + o.getOrderDate());
-			System.out.println("    OrderTotal: " + o.getOrderTotal());
-			System.out.println("    OrderStatus: " + o.getOrderStatus());
-
-			System.out.println("    Order User:");
-			System.out.println("        Order UserID: " + o.getOrderUser().getUserId());
-			System.out.println("        Order UserName: " + o.getOrderUser().getUserName());
-			System.out.println("        Order UserEmail: " + o.getOrderUser().getUserEmail());
-			System.out.println("        Order UserPassword: " + o.getOrderUser().getUserPassword());
-			System.out.println("        Order UserRole: " + o.getOrderUser().getUserRole());
-
-			System.out.println("    Order Items:");
-			for (OrderItem oi : o.getOrderItems()) {
-				flag = true;
-				System.out.println("        OrderItem ID: " + oi.getOrderItemId());
-				System.out.println("            OrderItem Quantity: " + oi.getQuantity());
-				System.out.println("            OrderItem's OrderID: " + oi.getOrderId());
-
-				System.out.println("            OrderItem's Menu Item:");
-				System.out.println("                 OrderItem's MenuItem Id: " + oi.getMenuItem().getMenuItemId());
-				System.out.println("                 OrderItem's MenuItem Name: " + oi.getMenuItem().getMenuItemName());
-				System.out.println("                 OrderItem's MenuItem Desc: " + oi.getMenuItem().getMenuItemDescription());
-				System.out.println("                 OrderItem's MenuItem Price: " + oi.getMenuItem().getMenuItemPrice());
-			}
-
-			if (flag == false) {
-				System.out.println("        none.");
-			}
-		}
-
-	}
-
-	public static void debugMenuItemRepository() {
-		MenuItemRepository mirepo = new MenuItemRepository();
-		ArrayList<MenuItem> menuItems = mirepo.getAll();
-
-		System.out.println("\n\nDELETE ALL BELOW ___");
-		for (MenuItem mi : menuItems) {
-			mirepo.delete(mi.getMenuItemId());
-		}
-
-		System.out.println("\n\nFETCH ALL BELOW ___");
-		menuItems = mirepo.getAll();
-		for (MenuItem m : menuItems) {
-			System.out.println("id: " + m.getMenuItemId());
-			System.out.println("name: " + m.getMenuItemName());
-			System.out.println("desc: " + m.getMenuItemDescription());
-			System.out.println("price: " + m.getMenuItemPrice());
-		}
-
-		System.out.println("\n\nINSERT ONE BELOW ___");
-		MenuItem mi = new MenuItem();
-		mi.setMenuItemName("Indomie Goreng Jumbo");
-		mi.setMenuItemDescription("Lebih nikmat disajikan dengan telur");
-		mi.setMenuItemPrice(3900);
-		mi = mirepo.post(mi);
-
-		System.out.println("\n\nFETCH ALL BELOW ___");
-		menuItems = mirepo.getAll();
-		for (MenuItem m : menuItems) {
-			System.out.println("id: " + m.getMenuItemId());
-			System.out.println("name: " + m.getMenuItemName());
-			System.out.println("desc: " + m.getMenuItemDescription());
-			System.out.println("price: " + m.getMenuItemPrice());
-		}
-
-		System.out.println("\n\nUPDATE ONE BELOW ___");
-		mi.setMenuItemName("Mie Suksess Isi 2");
-		mi.setMenuItemDescription("Isinya boleh 2, rasanya gaenak!");
-		mi.setMenuItemPrice(3500);
-		mirepo.put(mi);
-
-		System.out.println("\n\nFETCH ALL BELOW ___");
-		menuItems = mirepo.getAll();
-		for (MenuItem m : menuItems) {
-			System.out.println("id: " + m.getMenuItemId());
-			System.out.println("name: " + m.getMenuItemName());
-			System.out.println("desc: " + m.getMenuItemDescription());
-			System.out.println("price: " + m.getMenuItemPrice());
-		}
-
-		System.out.println("\n\nDELETE ONE BELOW ___");
-		mirepo.delete(mi.getMenuItemId());
-
-		System.out.println("\n\nFETCH ALL BELOW ___");
-		menuItems = mirepo.getAll();
-		for (MenuItem m : menuItems) {
-			System.out.println("MASUK SINI");
-			System.out.println("id: " + m.getMenuItemId());
-			System.out.println("name: " + m.getMenuItemName());
-			System.out.println("desc: " + m.getMenuItemDescription());
-			System.out.println("price: " + m.getMenuItemPrice());
-		}
 	}
 
 	@Override
 	public void start(Stage _primaryStage) throws Exception {
 		primaryStage = _primaryStage;
 
-		final Scene defaultStartupScene = attachStylesheet( sceneBuilder( new OrderDetailPage() ) );
+		final Scene defaultStartupScene = attachStylesheet( sceneBuilder( new LoginPage() ) );
 		primaryStage.setScene(defaultStartupScene);
 
 		primaryStage.setMinHeight(Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_MIN_HEIGHT.value) + (stagePadding * 2) );

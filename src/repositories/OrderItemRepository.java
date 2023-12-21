@@ -54,6 +54,44 @@ public class OrderItemRepository extends BaseRepository<OrderItem> {
     }
 
     /**
+     * Provides a way to delete a concrete object from the database
+     *
+     * @param _idOfAnObjectToBeDeleted • The id of which object you wish to remove
+     * @return Confirmation of whether the deletion operation is successful or not.
+     */
+    public Boolean deleteByMenuItemId (Integer _menuItemId) {
+        final String query = String.format("DELETE FROM %s WHERE menu_item_id = ?", TABLE_NAME);
+
+        try {
+            BaseRepository<OrderItem>.executeUpdateReturnDatatypes updateReport = executeUpdate(
+                db,
+                query,
+
+                _menuItemId
+            );
+
+            Integer rowsAffected = updateReport.getRowsAffected();
+            if ( modificationFollowsDatabasePolicy(rowsAffected) )
+                return save(db);
+
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+            rollback(db);
+
+        } catch (DatabaseModificationPolicyViolatedException _modificationDidNotFollowDatabasePolicy) {
+            DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_modificationDidNotFollowDatabasePolicy);
+            rollback(db);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
+
+        }
+
+        return false;
+    }
+
+    /**
      * Deletes any OrderItem whose {@code orderId} matched the {@code order_id} from the given parameter
      *
      * @param _orderId •

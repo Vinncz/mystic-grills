@@ -17,15 +17,14 @@ public class OrderItemController {
 		this.mic = new MenuItemController();
 	}
 
-	public OrderItem newOrderItem(Integer _orderId, MenuItem _menuitem) {{
+	public OrderItem newOrderItem (Integer _orderId, MenuItem _menuitem) {
 		OrderItem oi = new OrderItem();
+
 		oi.setOrderId(_orderId);
 		oi.setMenuItem(_menuitem);
 		oi.setQuantity(1);
 
 		return oi;
-	}
-
 	}
 
 	public ArrayList<OrderItem> getByOrderId (Integer _orderId) {
@@ -35,7 +34,7 @@ public class OrderItemController {
 	public OrderItem getByMenuItemID (Integer _orderId, Integer _menuItemID) {
 		Optional<MenuItem> menuItemHolder = mic.getById(_menuItemID);
 
-		if(menuItemHolder.isPresent()) {
+		if ( menuItemHolder.isPresent() ) {
 			OrderItem oi = new OrderItem();
 			oi.setOrderId(_orderId);
 			oi.setMenuItem(menuItemHolder.get());
@@ -85,6 +84,23 @@ public class OrderItemController {
 	public Boolean put (OrderItem _replacementObject) {
 		return orderItemRepo.put(_replacementObject);
 	}
+
+	public Boolean put(Integer _orderItemId, Integer _orderId, MenuItem _menuItem , Integer _quantity){
+        Optional<OrderItem> orderItem = orderItemRepo.getById(_orderId);
+
+        if(orderItem == null){
+            return false;
+        }
+
+        OrderItem updatedOrderItem = orderItem.get();
+
+        updatedOrderItem.setOrderItemId(_orderItemId);
+        updatedOrderItem.setOrderId(_orderId);
+        updatedOrderItem.setMenuItem(_menuItem);
+        updatedOrderItem.setQuantity(_quantity);
+
+        return orderItemRepo.put(updatedOrderItem);
+    }
 
 	public Boolean delete (Integer _idOfAnObjectToBeDeleted) {
 		return orderItemRepo.delete(_idOfAnObjectToBeDeleted);
