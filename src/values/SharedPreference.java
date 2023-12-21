@@ -1,14 +1,13 @@
 package values;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import design_patterns.observer_pattern.Observer;
 import design_patterns.observer_pattern.Publisher;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.stream.Collectors;
 
 public class SharedPreference implements Publisher {
     private HashMap<String, List<Observer>> subscribers;

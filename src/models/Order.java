@@ -5,16 +5,26 @@ import java.util.ArrayList;
 public class Order {
 
     public enum OrderStatus {
-        PAID,
-        PENDING,
-        PREPARED,
-        SERVED,
+        PAID("Paid"),
+        PENDING("Pending"),
+        PREPARED("Prepared"),
+        SERVED("Served");
+    
+        private final String stringValue;
+    
+        OrderStatus(String stringValue) {
+            this.stringValue = stringValue;
+        }
+    
+        public String getStringValue() {
+            return stringValue;
+        }
     }
 
     private Integer orderId;
     private User orderUser;
     private ArrayList<OrderItem> orderItems;
-    private OrderStatus orderStatus;
+    private String orderStatus;
     private String orderDate;
     private Double orderTotal;
 
@@ -30,7 +40,7 @@ public class Order {
         return orderItems;
     }
 
-    public OrderStatus getOrderStatus() {
+    public String getOrderStatus() {
         return orderStatus;
     }
 
@@ -55,7 +65,7 @@ public class Order {
     }
 
     public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+        this.orderStatus = orderStatus.getStringValue();
     }
 
     public void setOrderTotal(Double orderTotal) {

@@ -13,13 +13,13 @@ import repositories.MenuItemRepository;
 import repositories.OrderRepository;
 import values.SYSTEM_PROPERTIES;
 import values.SharedPreference;
-import views.CustomerDashboard;
+import views.CheckoutPage;
 
 public class App extends Application {
 
 	public static final String CURRENT_USER_KEY = "currentlyLoggedInUser";
 	public static final String PASSING_ID_CHANNEL_FOR_MODIFICATION = "channelWhichIsUsedToPassIdForModificationPage";
-	public static final String PASSING_ORDERS_CCHANNEL_FOR_CHECKOUT = "https://www.youtube.com/watch?v=wh9QLjk3M2k&t=92s";
+	public static final String PASSING_ORDERS_CHANNEL_FOR_CHECKOUT = "https://www.youtube.com/watch?v=wh9QLjk3M2k&t=92s";
 
 	private static Stage primaryStage;
 	public  static SharedPreference preferences = new SharedPreference();
@@ -36,6 +36,31 @@ public class App extends Application {
 		// debugOrderRepository();
 
 		launch(args);
+
+		// OrderRepository orderRepository = new OrderRepository();
+		// OrderItemRepository orderItemRepository = new OrderItemRepository(); 
+		// MenuItemRepository menuItemRepository = new MenuItemRepository();
+		// UserRepository userRepository = new UserRepository();
+		
+
+		// User user = userRepository.getById(2).get();
+		// OrderItem orderItem = new OrderItem();
+		// Order order = new Order();
+
+		// order.setOrderUser(user);
+		// order.setOrderDate("2023-12-15 14:30:00");
+		// order.setOrderStatus(OrderStatus.PAID);
+		// order.setOrderTotal(100D);
+
+		// orderRepository.post(order);
+
+		// orderItem.setMenuItem(menuItem);
+		// orderItem.setOrderId(1);
+		// orderItem.setQuantity(2);
+	
+		// orderItemRepository.post(orderItem);
+		
+
 
 	}
 
@@ -154,7 +179,7 @@ public class App extends Application {
 	public void start(Stage _primaryStage) throws Exception {
 		primaryStage = _primaryStage;
 
-		final Scene defaultStartupScene = attachStylesheet( sceneBuilder( new CustomerDashboard() ) );
+		final Scene defaultStartupScene = attachStylesheet( sceneBuilder( new CheckoutPage() ) );
 		primaryStage.setScene(defaultStartupScene);
 
 		primaryStage.setMinHeight(Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_MIN_HEIGHT.value) + (stagePadding * 2) );

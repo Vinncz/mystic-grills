@@ -121,7 +121,7 @@ public class CustomerDashboard extends BorderPane implements PageDeclarationGuid
     public void initializeEventListeners() {
     
         myOrdersBtn.setOnMouseClicked(e -> {
-            
+    
         });
 
         checkoutBtn.setOnMouseClicked(e -> {
@@ -141,9 +141,11 @@ public class CustomerDashboard extends BorderPane implements PageDeclarationGuid
 
             
             App.preferences.putValue(
-                App.PASSING_ORDERS_CCHANNEL_FOR_CHECKOUT,
+                App.PASSING_ORDERS_CHANNEL_FOR_CHECKOUT,
                 checkout_menuItems
             );
+
+            App.redirectTo(App.sceneBuilder(new CheckoutPage()));
         });
 
     }
