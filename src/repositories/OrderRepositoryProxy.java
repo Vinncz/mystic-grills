@@ -11,10 +11,12 @@ public class OrderRepositoryProxy {
     public class OrderClassifiedByStatusReturnDatatype {
         private ArrayList<Order> pendingOrders;
         private ArrayList<Order> preparedOrders;
+        private ArrayList<Order> servedOrders;
 
-        public OrderClassifiedByStatusReturnDatatype (ArrayList<Order> _pendings, ArrayList<Order> _prepareds) {
+        public OrderClassifiedByStatusReturnDatatype (ArrayList<Order> _pendings, ArrayList<Order> _prepareds, ArrayList<Order> _serveds) {
             this.pendingOrders = _pendings;
             this.preparedOrders = _prepareds;
+            this.servedOrders = _serveds;
         }
 
         public ArrayList<Order> getPendingOrders () {
@@ -24,27 +26,39 @@ public class OrderRepositoryProxy {
         public ArrayList<Order> getPreparedOrders () {
             return this.preparedOrders;
         }
+        
+        public ArrayList<Order> getServedOrders () {
+        	return this.servedOrders;
+        }
     }
 
     private OrderRepository orderRepo = new OrderRepository();
 
     public OrderRepositoryProxy () {}
 
-    public ArrayList<Order> getOrder (User.UserRole userRole) {
-        Order.OrderStatus status;
-        ArrayList<Order> retrievedData = new ArrayList<>();
+    public OrderClassifiedByStatusReturnDatatype getOrder (User.UserRole userRole) {
 
         if (userRole.equals(User.UserRole.CHEF)) {
-            status = OrderStatus.PENDING;
+            return new OrderClassifiedByStatusReturnDatatype(
+            		orderRepo.getByStatus(OrderStatus.PENDING), 
+            		null, null
+            );
 
         } else if (userRole.equals(User.UserRole.WAITER)) {
-            status = OrderStatus.PREPARED;
-            retrievedData = orderRepo.getByStatus(status);
-            status = OrderStatus.PENDING;
-            retrievedData.addAll(orderRepo.getByStatus(status));
+        	return new OrderClassifiedByStatusReturnDatatype(
+            		orderRepo.getByStatus(OrderStatus.PENDING), 
+            		orderRepo.getByStatus(OrderStatus.PREPARED),
+            		null
+            );
+        } else if (userRole.equals(User.UserRole.CASHIER)) {
+        	return new OrderClassifiedByStatusReturnDatatype(
+        			orderRepo.getByStatus(OrderStatus.PENDING), 
+        			orderRepo.getByStatus(OrderStatus.PREPARED),
+        			orderRepo.getByStatus(OrderStatus.SERVED)
+    		);
         }
 
-        return retrievedData;
+        return new OrderClassifiedByStatusReturnDatatype(null, null, null);
     }
 
 }
