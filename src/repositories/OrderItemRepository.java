@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import exceptions.DatabaseModificationPolicyViolatedException;
 import models.MenuItem;
 import models.OrderItem;
 import repositories.helpers.DatabaseExceptionExplainer;
@@ -21,8 +22,8 @@ public class OrderItemRepository extends BaseRepository<OrderItem> {
 
             String.format("SELECT * FROM %s WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_ORDER_ITEM_TABLE.value),
             String.format("SELECT * FROM %s", SYSTEM_PROPERTIES.DATABASE_ORDER_ITEM_TABLE.value),
-            String.format("INSERT INTO %s (menu_item_id, quantity) VALUES (?, ?)", SYSTEM_PROPERTIES.DATABASE_ORDER_ITEM_TABLE.value),
-            String.format("UPDATE %s SET menu_item_id = ?, quantity = ? WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_ORDER_ITEM_TABLE.value),
+            String.format("INSERT INTO %s (order_id, menu_item_id, quantity) VALUES (?, ?)", SYSTEM_PROPERTIES.DATABASE_ORDER_ITEM_TABLE.value),
+            String.format("UPDATE %s SET order_id = ?, menu_item_id = ?, quantity = ? WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_ORDER_ITEM_TABLE.value),
             String.format("DELETE FROM %s WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_ORDER_ITEM_TABLE.value)
         );
 
@@ -50,6 +51,79 @@ public class OrderItemRepository extends BaseRepository<OrderItem> {
         }
 
         return retrievedObjects;
+    }
+
+    /**
+     * Deletes any OrderItem whose {@code orderId} matched the {@code order_id} from the given parameter
+     *
+     * @param _orderId •
+     * @return Confirmation of whether the deletion operation is successful or not
+     */
+    public Boolean deleteByOrderId (Integer _orderId) {
+        final String query = String.format("DELETE FROM %s WHERE order_id = ?", TABLE_NAME);
+        try {
+            BaseRepository<OrderItem>.executeUpdateReturnDatatypes updateReport = executeUpdate(
+                db,
+                query,
+
+                _orderId
+            );
+
+            Integer rowsAffected = updateReport.getRowsAffected();
+            if ( modificationFollowsDatabasePolicy(rowsAffected) )
+                return save(db);
+
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+            rollback(db);
+
+        } catch (DatabaseModificationPolicyViolatedException _modificationDidNotFollowDatabasePolicy) {
+            DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_modificationDidNotFollowDatabasePolicy);
+            rollback(db);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
+
+        }
+
+        return false;
+    }
+
+    /**
+     * Deletes any OrderItem whose {@code orderId} matched the {@code order_id} from the given parameter. <br></br>
+     * This variation will not commit by itself, so you'll have to explicitly call {@code commit(db)} in order for changes to take effect.
+     *
+     * @param _orderId •
+     * @return Confirmation of whether the deletion operation is successful or not
+     */
+    public Boolean deleteByOrderIdWithoutCommit (Integer _orderId) {
+        final String query = String.format("DELETE FROM %s WHERE order_id = ?", TABLE_NAME);
+        try {
+            BaseRepository<OrderItem>.executeUpdateReturnDatatypes updateReport = executeUpdate(
+                db,
+                query,
+
+                _orderId
+            );
+
+            Integer rowsAffected = updateReport.getRowsAffected();
+            if ( modificationFollowsDatabasePolicy(rowsAffected) )
+                return true;
+
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+
+        } catch (DatabaseModificationPolicyViolatedException _modificationDidNotFollowDatabasePolicy) {
+            DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_modificationDidNotFollowDatabasePolicy);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
+
+        }
+
+        return false;
     }
 
     @Override

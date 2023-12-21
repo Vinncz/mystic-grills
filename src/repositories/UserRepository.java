@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import exceptions.DatabaseModificationPolicyViolatedException;
 import models.User;
 import repositories.helpers.DatabaseExceptionExplainer;
 import repositories.interfaces.BaseRepository;
@@ -94,8 +95,49 @@ public class UserRepository extends BaseRepository<User> {
 
         }
 
-         return retrievedObject;
-     }
+        return retrievedObject;
+    }
+
+    /**
+     * Provides a way to delete a concrete object from the database <br></br>
+     * This variation of {@code delete} method, who is owned by UserRepository, includes
+     * the logic to also delete associated Order (and by extension, Receipt and OrderItems aswel) who hold reference to said User object.
+     *
+     * @param _idOfAnObjectToBeDeleted • The id of which object you wish to remove
+     * @return Confirmation of whether the deletion operation is successful or not.
+     */
+    public Boolean delete (Integer _idOfAnObjectToBeDeleted) {
+        try {
+            OrderRepository orderRepo = new OrderRepository();
+            orderRepo.deleteByUserId(_idOfAnObjectToBeDeleted);
+
+            BaseRepository<User>.executeUpdateReturnDatatypes updateReport = executeUpdate(
+                db,
+                DELETE_QUERY,
+
+                _idOfAnObjectToBeDeleted
+            );
+
+            Integer rowsAffected = updateReport.getRowsAffected();
+            if ( modificationFollowsDatabasePolicy(rowsAffected) )
+                return save(db);
+
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+            rollback(db);
+
+        } catch (DatabaseModificationPolicyViolatedException _modificationDidNotFollowDatabasePolicy) {
+            DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_modificationDidNotFollowDatabasePolicy);
+            rollback(db);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
+
+        }
+
+        return false;
+    }
 
 
     @Override

@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import exceptions.DatabaseModificationPolicyViolatedException;
 import models.Order;
 import models.User;
 import repositories.helpers.DatabaseExceptionExplainer;
@@ -31,6 +32,29 @@ public class OrderRepository extends BaseRepository<Order> {
         orderItemRepo = new OrderItemRepository();
     }
 
+    public ArrayList<Order> getByUserId (Integer _userId) {
+        final String query = String.format("SELECT * FROM %s WHERE user_id = ?", TABLE_NAME);
+        ArrayList<Order> retrievedObject = new ArrayList<>();
+
+        try {
+            BaseRepository<Order>.executeQueryReturnDatatypes report = executeQuery(db, query, _userId);
+            retrievedObject = parseMany(report.getResultSet());
+
+            report.getResultSet().close();
+            report.getPreparedStatement().close();
+
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
+
+        }
+
+        return retrievedObject;
+    }
+
     public ArrayList<Order> getByStatus (Order.OrderStatus _status) {
         final String query = String.format("SELECT * FROM %d WHERE status = ?", TABLE_NAME);
         ArrayList<Order> retrievedObject = new ArrayList<>();
@@ -52,6 +76,114 @@ public class OrderRepository extends BaseRepository<Order> {
         }
 
         return retrievedObject;
+    }
+
+    /**
+     * Provides a way to delete a concrete object from the database. <br></br>
+     * This variation of {@code delete} method, who is owned by OrderRepository, includes
+     * the logic to also delete associated OrderItem and Receipt who hold reference to said Order object.
+     *
+     * @param _idOfAnObjectToBeDeleted • The id of which object you wish to remove
+     * @return Confirmation of whether the deletion operation is successful or not. Bear in mind that this only apply to whether the deletion of the Order object is successful, NOT whether the associated Receipt or OrderItems' deletion is successful or not.
+     */
+    public Boolean delete (Integer _idOfAnObjectToBeDeleted) {
+        try {
+            OrderItemRepository orderItemRepo = new OrderItemRepository();
+            orderItemRepo.deleteByOrderId(_idOfAnObjectToBeDeleted);
+
+            ReceiptRepository receiptRepo = new ReceiptRepository();
+            receiptRepo.deleteByOrderId(_idOfAnObjectToBeDeleted);
+
+            BaseRepository<Order>.executeUpdateReturnDatatypes updateReport = executeUpdate(
+                db,
+                DELETE_QUERY,
+
+                _idOfAnObjectToBeDeleted
+            );
+
+            Integer rowsAffected = updateReport.getRowsAffected();
+            if ( modificationFollowsDatabasePolicy(rowsAffected) )
+                return save(db);
+
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+            rollback(db);
+
+        } catch (DatabaseModificationPolicyViolatedException _modificationDidNotFollowDatabasePolicy) {
+            DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_modificationDidNotFollowDatabasePolicy);
+            rollback(db);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
+
+        }
+
+        return false;
+    }
+
+    /**
+     * Provides a way to delete a concrete object from the database. <br></br>
+     * This variation will not commit by itself, so you'll have to explicitly call {@code commit(db)} in order for changes to take effect.
+     *
+     * @param _idOfAnObjectToBeDeleted • The id of which object you wish to remove
+     * @return Confirmation of whether the deletion operation is successful or not. Bear in mind that this only apply to whether the deletion of the Order object is successful, NOT whether the associated Receipt or OrderItems' deletion is successful or not.
+     */
+    public Boolean deleteWithoutCommit (Integer _idOfAnObjectToBeDeleted) {
+        try {
+            OrderItemRepository orderItemRepo = new OrderItemRepository();
+            orderItemRepo.deleteByOrderIdWithoutCommit(_idOfAnObjectToBeDeleted);
+
+            ReceiptRepository receiptRepo = new ReceiptRepository();
+            receiptRepo.deleteByOrderIdWithoutCommit(_idOfAnObjectToBeDeleted);
+
+            BaseRepository<Order>.executeUpdateReturnDatatypes updateReport = executeUpdate(
+                db,
+                DELETE_QUERY,
+
+                _idOfAnObjectToBeDeleted
+            );
+
+            Integer rowsAffected = updateReport.getRowsAffected();
+            if ( modificationFollowsDatabasePolicy(rowsAffected) )
+                return true;
+
+        } catch (SQLException _problemDuringQueryExecution) {
+            DatabaseExceptionExplainer.explainQueryFault(_problemDuringQueryExecution);
+
+        } catch (DatabaseModificationPolicyViolatedException _modificationDidNotFollowDatabasePolicy) {
+            DatabaseExceptionExplainer.explainMaximumModifiableRowViolation(_modificationDidNotFollowDatabasePolicy);
+
+        } catch (Exception _unanticipatedProblem) {
+            _unanticipatedProblem.printStackTrace();
+            throw new RuntimeException(_unanticipatedProblem.getMessage());
+
+        }
+
+        return false;
+    }
+
+    /**
+     * Provides a way to delete a concrete object from the database
+     *
+     * @param _idOfAnObjectToBeDeleted • The id of which object you wish to remove
+     * @return Confirmation of whether the deletion operation is successful or not.
+     */
+    public Boolean deleteByUserId (Integer _userId) {
+        Boolean hasBeenSafeSoFar = true;
+
+        ArrayList<Order> ordersThatHaveMatchingUserId = getByUserId(_userId);
+        for ( Order o : ordersThatHaveMatchingUserId ) {
+            System.out.println("ketemu order yang user_idnya: " + _userId + " yaitu order dgn id: " + o.getOrderId());
+            hasBeenSafeSoFar = deleteWithoutCommit(o.getOrderId());
+            if ( hasBeenSafeSoFar == false ) {
+                rollback(db);
+                break;
+            }
+        }
+
+        if ( hasBeenSafeSoFar ) return save(db);
+        return false;
     }
 
     @Override

@@ -11,6 +11,7 @@ import models.Order;
 import models.OrderItem;
 import repositories.MenuItemRepository;
 import repositories.OrderRepository;
+import repositories.UserRepository;
 import values.SYSTEM_PROPERTIES;
 import values.SharedPreference;
 import views.LoginPage;
@@ -33,9 +34,21 @@ public class App extends Application {
 
 		// debugMenuItemRepository();
 		// debugOrderRepository();
+		// debugUserRepository();
+		// debugOrderRepository2();
 
 		launch(args);
 
+	}
+
+	public static void debugUserRepository () {
+		UserRepository userRepo = new UserRepository();
+		userRepo.delete(19);
+	}
+
+	public static void debugOrderRepository2 () {
+		OrderRepository orderRepo = new OrderRepository();
+		orderRepo.delete(1);
 	}
 
 	public static void debugOrderRepository () {
