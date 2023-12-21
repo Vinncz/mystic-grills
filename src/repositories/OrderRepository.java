@@ -56,7 +56,7 @@ public class OrderRepository extends BaseRepository<Order> {
     }
 
     public ArrayList<Order> getByStatus (Order.OrderStatus _status) {
-        final String query = String.format("SELECT * FROM %d WHERE status = ?", TABLE_NAME);
+        final String query = String.format("SELECT * FROM %s WHERE status = ?", TABLE_NAME);
         ArrayList<Order> retrievedObject = new ArrayList<>();
 
         try {
@@ -291,7 +291,7 @@ public class OrderRepository extends BaseRepository<Order> {
     public Object[] unparseAttributes(Order _object) {
         Object [] attributes = {
                                     _object.getOrderUser().getUserId(),
-                                    _object.getOrderStatus(),
+                                    _object.getOrderStatus().toString(),
                                     _object.getOrderDate(),
                                     _object.getOrderTotal()
                                };
