@@ -280,6 +280,7 @@ public class UserManagementPage extends BorderPane implements PageDeclarationGui
         }); 
 
         discardButton.setOnMouseClicked(e->{
+            userToDeleteList.clear();
             select();
         });
 
