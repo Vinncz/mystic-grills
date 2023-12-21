@@ -4,16 +4,21 @@ import java.util.ArrayList;
 
 import design_patterns.observer_pattern.Observer;
 import design_patterns.strategy_pattern.Strategy;
+import javafx.scene.Node;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import views.components.interfaces.CustomizableGrowingDirection;
 import views.components.interfaces.UsesStrategy;
 import views.components.vboxes.BaseVBox;
 import views.guidelines.PageDeclarationGuideline_v1;
 
-public class BaseCardView implements PageDeclarationGuideline_v1, Observer, UsesStrategy<BaseCardView> {
+public class BaseCardView implements PageDeclarationGuideline_v1, Observer, UsesStrategy<BaseCardView>, CustomizableGrowingDirection<BaseCardView> {
 
     private Strategy strat = null;
     private BaseVBox objectInCreation;
-    private ArrayList<Pane> content;
+    private ArrayList<Node> content;
 
     public BaseCardView () {
         super();
@@ -33,9 +38,9 @@ public class BaseCardView implements PageDeclarationGuideline_v1, Observer, Uses
         return this.objectInCreation;
     }
 
-    public BaseCardView setContent (Pane... _contents) {
-        ArrayList<Pane> localContent = new ArrayList<>();
-        for (Pane p : _contents) {
+    public BaseCardView setContent (Node... _contents) {
+        ArrayList<Node> localContent = new ArrayList<>();
+        for (Node p : _contents) {
             localContent.add(p);
         }
 
@@ -61,7 +66,7 @@ public class BaseCardView implements PageDeclarationGuideline_v1, Observer, Uses
 
     @Override
     public void assembleLayout () {
-        for (Pane p : content) {
+        for (Node p : content) {
             objectInCreation.getChildren().add(p);
         }
     }
@@ -80,6 +85,18 @@ public class BaseCardView implements PageDeclarationGuideline_v1, Observer, Uses
     @Override
     public void getNotified(Object _key, Object _value) {
         if (this.strat != null) this.strat.execute((String) _key, _value, this);
+    }
+
+    @Override
+    public BaseCardView growsHorizontally() {
+        HBox.setHgrow(this.objectInCreation, Priority.ALWAYS);
+        return this;
+    }
+
+    @Override
+    public BaseCardView growsVertically() {
+        VBox.setVgrow(this.objectInCreation, Priority.ALWAYS);
+        return this;
     }
 
 }
