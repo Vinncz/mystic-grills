@@ -93,6 +93,12 @@ public class ViewOrderPage extends BorderPane implements PageDeclarationGuidelin
 		backButtonContainer.setStyle(
 				"-fx-padding: 20 20 20 20;"
 		);
+		
+		if(!(user.getUserRole().equals(UserRole.CASHIER))) {
+			backButton.setVisible(false);
+			backButton.setManaged(false);			
+		}
+		
 	}
 
 	@Override
