@@ -98,7 +98,7 @@ public class ViewOrderMenuPageCustomer extends BorderPane implements PageDeclara
 
                             HBox orderItemContent = new BaseHBox();
                                 Label menuName = new H5Label(orderItem.getMenuItem().getMenuItemName());
-                                Label menuPrice = new H5Label("Rp"+Integer.toString(orderItem.getMenuItem().getMenuItemPrice()));
+                                Label menuPrice = new H5Label("$"+Integer.toString(orderItem.getMenuItem().getMenuItemPrice()));
 
                                 BaseNumberfieldBuilder baseNumberfieldBuilder = new BaseNumberfieldBuilder()
                                                                 .withMaximumValueOf(1000)
@@ -126,7 +126,7 @@ public class ViewOrderMenuPageCustomer extends BorderPane implements PageDeclara
 
             bottomPageContent = new BorderPane();
                 totalLabel = new H3Label("Total").withBoldFont();
-                totalPrice = new H3Label("Rp"+String.format("%.2f", tempTotalPrice));
+                totalPrice = new H3Label("$"+String.format("%.2f", tempTotalPrice));
 
         buttonContainer = new BaseHBox();
             confirmChangeBtn = new CTAButton("Confirm Order");
@@ -150,7 +150,7 @@ public class ViewOrderMenuPageCustomer extends BorderPane implements PageDeclara
         });
 
         confirmChangeBtn.setOnMouseClicked(e -> {
-            OrderItemController OrderItemController = new OrderItemController();
+            OrderItemController orderItemController = new OrderItemController();
             OrderController orderController = new OrderController();
 
             Order currentOrder = orderController.getById(orderId).get();
@@ -164,7 +164,13 @@ public class ViewOrderMenuPageCustomer extends BorderPane implements PageDeclara
                 tempTotalPrice = tempTotalPrice + updatedQuantity * orderItemPrice  ;
                 System.out.println("total:" + tempTotalPrice);
 
-                OrderItemController.put(orderItem.getOrderItemId(),orderItem.getOrderId(),orderItem.getMenuItem(),updatedQuantity);
+                if(updatedQuantity == 0){
+                    orderItemController.delete(orderItem.getOrderItemId());
+                }
+                else{
+                    orderItemController.put(orderItem.getOrderItemId(),orderItem.getOrderId(),orderItem.getMenuItem(),updatedQuantity);
+                }
+
             }
 
             orderController.put(orderId, currentOrder.getOrderUser(), currentOrder.getOrderStatus(), currentOrder.getOrderDate() , tempTotalPrice);

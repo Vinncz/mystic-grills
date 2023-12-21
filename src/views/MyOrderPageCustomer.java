@@ -78,7 +78,7 @@ public class MyOrderPageCustomer extends BorderPane implements PageDeclarationGu
 
                         VBox content2 = new BaseVBox().withTightSpacing();
                             Label totalLabel = new H5Label("Total").withLightFont();
-                            Label total = new H4Label("Rp"+String.format("%.2f", order.getOrderTotal())).withBoldFont();
+                            Label total = new H4Label("$"+String.format("%.2f", order.getOrderTotal())).withBoldFont();
 
                         HBox btnContent = new BaseHBox();
                             Button checkOrder = new BaseButton("Check Order");
