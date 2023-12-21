@@ -22,7 +22,7 @@ public class OrderItemRepository extends BaseRepository<OrderItem> {
 
             String.format("SELECT * FROM %s WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_ORDER_ITEM_TABLE.value),
             String.format("SELECT * FROM %s", SYSTEM_PROPERTIES.DATABASE_ORDER_ITEM_TABLE.value),
-            String.format("INSERT INTO %s (order_id, menu_item_id, quantity) VALUES (?, ?)", SYSTEM_PROPERTIES.DATABASE_ORDER_ITEM_TABLE.value),
+            String.format("INSERT INTO %s (order_id, menu_item_id, quantity) VALUES (?, ?, ?)", SYSTEM_PROPERTIES.DATABASE_ORDER_ITEM_TABLE.value),
             String.format("UPDATE %s SET order_id = ?, menu_item_id = ?, quantity = ? WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_ORDER_ITEM_TABLE.value),
             String.format("DELETE FROM %s WHERE id = ?", SYSTEM_PROPERTIES.DATABASE_ORDER_ITEM_TABLE.value)
         );

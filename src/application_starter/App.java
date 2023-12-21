@@ -16,9 +16,9 @@ import values.SYSTEM_PROPERTIES;
 import values.SharedPreference;
 import views.CashierDashboardPage;
 import views.LoginPage;
+import views.OrderDetailPage;
 
 public class App extends Application {
-
 	public static final String CURRENT_USER_KEY = "currentlyLoggedInUser";
 	public static final String PASSING_ID_CHANNEL_FOR_MODIFICATION = "channelWhichIsUsedToPassIdForModificationPage";
 
@@ -167,7 +167,7 @@ public class App extends Application {
 	public void start(Stage _primaryStage) throws Exception {
 		primaryStage = _primaryStage;
 
-		final Scene defaultStartupScene = attachStylesheet( sceneBuilder( new CashierDashboardPage() ) );
+		final Scene defaultStartupScene = attachStylesheet( sceneBuilder( new OrderDetailPage() ) );
 		primaryStage.setScene(defaultStartupScene);
 
 		primaryStage.setMinHeight(Integer.parseInt(SYSTEM_PROPERTIES.APPLICATION_MIN_HEIGHT.value) + (stagePadding * 2) );

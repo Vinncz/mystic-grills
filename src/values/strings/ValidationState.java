@@ -49,6 +49,9 @@ public enum ValidationState {
     INVALID_MENUITEM_PRICE_RANGE
         ("Menu item price must be greater than or equal to 2.5"),
 
+    AMOUNT_PAID_IS_LOWER_THAN_WHATS_NEEDED
+        ("You cannot place an order, when you don't pay enough for it"),
+
     GENERIC_INVALID_ARGUMENT
         ("Invalid input!"),
 
