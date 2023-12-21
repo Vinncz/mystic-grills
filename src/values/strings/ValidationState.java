@@ -28,6 +28,27 @@ public enum ValidationState {
     INCORRECT_PASSWORD
         ("Incorrect password entered"),
 
+    EMPTY_MENUITEM_NAME
+        ("Menu item name must be filled"),
+
+    DUPLICATE_MENUITEM_NAME
+        ("Menu item name must be unique"),
+
+    EMPTY_MENUITEM_DESCRIPTION
+        ("Menu item description must be filled"),
+
+    INVALID_MENUITEM_DESCRIPTION_LENGTH
+        ("Menu item description must be more than 10 characters"),
+
+    EMPTY_MENUITEM_PRICE
+        ("Menu item price must be filled"),
+
+    INVALID_MENUITEM_PRICE_FORMAT
+        ("Menu item price must be a valid number"),
+
+    INVALID_MENUITEM_PRICE_RANGE
+        ("Menu item price must be greater than or equal to 2.5"),
+
     GENERIC_INVALID_ARGUMENT
         ("Invalid input!"),
 

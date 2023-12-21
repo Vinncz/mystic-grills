@@ -4,7 +4,7 @@
     -primary-black-on-hover    : rgba(144, 144, 144, 1);
     -primary-white             : rgba(255, 255, 255, 1);
     -primary-lightgray         : rgba(228, 228, 228, 1);
-    -primary-lightgray-on-hover: rgb(201, 201, 201);
+    -primary-lightgray-on-hover: rgba(201, 201, 201, 1);
     -primary-gray              : rgba(154, 154, 154, 1);
     -primary-gray-on-hover     : rgba(119, 119, 119, 1);
     -primary-red               : rgba(219,  20,  60, 1);

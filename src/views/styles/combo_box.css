@@ -1,0 +1,43 @@
+.comboBox {
+    -fx-padding: 12;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.comboBox .text {
+    -fx-padding: 12 64 12 12;
+    -fx-text-fill: -primary-black;
+    -fx-font-weight: normal;
+}
+
+.comboBox .arrow-button {
+    -fx-padding: 12 12 12 64;
+}
+
+.comboBox .list-view {
+    -fx-background-color: -primary-white;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+}
+
+.comboBox .list-view .list-cell {
+    -fx-cursor: hand;
+    -fx-text-fill: -primary-black;
+    -fx-padding: 12;
+    -fx-background-color: -transparent;
+}
+
+.comboBox .list-view .list-cell:focused {
+    -fx-background-color: -primary-lightblue;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+}
+
+.comboBox .list-view .list-cell:hover {
+    -fx-background-color: -primary-lightblue;
+    -fx-background-radius: 8;
+}
+
+.combo-box .label  {
+    -fx-text-fill: white;
+}
