@@ -81,7 +81,6 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
         Integer menuItemId = (Integer) App.preferences.getValue(App.PASSING_ID_CHANNEL_FOR_MODIFICATION);
         Optional<MenuItem> menuItem = new MenuItemController().getById(menuItemId);
 
-        // if ( menuItem.isEmpty() ) // TODO go back to the previous page
 
         rootElement = new RootElement();
         container = new Container();

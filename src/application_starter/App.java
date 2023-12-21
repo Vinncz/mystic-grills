@@ -21,6 +21,9 @@ import views.OrderDetailPage;
 public class App extends Application {
 	public static final String CURRENT_USER_KEY = "currentlyLoggedInUser";
 	public static final String PASSING_ID_CHANNEL_FOR_MODIFICATION = "channelWhichIsUsedToPassIdForModificationPage";
+	public static final String PASSING_ITEM_ORDER_CHANNEL_FOR_CHECKOUT = "https://www.youtube.com/watch?v=wh9QLjk3M2k&t=92s";
+	public static final String PASSING_QUANTITY_ORDER_CHANNEL_FOR_CHECKOUT = "https://www.youtube.com/watch?v=AWM5ZNdWlqw";
+	public static final String PASSING_ORDER_CHANNEL_FOR_CHECK_ORDER_DETAIL = "https://www.youtube.com/watch?v=AYil1j5vS_4";
 
 	private static Stage primaryStage;
 	public  static SharedPreference preferences = new SharedPreference();
@@ -39,6 +42,31 @@ public class App extends Application {
 		// debugOrderRepository2();
 
 		launch(args);
+
+		// OrderRepository orderRepository = new OrderRepository();
+		// OrderItemRepository orderItemRepository = new OrderItemRepository();
+		// MenuItemRepository menuItemRepository = new MenuItemRepository();
+		// UserRepository userRepository = new UserRepository();
+
+
+		// User user = userRepository.getById(2).get();
+		// OrderItem orderItem = new OrderItem();
+		// Order order = new Order();
+
+		// order.setOrderUser(user);
+		// order.setOrderDate("2023-12-15 14:30:00");
+		// order.setOrderStatus(OrderStatus.PAID);
+		// order.setOrderTotal(100D);
+
+		// orderRepository.post(order);
+
+		// orderItem.setMenuItem(menuItem);
+		// orderItem.setOrderId(1);
+		// orderItem.setQuantity(2);
+
+		// orderItemRepository.post(orderItem);
+
+
 
 	}
 

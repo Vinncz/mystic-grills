@@ -4,69 +4,52 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import models.Order;
-import models.Order.OrderStatus;
-import models.User.UserRole;
+import models.User;
 import repositories.OrderRepository;
-import repositories.OrderRepositoryProxy;
-import repositories.OrderRepositoryProxy.OrderClassifiedByStatusReturnDatatype;
 
 public class OrderController {
 
-	private OrderRepository orderRepo;
-	private OrderRepositoryProxy orderRepoProxy;
-	
-	public OrderController() {
-		this.orderRepo = new OrderRepository();
-		this.orderRepoProxy = new OrderRepositoryProxy();
-	}
-	
-	public Optional<Order> getOrderById (Integer _id) {
-		return orderRepo.getById(_id);
-	}
-	
-	public ArrayList<Order> getAll () {
-		return orderRepo.getAll();
-	}
-	
-	public OrderClassifiedByStatusReturnDatatype getOrders(UserRole role) {
-		return orderRepoProxy.getOrder(role);
-	}
-	
-	public Boolean validateDeleteOrder (Integer _idOfAnObjectToBeDeleted) {
-		Optional<Order> order = getOrderById(_idOfAnObjectToBeDeleted);
-		
-		if (order.isPresent()) {
-			return orderRepo.delete(_idOfAnObjectToBeDeleted);
-		}
-		
-		return false;
-	}
-	
-	public Boolean prepareOrder (Order order) {
-		if(order.getOrderStatus().equals(OrderStatus.PENDING)) {			
-			order.setOrderStatus(OrderStatus.PREPARED);
-			return orderRepo.put(order);
-		}
-		return false;
-	}
-	
-	public Boolean serveOrder (Order order) {
-		if(order.getOrderStatus().equals(OrderStatus.PREPARED)) {			
-			order.setOrderStatus(OrderStatus.SERVED);
-			return orderRepo.put(order);
-		}
-		return false;
-	}
-	
-	public Order post (Order _objectToBeInserted) {
-		return orderRepo.post(_objectToBeInserted);
-	}
-	
-	public Boolean put (Order _replacementObject) {
-		return orderRepo.put(_replacementObject);
-	}
-	
-	public Boolean delete (Integer _idOfAnObjectToBeDeleted) {
-		return orderRepo.delete(_idOfAnObjectToBeDeleted);
-	}
+    private OrderRepository orderRepository;
+
+    public OrderController(){
+        orderRepository = new OrderRepository();
+    }
+
+    public Order post(User _user, Order.OrderStatus _orderStatus, String _orderDate , Double _orderTotal){
+
+        Order order = new Order();
+
+        order.setOrderUser(_user);
+        order.setOrderStatus(_orderStatus);
+        order.setOrderDate(_orderDate);
+        order.setOrderTotal(_orderTotal);
+
+        return orderRepository.post(order);
+    }
+
+    public Boolean put(Integer _orderId,User _user, Order.OrderStatus _orderStatus, String _orderDate , Double _orderTotal){
+
+        Order updatedOrder = new Order();
+
+        updatedOrder.setOrderId(_orderId);
+        updatedOrder.setOrderUser(_user);
+        updatedOrder.setOrderStatus(_orderStatus);
+        updatedOrder.setOrderDate(_orderDate);
+        updatedOrder.setOrderTotal(_orderTotal);
+
+        return orderRepository.put(updatedOrder);
+    }
+
+    public Boolean delete(Integer _orderId){
+        return orderRepository.delete(_orderId);
+    }
+
+    public ArrayList<Order> getAll(){
+        return orderRepository.getAll();
+    }
+
+    public Optional<Order> getById(Integer _orderId){
+        return orderRepository.getById(_orderId);
+    }
+
 }

@@ -239,7 +239,6 @@ public abstract class BaseRepository <T> {
         } catch (Exception _unanticipatedProblem) {
             _unanticipatedProblem.printStackTrace();
             throw new RuntimeException(_unanticipatedProblem.getMessage());
-
         }
 
         return _objectToBeInserted;
