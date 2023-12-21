@@ -58,8 +58,8 @@ public class MenuItemController {
 
             return returnObject;
         }
-
-        if ( validator.longerThanNCharacters(menuItemDescription, 10) ) {
+        
+        if ( validator.lessThanNCharacters(menuItemDescription, 11) ) {
             returnObject.setState(ValidationState.INVALID_MENUITEM_DESCRIPTION_LENGTH);
 
             return returnObject;

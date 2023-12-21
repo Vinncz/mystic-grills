@@ -218,7 +218,7 @@ public class NewMenuItemPage extends BorderPane implements PageDeclarationGuidel
 
             } else {
                 resetErrors();
-                App.redirectTo( App.sceneBuilder(new temp()) );
+                App.redirectTo( App.sceneBuilder(new MenuItemManagementPage()) );
 
             }
         });
