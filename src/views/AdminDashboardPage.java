@@ -147,7 +147,7 @@ public class AdminDashboardPage extends BorderPane implements PageDeclarationGui
     public void initializeEventListeners()
     {
         menuManagementButton.setOnMouseClicked(e -> {
-            App.redirectTo( App.sceneBuilder(new temp()) );
+            App.redirectTo( App.sceneBuilder(new MenuItemManagementPage()) );
         });
 
         menuManagementButton.setOnMouseEntered(e -> {
@@ -159,7 +159,7 @@ public class AdminDashboardPage extends BorderPane implements PageDeclarationGui
         });
 
         userManagementButton.setOnMouseClicked(e -> {
-            App.redirectTo( App.sceneBuilder(new temp()) );
+            App.redirectTo( App.sceneBuilder(new UserManagementPage()) );
         });
 
         userManagementButton.setOnMouseEntered(e -> {

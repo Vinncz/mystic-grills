@@ -227,7 +227,7 @@ public class EditMenuItemPage extends BorderPane implements PageDeclarationGuide
 
             } else {
                 resetErrosrs();
-                App.redirectTo( App.sceneBuilder(new temp()) );
+                App.redirectTo( App.sceneBuilder(new MenuItemManagementPage()) );
 
             }
         });
