@@ -13,8 +13,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import models.MenuItem;
-import models.OrderItem;
 import models.Order.OrderStatus;
+import models.OrderItem;
 import models.User;
 import views.components.buttons.BaseButton;
 import views.components.buttons.CTAButton;
@@ -95,7 +95,7 @@ public class CheckoutPage extends BorderPane implements PageDeclarationGuideline
                     BorderPane orderItemView = new BorderPane();
                             HBox orderItemContent = new BaseHBox();
                                 Label menuName = new H5Label(menuItem.getMenuItemName());
-                                Label menuPrice = new H5Label("Rp"+Integer.toString(menuItem.getMenuItemPrice()));
+                                Label menuPrice = new H5Label("$"+Integer.toString(menuItem.getMenuItemPrice()));
 
                                 baseNumberfieldBuilder = new BaseNumberfieldBuilder()
                                                                 .withMaximumValueOf(10)
@@ -119,7 +119,7 @@ public class CheckoutPage extends BorderPane implements PageDeclarationGuideline
 
             bottomPageContent = new BorderPane();
                 totalLabel = new H3Label("Total").withBoldFont();
-                totalPrice = new H3Label("Rp"+String.format("%.2f", tempTotalPrice));
+                totalPrice = new H3Label("$"+String.format("%.2f", tempTotalPrice));
 
         buttonContainer = new BaseHBox();
             confirmOrderBtn = new CTAButton("Confirm Order");

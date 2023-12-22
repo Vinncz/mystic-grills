@@ -89,7 +89,7 @@ public class CustomerDashboardPage extends BorderPane implements PageDeclaration
 
                 VBox content2 = new BaseVBox().withTightSpacing();
                     priceTitle = new H5Label("Price").withLightFont();
-                    menuItemPriceLabel = new H4Label("Rp" + Integer.toString(menuItem.getMenuItemPrice()) + ",-").withBlackFont();
+                    menuItemPriceLabel = new H4Label("$" + Integer.toString(menuItem.getMenuItemPrice()) + ",-").withBlackFont();
                     baseNumberfieldBuilder = new BaseNumberfieldBuilder().withMaximumValueOf(10).withMinimumValueOf(0).withInitialValueOf(0);
                     baseNumberfieldObj = baseNumberfieldBuilder.build();
 
@@ -129,8 +129,8 @@ public class CustomerDashboardPage extends BorderPane implements PageDeclaration
             cardView.getInstance().setPrefWidth(400);
         }
 
-        pageContent.setVgap(15);
-        pageContent.setHgap(15);
+        pageContent.setVgap(8);
+        pageContent.setHgap(8);
 
     }
 
