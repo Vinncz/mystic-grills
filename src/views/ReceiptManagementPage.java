@@ -3,11 +3,14 @@ package views;
 import java.util.ArrayList;
 
 import application_starter.App;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import models.Receipt;
+import repositories.ReceiptRepository;
 import views.components.buttons.BaseButton;
 import views.components.card_views.BaseCardView;
 import views.components.flowpanes.BaseFlowpane;
@@ -20,20 +23,25 @@ import views.components.vboxes.BaseVBox;
 import views.components.vboxes.Container;
 import views.guidelines.PageDeclarationGuideline_v1;
 
-public class CashierDashboardPage extends BorderPane implements PageDeclarationGuideline_v1 {
+public class ReceiptManagementPage extends BorderPane implements PageDeclarationGuideline_v1 {
+
+    public ArrayList<Receipt> receipts;
 
     private ScrollPane scrollSupport;
     private HBox rootElement;
     private VBox container;
 
     private VBox pageIdentifierContainer;
+    private BaseButton backButton;
     private Label pageTitle;
 
     private BaseFlowpane pageContent;
     private ArrayList<BaseCardView> cardViews;
     private ArrayList<BaseButton> buttonsForCardViews;
 
-    public CashierDashboardPage () {
+    public ReceiptManagementPage () {
+        ReceiptRepository rere = new ReceiptRepository();
+        this.receipts = rere.getAll();
         initializeScene();
     }
 
@@ -44,29 +52,30 @@ public class CashierDashboardPage extends BorderPane implements PageDeclarationG
         scrollSupport = new BaseScrollPane(rootElement);
 
         pageIdentifierContainer = new BaseVBox().withNoSpacing();
-            pageTitle = new H2Label("Cashier Dashboard").withExtraBoldFont();
+            backButton = new BaseButton("Back");
+            pageTitle = new H2Label("Receipt Management Studio").withExtraBoldFont();
 
         pageContent = new BaseFlowpane().growsHorizontally().growsVertically();
-            buttonsForCardViews = new ArrayList<>() {{
-                add(new BaseButton("Take me there").withSizeOf(18));
-                add(new BaseButton("Take me there").withSizeOf(18));
-            }};
-            cardViews = new ArrayList<>(){{
-                add(new BaseCardView()
+            buttonsForCardViews = new ArrayList<>();
+            cardViews = new ArrayList<>();
+
+            receipts.forEach(receipt -> {
+                BaseButton b = new BaseButton("Check this receipt").withSizeOf(18);
+                b.setOnMouseClicked(e -> {
+                    App.preferences.putValue(App.PASSING_ID_CHANNEL_FOR_RECEIPT_DETAIL_PAGE, receipt.getReceiptId());
+                    App.redirectTo( App.sceneBuilder( new ReceiptDetailPage() ) );
+                });
+                buttonsForCardViews.add(b);
+
+                cardViews.add(
+                    new BaseCardView()
                             .setContent(
-                                new H4Label("Order Management").withExtraBoldFont(),
-                                new H5Label("Access and manage resto's order").withRegularFont(),
-                                buttonsForCardViews.get(0)
+                                new H4Label("Receipt #" + receipt.getReceiptId()).withExtraBoldFont(),
+                                new H5Label("Ordered by\n" + receipt.getReceiptOrder().getOrderUser().getUserName()),
+                                b
                             ).growsVertically()
                 );
-                add(new BaseCardView()
-                            .setContent(
-                                new H4Label("Receipt Management").withExtraBoldFont(),
-                                new H5Label("Access and manage resto's receipt").withRegularFont(),
-                                buttonsForCardViews.get(1)
-                            ).growsVertically()
-                );
-            }};
+            });
     }
 
     @Override
@@ -79,21 +88,20 @@ public class CashierDashboardPage extends BorderPane implements PageDeclarationG
             card.getInstance().growsVertically();
             card.getInstance().getStyleClass().addAll("-fx-background-color: -primary-red");
         });
+        backButton.setStyle("-fx-background-radius: 8;");
     }
 
     @Override
     public void initializeEventListeners() {
-        buttonsForCardViews.get(0).setOnMouseClicked(e -> {
-            App.redirectTo(App.sceneBuilder(new ViewOrderPage()));
-        });
-        buttonsForCardViews.get(1).setOnMouseClicked(e -> {
-            App.redirectTo(App.sceneBuilder(new ReceiptManagementPage())); // TODO: RECEIPT MANAGEMENT BELOM
+        backButton.setOnMouseClicked(e -> {
+            App.redirectTo( App.sceneBuilder( new CashierDashboardPage() ) );
         });
     }
 
     @Override
     public void assembleLayout() {
         pageIdentifierContainer.getChildren().addAll(
+            backButton,
             pageTitle
         );
 
@@ -115,5 +123,7 @@ public class CashierDashboardPage extends BorderPane implements PageDeclarationG
     public void setupScene() {
         setCenter(scrollSupport);
     }
+
+
 
 }

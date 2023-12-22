@@ -15,6 +15,7 @@ public class App extends Application {
 	public static final String PASSING_ITEM_ORDER_CHANNEL_FOR_CHECKOUT = "https://www.youtube.com/watch?v=wh9QLjk3M2k&t=92s";
 	public static final String PASSING_ORDER_QUANTITY_CHANNEL_FOR_CHECKOUT = "https://www.youtube.com/watch?v=AWM5ZNdWlqw";
 	public static final String PASSING_ORDER_CHANNEL_FOR_CHECK_ORDER_DETAIL = "https://www.youtube.com/watch?v=AYil1j5vS_4";
+	public static final String PASSING_ID_CHANNEL_FOR_RECEIPT_DETAIL_PAGE = "channelWhichIsUserToPassReceiptIdForReceiptDetailPage";
 
 	private static Stage primaryStage;
 	public  static SharedPreference preferences = new SharedPreference();
